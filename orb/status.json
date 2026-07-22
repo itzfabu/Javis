@@ -1,3 +1,1 @@
-﻿{
-    "status":  "thinking"
-}
+{"status": "speaking", "lastMessage": "You're welcome. Anything else?", "tasks": ["Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example"], "audioToken": "1784748627016"}
