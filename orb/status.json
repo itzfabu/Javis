@@ -1,9 +1,3 @@
 ﻿{
-    "audioToken":  1784725253236,
-    "status":  "idle",
-    "tasks":  [
-                  "Beispielaufgabe: hier eigene Aufgaben eintragen",
-                  "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt"
-              ],
-    "lastMessage":  "Fine, thanks â€” running well and ready for the next task."
+    "status":  "thinking"
 }
