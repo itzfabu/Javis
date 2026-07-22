@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Jarvis</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap");
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: radial-gradient(circle at center, #0a0a12 0%, #000 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: "Orbitron", sans-serif;
+}
+.orb {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #7fd8ff, #1a5f8a 60%, #062033 100%);
+  box-shadow: 0 0 40px 10px rgba(80, 200, 255, 0.5), 0 0 90px 30px rgba(80, 200, 255, 0.25);
+  transition: all 0.8s ease;
+  animation: pulse 3s ease-in-out infinite;
+}
+.ring {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 1px solid rgba(120, 210, 255, 0.3);
+  animation: spin 12s linear infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.thinking { background: radial-gradient(circle at 35% 35%, #ffd27f, #8a5a1a, #331a06); box-shadow: 0 0 40px 10px rgba(255, 180, 80, 0.5), 0 0 90px 30px rgba(255, 180, 80, 0.25); animation: pulse 0.8s ease-in-out infinite; }
+.speaking { animation: pulse 0.4s ease-in-out infinite; }
+#label { position: absolute; bottom: 60px; color: #7fd8ff; font-size: 13px; letter-spacing: 3px; opacity: 0.6; }
+</style>
+</head>
+<body>
+<div class="ring"></div>
+<div class="orb" id="orb"></div>
+<div id="label">STANDBY</div>
+<script>
+async function poll() {
+  try {
+    const res = await fetch("status.json?t=" + Date.now());
+    const data = await res.json();
+    const orb = document.getElementById("orb");
+    const label = document.getElementById("label");
+    orb.className = "orb";
+    if (data.status === "thinking") { orb.classList.add("thinking"); label.textContent = "DENKT NACH"; }
+    else if (data.status === "speaking") { orb.classList.add("speaking"); label.textContent = "ANTWORTET"; }
+    else { label.textContent = "BEREIT"; }
+  } catch (e) {}
+  setTimeout(poll, 400);
+}
+poll();
+</script>
+</body>
+</html>

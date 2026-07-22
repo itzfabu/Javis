@@ -1,7 +1,12 @@
+﻿$statusPath = "C:\Jarvis\orb\status.json"
+
 $inputJson = [Console]::In.ReadToEnd()
 $data = $inputJson | ConvertFrom-Json
 $transcriptPath = $data.transcript_path
-if ([string]::IsNullOrWhiteSpace($transcriptPath) -or -not (Test-Path $transcriptPath)) { exit }
+if ([string]::IsNullOrWhiteSpace($transcriptPath) -or -not (Test-Path $transcriptPath)) {
+    Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
+    exit
+}
 
 $lastAssistantText = $null
 Get-Content $transcriptPath | ForEach-Object {
@@ -13,10 +18,15 @@ Get-Content $transcriptPath | ForEach-Object {
 }
 
 $text = $lastAssistantText
-if ([string]::IsNullOrWhiteSpace($text)) { exit }
+if ([string]::IsNullOrWhiteSpace($text)) {
+    Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
+    exit
+}
 
 $text = $text -replace "[*_#``]", ""
 $text = $text -replace "\[(.+?)\]\(.+?\)", "`$1"
+
+Set-Content -Path $statusPath -Value (@{status="speaking"} | ConvertTo-Json) -Encoding UTF8
 
 $txtPath = "$env:TEMP\jarvis-response.txt"
 $mp3Path = "$env:TEMP\jarvis-response.mp3"
@@ -38,3 +48,5 @@ if ($player.NaturalDuration.HasTimeSpan) {
   Start-Sleep -Seconds $player.NaturalDuration.TimeSpan.TotalSeconds
 }
 $player.Close()
+
+Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
