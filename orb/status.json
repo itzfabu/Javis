@@ -1,9 +1,9 @@
 ﻿{
-    "audioToken":  1784725178151,
+    "audioToken":  1784725198790,
     "status":  "idle",
     "tasks":  [
                   "Beispielaufgabe: hier eigene Aufgaben eintragen",
                   "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt"
               ],
-    "lastMessage":  "14:59, Zurich."
+    "lastMessage":  "UK is one hour behind Zurich (BST vs CEST): 13:59."
 }
