@@ -22,6 +22,12 @@ if ([string]::IsNullOrWhiteSpace($text)) { exit }
 $text = $text -replace "[*_#``]", ""
 $text = $text -replace "\[(.+?)\]\(.+?\)", "`$1"
 
+$tasksPath = "C:\Jarvis\TASKS.md"
+$tasks = @()
+if (Test-Path $tasksPath) {
+    $tasks = @(Get-Content $tasksPath | Where-Object { $_ -match "^\s*-\s*\[ \]" } | ForEach-Object { $_ -replace "^\s*-\s*\[ \]\s*", "" })
+}
+
 $txtPath = "$env:TEMP\jarvis-response.txt"
 $mp3Path = "C:\Jarvis\orb\latest.mp3"
 Set-Content -Path $txtPath -Value $text -Encoding UTF8
@@ -29,7 +35,7 @@ Set-Content -Path $txtPath -Value $text -Encoding UTF8
 edge-tts --voice "en-GB-RyanNeural" --rate="-2%" --file $txtPath --write-media $mp3Path
 
 $audioToken = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
-@{status="speaking"; lastMessage=$text; tasks=@(); audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
+@{status="speaking"; lastMessage=$text; tasks=$tasks; audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
 
 Add-Type -AssemblyName PresentationCore
 $probe = New-Object System.Windows.Media.MediaPlayer
@@ -41,4 +47,4 @@ if ($probe.NaturalDuration.HasTimeSpan) { $duration = $probe.NaturalDuration.Tim
 $probe.Close()
 Start-Sleep -Seconds $duration
 
-@{status="idle"; lastMessage=$text; tasks=@(); audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
+@{status="idle"; lastMessage=$text; tasks=$tasks; audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
