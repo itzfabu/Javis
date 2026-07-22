@@ -1,12 +1,7 @@
-﻿$statusPath = "C:\Jarvis\orb\status.json"
-
 $inputJson = [Console]::In.ReadToEnd()
 $data = $inputJson | ConvertFrom-Json
 $transcriptPath = $data.transcript_path
-if ([string]::IsNullOrWhiteSpace($transcriptPath) -or -not (Test-Path $transcriptPath)) {
-    Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
-    exit
-}
+if ([string]::IsNullOrWhiteSpace($transcriptPath) -or -not (Test-Path $transcriptPath)) { exit }
 
 $lastAssistantText = $null
 Get-Content $transcriptPath | ForEach-Object {
@@ -18,35 +13,42 @@ Get-Content $transcriptPath | ForEach-Object {
 }
 
 $text = $lastAssistantText
-if ([string]::IsNullOrWhiteSpace($text)) {
-    Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
-    exit
-}
+if ([string]::IsNullOrWhiteSpace($text)) { exit }
 
 $text = $text -replace "[*_#``]", ""
 $text = $text -replace "\[(.+?)\]\(.+?\)", "`$1"
 
-Set-Content -Path $statusPath -Value (@{status="speaking"} | ConvertTo-Json) -Encoding UTF8
+$tasksPath = "C:\Jarvis\TASKS.md"
+function Get-OpenTasks {
+    if (Test-Path $tasksPath) {
+        $lines = Get-Content $tasksPath | Where-Object { $_ -match "^\s*-\s*\[ \]" }
+        return @($lines | ForEach-Object { $_ -replace "^\s*-\s*\[ \]\s*", "" })
+    }
+    return @()
+}
+$tasks = Get-OpenTasks
 
 $txtPath = "$env:TEMP\jarvis-response.txt"
-$mp3Path = "$env:TEMP\jarvis-response.mp3"
+$mp3Path = "C:\Jarvis\orb\latest.mp3"
 Set-Content -Path $txtPath -Value $text -Encoding UTF8
 
 edge-tts --voice "en-GB-RyanNeural" --rate="-8%" --pitch="-5Hz" --file $txtPath --write-media $mp3Path
 
+$audioToken = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+@{status="speaking"; lastMessage=$text; tasks=$tasks; audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
+
 Add-Type -AssemblyName PresentationCore
-$player = New-Object System.Windows.Media.MediaPlayer
-$player.Open([Uri]$mp3Path)
-$player.Play()
-Start-Sleep -Milliseconds 500
+$probe = New-Object System.Windows.Media.MediaPlayer
+$probe.Open([Uri]$mp3Path)
 $timeout = 0
-while (-not $player.NaturalDuration.HasTimeSpan -and $timeout -lt 50) {
+while (-not $probe.NaturalDuration.HasTimeSpan -and $timeout -lt 50) {
   Start-Sleep -Milliseconds 100
   $timeout++
 }
-if ($player.NaturalDuration.HasTimeSpan) {
-  Start-Sleep -Seconds $player.NaturalDuration.TimeSpan.TotalSeconds
-}
-$player.Close()
+$duration = 3
+if ($probe.NaturalDuration.HasTimeSpan) { $duration = $probe.NaturalDuration.TimeSpan.TotalSeconds }
+$probe.Close()
 
-Set-Content -Path $statusPath -Value (@{status="idle"} | ConvertTo-Json) -Encoding UTF8
+Start-Sleep -Seconds $duration
+
+@{status="idle"; lastMessage=$text; tasks=$tasks; audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8

@@ -1,65 +1,230 @@
-﻿<!DOCTYPE html>
-<html lang="de">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Jarvis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap");
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: radial-gradient(circle at center, #0a0a12 0%, #000 100%);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  font-family: "Orbitron", sans-serif;
-}
-.orb {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #7fd8ff, #1a5f8a 60%, #062033 100%);
-  box-shadow: 0 0 40px 10px rgba(80, 200, 255, 0.5), 0 0 90px 30px rgba(80, 200, 255, 0.25);
-  transition: all 0.8s ease;
-  animation: pulse 3s ease-in-out infinite;
-}
-.ring {
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  border: 1px solid rgba(120, 210, 255, 0.3);
-  animation: spin 12s linear infinite;
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.thinking { background: radial-gradient(circle at 35% 35%, #ffd27f, #8a5a1a, #331a06); box-shadow: 0 0 40px 10px rgba(255, 180, 80, 0.5), 0 0 90px 30px rgba(255, 180, 80, 0.25); animation: pulse 0.8s ease-in-out infinite; }
-.speaking { animation: pulse 0.4s ease-in-out infinite; }
-#label { position: absolute; bottom: 60px; color: #7fd8ff; font-size: 13px; letter-spacing: 3px; opacity: 0.6; }
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap");
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Orbitron", sans-serif; }
+body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); height: 100vh; width: 100vw; overflow: hidden; color: #7fffe8; position: relative; }
+.scanlines { position: absolute; inset: 0; pointer-events: none; z-index: 6; background: repeating-linear-gradient(to bottom, rgba(90,255,230,0.03) 0px, rgba(90,255,230,0.03) 1px, transparent 1px, transparent 3px); mix-blend-mode: screen; }
+.vignette { position: absolute; inset: 0; pointer-events: none; z-index: 6; box-shadow: inset 0 0 160px 40px rgba(0,0,0,0.85); }
+#dateTime { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3; }
+#clock { font-size: 26px; font-weight: 500; color: #baffef; letter-spacing: 2px; }
+#dateline { font-size: 11px; opacity: 0.6; margin-top: 2px; letter-spacing: 1px; }
+#taskList { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
+#taskList .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
+#tasklist { list-style: none; }
+#tasklist li { padding: 2px 0; opacity: 0.8; }
+#tasklist li:after { content: " ◂"; color: #6fffe0; }
+#logText { position: absolute; bottom: 40px; left: 40px; font-size: 11px; max-width: 300px; z-index: 3; }
+#logText .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
+#chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
+#globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
+#globePanel .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
+#globeContainer { width: 150px; height: 150px; margin: 0 auto; }
+.platform { width: 130px; height: 10px; margin: -6px auto 0; background: radial-gradient(ellipse at center, rgba(90,255,230,0.35), transparent 70%); border-radius: 50%; }
+.stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; z-index: 2; }
+#coreContainer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; }
+#label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 20px; font-size: 12px; letter-spacing: 4px; opacity: 0.65; white-space: nowrap; }
+#audioHint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 10px; opacity: 0.4; letter-spacing: 1px; z-index: 5; transition: opacity 0.5s; }
 </style>
 </head>
 <body>
-<div class="ring"></div>
-<div class="orb" id="orb"></div>
-<div id="label">STANDBY</div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">—</div></div>
+<div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
+<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">—</div></div>
+<div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
+<div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
+<div id="audioHint">click anywhere to enable audio</div>
 <script>
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleTimeString();
+  document.getElementById("dateline").textContent = now.toLocaleDateString(undefined, { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+}
+updateClock(); setInterval(updateClock, 1000);
+
+let lastRenderedMessage = "";
+function typewrite(text) {
+  if (text === lastRenderedMessage) return;
+  lastRenderedMessage = text;
+  const el = document.getElementById("chatlog"); el.textContent = "";
+  let i = 0;
+  function step() { if (i <= text.length) { el.textContent = text.slice(0, i); i += 3; setTimeout(step, 12); } }
+  step();
+}
+
+let audioCtx, analyser, freqData, audioReady = false;
+const audioEl = new Audio();
+audioEl.crossOrigin = "anonymous";
+function setupAudio() {
+  if (audioReady) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaElementSource(audioEl);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  freqData = new Uint8Array(analyser.frequencyBinCount);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  audioReady = true;
+  document.getElementById("audioHint").style.opacity = "0";
+}
+document.addEventListener("click", setupAudio, { once: true });
+audioEl.addEventListener("ended", () => { currentState = "idle"; document.getElementById("label").textContent = "READY"; });
+function getAudioAmplitude() {
+  if (!analyser) return 0;
+  analyser.getByteFrequencyData(freqData);
+  let sum = 0;
+  for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+  return (sum / freqData.length) / 255;
+}
+
+let coreScene, coreCamera, coreRenderer, coreParticles, basePositions;
+let speakTime = 0;
+let currentState = "idle";
+let lastAudioToken = null;
+function initCore() {
+  const container = document.getElementById("coreContainer");
+  coreScene = new THREE.Scene();
+  coreCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  coreCamera.position.z = 3.2;
+  coreRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  coreRenderer.setSize(200, 200);
+  container.appendChild(coreRenderer.domElement);
+  const count = 4500;
+  basePositions = new Float32Array(count * 3);
+  const radius = 1.15;
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r;
+    const jitter = 1 + (Math.random() - 0.5) * 0.08;
+    basePositions[i*3] = x * radius * jitter;
+    basePositions[i*3+1] = y * radius * jitter;
+    basePositions[i*3+2] = z * radius * jitter;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(basePositions.slice(), 3));
+  const canvas = document.createElement("canvas");
+  canvas.width = 16; canvas.height = 16;
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createRadialGradient(8,8,0,8,8,8);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad; ctx.fillRect(0,0,16,16);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.PointsMaterial({ size: 0.05, map: tex, transparent: true, opacity: 0.9, color: 0x5affe6, depthWrite: false, blending: THREE.AdditiveBlending });
+  coreParticles = new THREE.Points(geo, mat);
+  coreScene.add(coreParticles);
+  animateCore();
+}
+function animateCore() {
+  requestAnimationFrame(animateCore);
+  const posAttr = coreParticles.geometry.attributes.position;
+  const arr = posAttr.array;
+  if (currentState === "speaking") {
+    const amp = getAudioAmplitude();
+    speakTime += 0.1;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + amp * 0.22 * Math.sin(speakTime * 2 + i * 0.3);
+      arr[i*3] = basePositions[i*3] * wobble;
+      arr[i*3+1] = basePositions[i*3+1] * wobble;
+      arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.006 + amp * 0.02;
+  } else if (currentState === "thinking") {
+    speakTime += 0.05;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + Math.sin(speakTime * 1.5 + i * 0.2) * 0.03;
+      arr[i*3] = basePositions[i*3] * wobble;
+      arr[i*3+1] = basePositions[i*3+1] * wobble;
+      arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.005;
+  } else {
+    if (arr[0] !== basePositions[0]) { arr.set(basePositions); posAttr.needsUpdate = true; }
+    coreParticles.rotation.y += 0.003;
+  }
+  coreRenderer.render(coreScene, coreCamera);
+}
+if (window.THREE) initCore();
+
+let globeScene, globeCamera, globeRenderer, globeMesh;
+function initGlobe() {
+  const container = document.getElementById("globeContainer");
+  globeScene = new THREE.Scene();
+  globeCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  globeCamera.position.z = 3.2;
+  globeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  globeRenderer.setSize(150, 150);
+  container.appendChild(globeRenderer.domElement);
+  const loader = new THREE.TextureLoader();
+  loader.crossOrigin = "anonymous";
+  const earthTexture = loader.load("https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg");
+  const geo = new THREE.SphereGeometry(1.2, 32, 24);
+  const mat = new THREE.MeshBasicMaterial({ map: earthTexture });
+  globeMesh = new THREE.Mesh(geo, mat);
+  globeScene.add(globeMesh);
+  const wireGeo = new THREE.SphereGeometry(1.22, 24, 16);
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0x5affe6, wireframe: true, transparent: true, opacity: 0.2 });
+  globeScene.add(new THREE.Mesh(wireGeo, wireMat));
+  const atmosGeo = new THREE.SphereGeometry(1.3, 24, 16);
+  const atmosMat = new THREE.MeshBasicMaterial({ color: 0x5affe6, transparent: true, opacity: 0.08 });
+  globeScene.add(new THREE.Mesh(atmosGeo, atmosMat));
+  animateGlobe();
+}
+function animateGlobe() {
+  requestAnimationFrame(animateGlobe);
+  globeMesh.rotation.y += 0.006;
+  globeRenderer.render(globeScene, globeCamera);
+}
+if (window.THREE) initGlobe();
+
+const stage = document.getElementById("stage");
+document.addEventListener("mousemove", (e) => {
+  const dx = (e.clientX / window.innerWidth - 0.5) * 10;
+  const dy = (e.clientY / window.innerHeight - 0.5) * 10;
+  stage.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+});
+
 async function poll() {
   try {
     const res = await fetch("status.json?t=" + Date.now());
     const data = await res.json();
-    const orb = document.getElementById("orb");
     const label = document.getElementById("label");
-    orb.className = "orb";
-    if (data.status === "thinking") { orb.classList.add("thinking"); label.textContent = "DENKT NACH"; }
-    else if (data.status === "speaking") { orb.classList.add("speaking"); label.textContent = "ANTWORTET"; }
-    else { label.textContent = "BEREIT"; }
+    if (data.status === "thinking") {
+      currentState = "thinking";
+      if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
+      label.textContent = "THINKING";
+    } else if (data.status === "speaking") {
+      if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
+      if (data.audioToken && data.audioToken !== lastAudioToken && audioReady) {
+        lastAudioToken = data.audioToken;
+        audioEl.src = "latest.mp3?t=" + data.audioToken;
+        audioEl.play().catch(() => {});
+        currentState = "speaking";
+        label.textContent = "RESPONDING";
+      }
+    } else {
+      if (audioEl.paused) {
+        currentState = "idle";
+        if (coreParticles) coreParticles.material.color.setHex(0x5affe6);
+        label.textContent = "READY";
+      }
+    }
+    typewrite(data.lastMessage || "—");
+    const list = document.getElementById("tasklist"); list.innerHTML = "";
+    const tasks = data.tasks || [];
+    if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
+    else list.innerHTML = "<li>none</li>";
   } catch (e) {}
   setTimeout(poll, 400);
 }
