@@ -1,1 +1,9 @@
-{"status": "speaking", "lastMessage": "Hello. What can I do for you, Sir?", "tasks": ["Beispielaufgabe: hier eigene Aufgaben eintragen", "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt"], "audioToken": "1784725996749"}
+﻿{
+    "audioToken":  1784731270985,
+    "status":  "idle",
+    "tasks":  [
+                  "Beispielaufgabe: hier eigene Aufgaben eintragen",
+                  "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt"
+              ],
+    "lastMessage":  "Confirmed â€” the append landed correctly."
+}

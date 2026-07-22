@@ -1,10 +1,9 @@
-Set-Location "C:\Jarvis"
-
-git add -A
-
+﻿Set-Location C:\Jarvis
 $status = git status --porcelain
-if ([string]::IsNullOrWhiteSpace($status)) { exit }
-
-$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-git commit -m "Auto-Backup: $timestamp" | Out-Null
-git push https://github.com/itzfabu/Javis.git HEAD:main
+if ($status) {
+    git add .
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
+    git commit -m "Auto-Backup: $timestamp"
+    git push
+}
+powershell -File C:\Jarvis\.claude\hooks\sync-knowledge.ps1

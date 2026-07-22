@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -10,36 +10,57 @@
 body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); height: 100vh; width: 100vw; overflow: hidden; color: #7fffe8; position: relative; }
 .scanlines { position: absolute; inset: 0; pointer-events: none; z-index: 6; background: repeating-linear-gradient(to bottom, rgba(90,255,230,0.03) 0px, rgba(90,255,230,0.03) 1px, transparent 1px, transparent 3px); mix-blend-mode: screen; }
 .vignette { position: absolute; inset: 0; pointer-events: none; z-index: 6; box-shadow: inset 0 0 160px 40px rgba(0,0,0,0.85); }
+.lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
+#knowledgeGraphPanel { position: absolute; top: 40px; left: 40px; z-index: 3; }
+#kgCanvas { cursor: grab; border-radius: 6px; background: rgba(10,40,45,0.25); }
+#activityLog { position: absolute; top: 270px; left: 40px; font-size: 11px; z-index: 3; max-width: 220px; }
+#activitylist { list-style: none; }
+#activitylist li { padding: 2px 0; opacity: 0.75; }
 #dateTime { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3; }
 #clock { font-size: 26px; font-weight: 500; color: #baffef; letter-spacing: 2px; }
 #dateline { font-size: 11px; opacity: 0.6; margin-top: 2px; letter-spacing: 1px; }
 #taskList { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
-#taskList .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
 #tasklist { list-style: none; }
 #tasklist li { padding: 2px 0; opacity: 0.8; }
-#tasklist li:after { content: " â—‚"; color: #6fffe0; }
+#tasklist li:after { content: " ◂"; color: #6fffe0; }
 #logText { position: absolute; bottom: 40px; left: 40px; font-size: 11px; max-width: 300px; z-index: 3; }
-#logText .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
 #chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
 #globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
-#globePanel .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
 #globeContainer { width: 150px; height: 150px; margin: 0 auto; }
 .platform { width: 130px; height: 10px; margin: -6px auto 0; background: radial-gradient(ellipse at center, rgba(90,255,230,0.35), transparent 70%); border-radius: 50%; }
 .stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; z-index: 2; }
 #coreContainer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; }
 #label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 20px; font-size: 12px; letter-spacing: 4px; opacity: 0.65; white-space: nowrap; }
-#audioHint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 10px; opacity: 0.4; letter-spacing: 1px; z-index: 5; transition: opacity 0.5s; }
+#chatInput { position: absolute; top: calc(50% + 190px); left: 50%; transform: translateX(-50%); display: flex; gap: 14px; align-items: center; z-index: 5; background: rgba(10,40,45,0.55); padding: 14px 22px; border-radius: 26px; min-width: 360px; }
+#msgInput { background: transparent; border: none; outline: none; color: #baffef; font-family: Orbitron, sans-serif; font-size: 15px; width: 280px; }
+#micBtn, #sendBtn { background: none; border: none; color: #5affe6; cursor: pointer; }
+#micBtn { font-size: 22px; }
+#sendBtn { font-size: 20px; }
 </style>
 </head>
 <body>
 <div class="scanlines"></div>
 <div class="vignette"></div>
-<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
+
+<div id="knowledgeGraphPanel">
+  <div class="lbl">KNOWLEDGE</div>
+  <canvas id="kgCanvas" width="240" height="180"></canvas>
+</div>
+<div id="activityLog"><div class="lbl">ACTIVITY</div><ul id="activitylist"><li style="opacity:0.6;">no activity yet</li></ul></div>
+
+<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">—</div></div>
 <div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
-<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
+<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">—</div></div>
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
+
 <div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
-<div id="audioHint">click anywhere to enable audio</div>
+
+<div id="chatInput">
+  <input id="msgInput" type="text" placeholder="talk to jarvis...">
+  <button id="micBtn">&#127908;</button>
+  <button id="sendBtn">&#10148;</button>
+</div>
+
 <script>
 function updateClock() {
   const now = new Date();
@@ -71,7 +92,6 @@ function setupAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
   audioReady = true;
-  document.getElementById("audioHint").style.opacity = "0";
 }
 document.addEventListener("click", setupAudio, { once: true });
 audioEl.addEventListener("ended", () => { currentState = "idle"; document.getElementById("label").textContent = "READY"; });
@@ -195,47 +215,151 @@ document.addEventListener("mousemove", (e) => {
   stage.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
 });
 
-async function poll() {
-  try {
-    const res = await fetch("status.json?t=" + Date.now());
-    const data = await res.json();
-    const label = document.getElementById("label");
-    if (data.status === "thinking") {
-      currentState = "thinking";
-      if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
-      label.textContent = "THINKING";
-    } else if (data.status === "speaking") {
-      if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
-      if (data.audioToken && data.audioToken !== lastAudioToken && audioReady) {
-        lastAudioToken = data.audioToken;
-        audioEl.src = "latest.mp3?t=" + data.audioToken;
-        audioEl.play().catch(() => {});
-        currentState = "speaking";
-        label.textContent = "RESPONDING";
-      }
-    } else {
-      if (audioEl.paused) {
-        currentState = "idle";
-        if (coreParticles) coreParticles.material.color.setHex(0x5affe6);
-        label.textContent = "READY";
-      }
+let kgNodes = [];
+let kgEdges = [];
+function kgSyncData(data) {
+  const wantIds = new Set();
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+
+  (data.agents || []).forEach((name, i) => {
+    const id = "agent:" + name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      const angle = (i / data.agents.length) * Math.PI * 2;
+      kgNodes.push({ id, type: "agent", label: name, x: 50 * Math.cos(angle), y: 50 * Math.sin(angle), vx: 0, vy: 0, radius: 5, color: "#5affe6" });
     }
-    typewrite(data.lastMessage || "â€”");
-    const list = document.getElementById("tasklist"); list.innerHTML = "";
-    const tasks = data.tasks || [];
-    if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
-    else list.innerHTML = "<li>none</li>";
-  } catch (e) {}
-  setTimeout(poll, 400);
+  });
+  (data.projects || []).forEach((p) => {
+    const id = "project:" + p.name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "project", label: p.name, owner: p.owner, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 7, color: "#ffcf7f" });
+    }
+  });
+  (data.tasks || []).forEach((t, i) => {
+    if (!t.project) return;
+    const id = "task:" + t.text;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "task", label: t.text.slice(0, 20), project: t.project, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 3, color: "#7fffe8" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => wantIds.has(n.id));
+
+  kgEdges = [];
+  kgNodes.forEach(n => {
+    if (n.type === "project" && n.owner) {
+      const ownerNode = kgNodes.find(a => a.id === "agent:" + n.owner);
+      if (ownerNode) kgEdges.push({ source: n.id, target: ownerNode.id });
+    }
+    if (n.type === "task" && n.project) {
+      const projNode = kgNodes.find(p => p.type === "project" && p.label === n.project);
+      if (projNode) kgEdges.push({ source: n.id, target: projNode.id });
+    }
+  });
 }
-poll();
-</script>
-<div id="chatInput" style="position:absolute; top: calc(50% + 190px); left:50%; transform:translateX(-50%); display:flex; gap:14px; align-items:center; z-index:5; background:rgba(10,40,45,0.55); padding:14px 22px; border-radius:26px; min-width:360px;">
-  <input id="msgInput" type="text" placeholder="talk to jarvis..." style="background:transparent; border:none; outline:none; color:#baffef; font-family:Orbitron, sans-serif; font-size:15px; width:280px;">
-  <button id="micBtn" style="background:none;border:none;color:#5affe6;cursor:pointer;font-size:22px;">&#127908;</button>
-  <button id="sendBtn" style="background:none;border:none;color:#5affe6;cursor:pointer;font-size:20px;">&#10148;</button>
-</div>
-<script>
+function kgStep() {
+  for (let i = 0; i < kgNodes.length; i++) {
+    for (let j = i + 1; j < kgNodes.length; j++) {
+      const a = kgNodes[i], b = kgNodes[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const distSq = Math.max(dx*dx + dy*dy, 25);
+      const force = 350 / distSq;
+      const dist = Math.sqrt(distSq);
+      const fx = dx/dist*force, fy = dy/dist*force;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+  }
+  kgEdges.forEach(e => {
+    const a = kgNodes.find(n => n.id === e.source), b = kgNodes.find(n => n.id === e.target);
+    if (!a || !b) return;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 0.01;
+    const force = (dist - 40) * 0.02;
+    const fx = dx/dist*force, fy = dy/dist*force;
+    a.vx += fx; a.vy += fy;
+    b.vx -= fx; b.vy -= fy;
+  });
+  kgNodes.forEach(n => {
+    n.vx += -n.x * 0.0008;
+    n.vy += -n.y * 0.0008;
+    n.vx *= 0.85; n.vy *= 0.85;
+    n.x += n.vx; n.y += n.vy;
+  });
+}
+let kgScale = 1, kgOffsetX = 0, kgOffsetY = 0, kgDragging = false, kgLastX = 0, kgLastY = 0;
+function kgRender() {
+  const canvas = document.getElementById("kgCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width/2 + kgOffsetX, canvas.height/2 + kgOffsetY);
+  ctx.scale(kgScale, kgScale);
+  ctx.strokeStyle = "rgba(90,255,230,0.25)";
+  ctx.lineWidth = 1 / kgScale;
+  kgEdges.forEach(e => {
+    const a = kgNodes.find(n => n.id === e.source), b = kgNodes.find(n => n.id === e.target);
+    if (!a || !b) return;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  });
+  kgNodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+    ctx.fillStyle = n.color;
+    ctx.fill();
+    if (kgScale > 0.6) {
+      ctx.font = (9 / Math.max(kgScale, 1)) + "px Orbitron";
+      ctx.fillText(n.label, n.x + n.radius + 3, n.y + 3);
+    }
+  });
+  ctx.restore();
+}
+function kgLoop() { kgStep(); kgRender(); requestAnimationFrame(kgLoop); }
+kgLoop();
+async function pollKG() {
+  try {
+    const res = await fetch("knowledge.json?t=" + Date.now());
+    const data = await res.json();
+    kgSyncData(data);
+  } catch (e) {}
+}
+setInterval(pollKG, 5000);
+pollKG();
+const kgCanvasEl = document.getElementById("kgCanvas");
+kgCanvasEl.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  kgScale *= (e.deltaY < 0 ? 1.1 : 0.9);
+  kgScale = Math.max(0.3, Math.min(4, kgScale));
+});
+kgCanvasEl.addEventListener("mousedown", (e) => { kgDragging = true; kgLastX = e.clientX; kgLastY = e.clientY; kgCanvasEl.style.cursor = "grabbing"; });
+window.addEventListener("mouseup", () => { kgDragging = false; kgCanvasEl.style.cursor = "grab"; });
+window.addEventListener("mousemove", (e) => {
+  if (!kgDragging) return;
+  kgOffsetX += e.clientX - kgLastX;
+  kgOffsetY += e.clientY - kgLastY;
+  kgLastX = e.clientX; kgLastY = e.clientY;
+});
+
+async function pollHistory() {
+  try {
+    const res = await fetch("history.json?t=" + Date.now());
+    const hist = await res.json();
+    const list = document.getElementById("activitylist");
+    list.innerHTML = "";
+    if (hist && hist.length > 0) {
+      hist.slice().reverse().forEach(h => {
+        const li = document.createElement("li");
+        li.textContent = "[" + h.time + "] " + h.text;
+        list.appendChild(li);
+      });
+    }
+  } catch (e) {}
+}
+setInterval(pollHistory, 2000);
+pollHistory();
+
 async function sendMessage(text) {
   if (!text || !text.trim()) return;
   document.getElementById("label").textContent = "THINKING";
@@ -260,9 +384,43 @@ if ("webkitSpeechRecognition" in window) {
 } else {
   document.getElementById("micBtn").style.display = "none";
 }
+
+async function poll() {
+  try {
+    const res = await fetch("status.json?t=" + Date.now());
+    const data = await res.json();
+    const coreEl = document.getElementById("coreContainer");
+    const label = document.getElementById("label");
+    if (data.status === "thinking") {
+      coreEl.style.animationDuration = "0.8s";
+      if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
+      currentState = "thinking";
+      label.textContent = "THINKING";
+    } else if (data.status === "speaking") {
+      if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
+      if (data.audioToken && data.audioToken !== lastAudioToken && audioReady) {
+        lastAudioToken = data.audioToken;
+        audioEl.src = "latest.mp3?t=" + data.audioToken;
+        audioEl.play().catch(() => {});
+        currentState = "speaking";
+        label.textContent = "RESPONDING";
+      }
+    } else {
+      if (audioEl.paused) {
+        currentState = "idle";
+        if (coreParticles) coreParticles.material.color.setHex(0x5affe6);
+        label.textContent = "READY";
+      }
+    }
+    typewrite(data.lastMessage || "—");
+    const list = document.getElementById("tasklist"); list.innerHTML = "";
+    const tasks = data.tasks || [];
+    if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
+    else list.innerHTML = "<li>none</li>";
+  } catch (e) {}
+  setTimeout(poll, 400);
+}
+poll();
 </script>
 </body>
 </html>
-
-
-

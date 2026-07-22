@@ -1,0 +1,25 @@
+﻿{
+    "projects":  [
+
+                 ],
+    "agents":  [
+                   "researcher",
+                   "coder",
+                   "debugger",
+                   "business-analyst",
+                   "writer",
+                   "planner",
+                   "webdesigner",
+                   "project-manager"
+               ],
+    "tasks":  [
+                  {
+                      "text":  "Beispielaufgabe: hier eigene Aufgaben eintragen",
+                      "project":  ""
+                  },
+                  {
+                      "text":  "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt",
+                      "project":  ""
+                  }
+              ]
+}
