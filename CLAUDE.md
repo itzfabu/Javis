@@ -16,11 +16,18 @@
 - Create a note per topic instead of cramming everything into CLAUDE.md or TASKS.md.
 - Use wikilinks to connect related notes where it makes sense.
 - When I mention an idea, a decision, or something worth keeping, offer to save it as a note in the vault rather than letting it disappear at the end of the conversation.
+- The vault follows the PARA method (see vault/README.md): new project notes go in vault/Projects, ongoing responsibilities in vault/Areas, reference material in vault/Resources, inactive things in vault/Archive. Always place new notes in the right folder rather than the vault root.
 
 # Knowledge System
 - Projects live in knowledge/PROJECTS.md. Tasks in TASKS.md can be tagged with #project-name to link them to a project.
 - Before starting any project-related work, check knowledge/PROJECTS.md first for existing context; if it's something new, add it there before diving in.
 - The project-manager agent should always consult this file before delegating to other agents.
+
+# Tasks (TASKS.md)
+- Format: `- [ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #project-tag`
+- When adding a task, always include priority and due date if known.
+- When asked what to work on, use the planner agent and prioritize by due date first, then priority level.
+- Move completed tasks to the "Done" section instead of deleting them.
 
 # Feste Regeln
 - Nie autonom Geld ausgeben, Verträge abschließen oder Nachrichten in meinem Namen an Dritte senden ohne Rückfrage

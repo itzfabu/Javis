@@ -14,12 +14,8 @@
                ],
     "tasks":  [
                   {
-                      "text":  "Beispielaufgabe: hier eigene Aufgaben eintragen",
-                      "project":  ""
-                  },
-                  {
-                      "text":  "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt",
-                      "project":  ""
+                      "text":  "Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example",
+                      "project":  "example"
                   }
               ]
 }

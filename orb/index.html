@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -22,7 +22,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #taskList { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
 #tasklist { list-style: none; }
 #tasklist li { padding: 2px 0; opacity: 0.8; }
-#tasklist li:after { content: " ◂"; color: #6fffe0; }
+#tasklist li:after { content: " â—‚"; color: #6fffe0; }
 #logText { position: absolute; bottom: 40px; left: 40px; font-size: 11px; max-width: 300px; z-index: 3; }
 #chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
 #globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
@@ -48,9 +48,9 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 </div>
 <div id="activityLog"><div class="lbl">ACTIVITY</div><ul id="activitylist"><li style="opacity:0.6;">no activity yet</li></ul></div>
 
-<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">—</div></div>
+<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
 <div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
-<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">—</div></div>
+<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
 
 <div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
@@ -360,11 +360,12 @@ async function pollHistory() {
 setInterval(pollHistory, 2000);
 pollHistory();
 
+const JARVIS_TOKEN = "bfee9c861c8a6a792a579f613b8bda86a3a6ac9fb5513d78";
 async function sendMessage(text) {
   if (!text || !text.trim()) return;
   document.getElementById("label").textContent = "THINKING";
   try {
-    await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: text}) });
+    await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json", "X-Jarvis-Token": JARVIS_TOKEN}, body: JSON.stringify({message: text}) });
   } catch (e) {
     document.getElementById("label").textContent = "ERROR";
   }
@@ -412,7 +413,7 @@ async function poll() {
         label.textContent = "READY";
       }
     }
-    typewrite(data.lastMessage || "—");
+    typewrite(data.lastMessage || "â€”");
     const list = document.getElementById("tasklist"); list.innerHTML = "";
     const tasks = data.tasks || [];
     if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
@@ -424,3 +425,4 @@ poll();
 </script>
 </body>
 </html>
+
