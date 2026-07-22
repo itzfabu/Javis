@@ -1,6 +1,9 @@
-﻿# Offene Aufgaben
+﻿# Tasks
 
-- [ ] Beispielaufgabe: hier eigene Aufgaben eintragen
-- [ ] Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt
+Format: - [ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #project-tag
 
-Tip: tag a task with #project-name to link it to a project in knowledge/PROJECTS.md
+## Active
+- [ ] Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example
+
+## Done
+(move completed tasks here instead of deleting them)
