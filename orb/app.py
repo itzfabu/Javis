@@ -26,7 +26,7 @@ def chat():
         return jsonify({"error": "empty"}), 400
 
     result = subprocess.run(
-        ["cmd", "/c", "claude", "-p", message, "-c", "--permission-mode", "acceptEdits"],
+        ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits"],
         cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120
     )
     reply = result.stdout.strip() or "Sorry, I could not process that."
