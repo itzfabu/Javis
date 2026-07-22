@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -17,7 +17,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #taskList .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
 #tasklist { list-style: none; }
 #tasklist li { padding: 2px 0; opacity: 0.8; }
-#tasklist li:after { content: " ◂"; color: #6fffe0; }
+#tasklist li:after { content: " â—‚"; color: #6fffe0; }
 #logText { position: absolute; bottom: 40px; left: 40px; font-size: 11px; max-width: 300px; z-index: 3; }
 #logText .lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
 #chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
@@ -34,9 +34,9 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 <body>
 <div class="scanlines"></div>
 <div class="vignette"></div>
-<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">—</div></div>
+<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
 <div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
-<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">—</div></div>
+<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
 <div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
 <div id="audioHint">click anywhere to enable audio</div>
@@ -220,7 +220,7 @@ async function poll() {
         label.textContent = "READY";
       }
     }
-    typewrite(data.lastMessage || "—");
+    typewrite(data.lastMessage || "â€”");
     const list = document.getElementById("tasklist"); list.innerHTML = "";
     const tasks = data.tasks || [];
     if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
@@ -230,5 +230,52 @@ async function poll() {
 }
 poll();
 </script>
+<div id="chatInput" style="position:absolute; top: calc(50% + 190px); left:50%; transform:translateX(-50%); display:flex; gap:14px; align-items:center; z-index:5; background:rgba(10,40,45,0.55); padding:14px 22px; border-radius:26px; min-width:360px;">
+  <input id="msgInput" type="text" placeholder="talk to jarvis..." style="background:transparent; border:none; outline:none; color:#baffef; font-family:Orbitron, sans-serif; font-size:15px; width:280px;">
+  <button id="micBtn" style="background:none;border:none;color:#5affe6;cursor:pointer;font-size:22px;">&#127908;</button>
+  <button id="sendBtn" style="background:none;border:none;color:#5affe6;cursor:pointer;font-size:20px;">&#10148;</button>
+</div>
+<script>
+async function sendMessage(text) {
+  if (!text || !text.trim()) return;
+  currentState = "thinking";
+  document.getElementById("label").textContent = "THINKING";
+  if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
+  try {
+    const res = await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: text}) });
+    const data = await res.json();
+    typewrite(data.reply || "no reply");
+    if (data.tasks) {
+      const list = document.getElementById("tasklist"); list.innerHTML = "";
+      if (data.tasks.length > 0) data.tasks.forEach(t => { const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
+      else list.innerHTML = "<li>none</li>";
+    }
+    currentState = "speaking";
+    document.getElementById("label").textContent = "RESPONDING";
+    if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
+    lastAudioToken = data.audioToken;
+    if (audioReady) { audioEl.src = "latest.mp3?t=" + data.audioToken; audioEl.play().catch(() => {}); }
+  } catch (e) {
+    document.getElementById("label").textContent = "ERROR";
+  }
+}
+document.getElementById("sendBtn").addEventListener("click", () => {
+  const input = document.getElementById("msgInput");
+  sendMessage(input.value);
+  input.value = "";
+});
+document.getElementById("msgInput").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("sendBtn").click(); });
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.onresult = (e) => { const t = e.results[0][0].transcript; document.getElementById("msgInput").value = t; sendMessage(t); };
+  document.getElementById("micBtn").addEventListener("click", () => recognition.start());
+} else {
+  document.getElementById("micBtn").style.display = "none";
+}
+</script>
 </body>
 </html>
+
+
