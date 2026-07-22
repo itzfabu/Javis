@@ -32,7 +32,7 @@ $txtPath = "$env:TEMP\jarvis-response.txt"
 $mp3Path = "C:\Jarvis\orb\latest.mp3"
 Set-Content -Path $txtPath -Value $text -Encoding UTF8
 
-edge-tts --voice "en-GB-RyanNeural" --rate="-8%" --pitch="-5Hz" --file $txtPath --write-media $mp3Path
+edge-tts --voice "en-GB-RyanNeural" --rate="-2%" --file $txtPath --write-media $mp3Path
 
 $audioToken = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
 @{status="speaking"; lastMessage=$text; tasks=$tasks; audioToken=$audioToken} | ConvertTo-Json | Set-Content -Path "C:\Jarvis\orb\status.json" -Encoding UTF8
