@@ -1,5 +1,5 @@
 ﻿from flask import Flask, request, jsonify, send_from_directory
-import subprocess, os, time, json
+import subprocess, os, time, json, socket
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
@@ -27,6 +27,8 @@ def run_claude(message):
     else:
         cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--session-id", WEBCHAT_SESSION_ID]
     result = subprocess.run(cmd, cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+    if result.returncode != 0 and result.stderr.strip():
+        raise RuntimeError(result.stderr.strip()[:300])
     if not os.path.exists(SESSION_MARKER):
         with open(SESSION_MARKER, "w") as f:
             f.write("created")
@@ -46,22 +48,42 @@ def chat():
     tasks = get_open_tasks()
     write_status("thinking", "", tasks, None)
 
-    reply = run_claude(message)
+    try:
+        reply = run_claude(message)
+    except subprocess.TimeoutExpired:
+        write_status("idle", "Sorry, that request timed out.", tasks, None)
+        return jsonify({"error": "timeout"}), 504
+    except Exception as e:
+        write_status("idle", "Something went wrong: " + str(e), tasks, None)
+        return jsonify({"error": str(e)}), 500
 
-    txt_path = os.path.join(os.environ.get("TEMP", "."), "jarvis-response.txt")
-    with open(txt_path, "w", encoding="utf-8") as f:
-        f.write(reply)
-    mp3_path = r"C:\Jarvis\orb\latest.mp3"
-    subprocess.run(
-        ["cmd", "/c", "edge-tts", "--voice", "en-GB-RyanNeural", "--rate=-2%", "--file", txt_path, "--write-media", mp3_path],
-        timeout=60
-    )
+    write_status("speaking", reply, tasks, None)
 
-    token = str(int(time.time() * 1000))
+    token = None
+    try:
+        txt_path = os.path.join(os.environ.get("TEMP", "."), "jarvis-response.txt")
+        with open(txt_path, "w", encoding="utf-8") as f:
+            f.write(reply)
+        mp3_path = r"C:\Jarvis\orb\latest.mp3"
+        subprocess.run(
+            ["cmd", "/c", "edge-tts", "--voice", "en-GB-RyanNeural", "--rate=-2%", "--file", txt_path, "--write-media", mp3_path],
+            timeout=30
+        )
+        token = str(int(time.time() * 1000))
+    except Exception:
+        pass
+
     tasks = get_open_tasks()
-    write_status("speaking", reply, tasks, token)
+    write_status("speaking" if token else "idle", reply, tasks, token)
 
     return jsonify({"reply": reply, "audioToken": token, "tasks": tasks})
 
+def port_in_use(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("127.0.0.1", port)) == 0
+
 if __name__ == "__main__":
-    app.run(port=8420)
+    if port_in_use(8420):
+        print("Port 8420 is already in use by another process. Stop it first (check for a stray python.exe) before starting a new instance.")
+    else:
+        app.run(port=8420)
