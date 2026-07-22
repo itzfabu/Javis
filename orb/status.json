@@ -1,9 +1,9 @@
 ﻿{
-    "audioToken":  1784718655652,
+    "audioToken":  1784720721270,
     "status":  "idle",
     "tasks":  [
                   "Beispielaufgabe: hier eigene Aufgaben eintragen",
                   "Format: eine Zeile pro Aufgabe, [ ] = offen, [x] = erledigt"
               ],
-    "lastMessage":  "Confirmed â€” line 35 now reads edge-tts --voice \"en-GB-RyanNeural\" --rate=\"-2%\" --file $txtPath --write-media $mp3Path. Rest of the file unchanged."
+    "lastMessage":  "Updated. The Startroutine section now says time/weather/tasks arrive automatically via the SessionStart hook, with no WebSearch or commands needed â€” just use the given context for the greeting. Removed the now-obsolete \"Zeitermittlung\" section since it was only there to force a manual time lookup."
 }
