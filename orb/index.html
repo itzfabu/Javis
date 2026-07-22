@@ -238,23 +238,9 @@ poll();
 <script>
 async function sendMessage(text) {
   if (!text || !text.trim()) return;
-  currentState = "thinking";
   document.getElementById("label").textContent = "THINKING";
-  if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
   try {
-    const res = await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: text}) });
-    const data = await res.json();
-    typewrite(data.reply || "no reply");
-    if (data.tasks) {
-      const list = document.getElementById("tasklist"); list.innerHTML = "";
-      if (data.tasks.length > 0) data.tasks.forEach(t => { const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
-      else list.innerHTML = "<li>none</li>";
-    }
-    currentState = "speaking";
-    document.getElementById("label").textContent = "RESPONDING";
-    if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
-    lastAudioToken = data.audioToken;
-    if (audioReady) { audioEl.src = "latest.mp3?t=" + data.audioToken; audioEl.play().catch(() => {}); }
+    await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: text}) });
   } catch (e) {
     document.getElementById("label").textContent = "ERROR";
   }
@@ -277,5 +263,6 @@ if ("webkitSpeechRecognition" in window) {
 </script>
 </body>
 </html>
+
 
 

@@ -1,12 +1,9 @@
 ﻿from flask import Flask, request, jsonify, send_from_directory
-import subprocess, os, time
+import subprocess, os, time, json
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
-
-@app.route("/")
-def index():
-    return send_from_directory(".", "index.html")
+STATUS_PATH = r"C:\Jarvis\orb\status.json"
 
 def get_open_tasks():
     tasks = []
@@ -18,12 +15,23 @@ def get_open_tasks():
                     tasks.append(line[5:].strip())
     return tasks
 
+def write_status(status, message, tasks, token):
+    with open(STATUS_PATH, "w", encoding="utf-8") as f:
+        json.dump({"status": status, "lastMessage": message, "tasks": tasks, "audioToken": token}, f)
+
+@app.route("/")
+def index():
+    return send_from_directory(".", "index.html")
+
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
     message = data.get("message", "")
     if not message:
         return jsonify({"error": "empty"}), 400
+
+    tasks = get_open_tasks()
+    write_status("thinking", "", tasks, None)
 
     result = subprocess.run(
         ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits"],
@@ -40,7 +48,11 @@ def chat():
         timeout=60
     )
 
-    return jsonify({"reply": reply, "audioToken": str(int(time.time() * 1000)), "tasks": get_open_tasks()})
+    token = str(int(time.time() * 1000))
+    tasks = get_open_tasks()
+    write_status("speaking", reply, tasks, token)
+
+    return jsonify({"reply": reply, "audioToken": token, "tasks": tasks})
 
 if __name__ == "__main__":
     app.run(port=8420)
