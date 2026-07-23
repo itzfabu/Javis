@@ -1,3 +1,8 @@
 ﻿{
-    "status":  "thinking"
+    "audioToken":  1784800400515,
+    "status":  "idle",
+    "tasks":  [
+                  "Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example"
+              ],
+    "lastMessage":  "No Google Drive connector is currently connected in this session â€” the only active MCP servers are 21st.dev, Canva, and Higgsfield (confirmed a moment ago when I checked for Outlook access too). I can\u0027t search your Drive right now.\n\nTo enable this, you\u0027d need to connect a Google Drive connector in Claude\u0027s connector settings. Once connected, the guard-connectors.ps1 hook already in place would keep it to read-only search/view â€” no edits, deletes, or uploads."
 }
