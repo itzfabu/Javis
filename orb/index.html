@@ -19,11 +19,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #dateTime { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3; }
 #clock { font-size: 26px; font-weight: 500; color: #baffef; letter-spacing: 2px; }
 #dateline { font-size: 11px; opacity: 0.6; margin-top: 2px; letter-spacing: 1px; }
-#taskList { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
-#tasklist { list-style: none; }
-#tasklist li { padding: 2px 0; opacity: 0.8; }
-#tasklist li:after { content: " â—‚"; color: #6fffe0; }
-#notesPanel { position: absolute; top: 220px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
+#notesPanel { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
 #noteslist { list-style: none; }
 #noteslist li { padding: 2px 0; opacity: 0.75; }
 #logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 360px; font-size: 11px; z-index: 3; text-align: center; }
@@ -52,7 +48,6 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 <div id="activityLog"><div class="lbl">ACTIVITY</div><ul id="activitylist"><li style="opacity:0.6;">no activity yet</li></ul></div>
 
 <div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
-<div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
 <div id="notesPanel"><div class="lbl">NOTES</div><ul id="noteslist"><li>none</li></ul></div>
 <div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
@@ -491,10 +486,6 @@ async function poll() {
       }
     }
     typewrite(data.lastMessage || "â€”");
-    const list = document.getElementById("tasklist"); list.innerHTML = "";
-    const tasks = data.tasks || [];
-    if (tasks.length > 0) tasks.forEach(t => { const li = document.createElement("li"); li.textContent = t; list.appendChild(li); });
-    else list.innerHTML = "<li>none</li>";
   } catch (e) {}
   setTimeout(poll, 400);
 }
