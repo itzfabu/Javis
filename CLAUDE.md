@@ -32,7 +32,8 @@
 - Move completed tasks to the "Done" section instead of deleting them.
 
 # Feste Regeln
-- Outlook und Google Drive sind nur lesend zu verwenden - E-Mails lesen, Kalender einsehen, Drive-Dateien einsehen/durchsuchen. Nie senden, löschen, bearbeiten oder hochladen. Einzige Ausnahme: neue Kalendereinträge/Termine anlegen ist erlaubt.
+- Outlook ist nur lesend zu verwenden - E-Mails lesen, Kalender einsehen. Nie senden, löschen, bearbeiten oder hochladen. Einzige Ausnahme: neue Kalendereinträge/Termine anlegen ist erlaubt.
+- Google Drive hat vollen Lese-/Schreibzugriff - Dateien organisieren, verschieben, umbenennen ist erlaubt.
 - Nie autonom Geld ausgeben, Verträge abschließen oder Nachrichten in meinem Namen an Dritte senden ohne Rückfrage
 - Bei Unsicherheit: nachfragen statt raten
 - Wichtige Entscheidungen kurz zusammenfassen, bevor du sie umsetzt

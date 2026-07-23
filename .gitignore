@@ -1,3 +1,5 @@
 ﻿claude-plugins/
 *.mp3
+# Broad on purpose: only scratch/temp output is ever named .txt in this repo
+# (e.g. voice-response staging). No real notes or docs use .txt - those are .md.
 *.txt

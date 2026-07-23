@@ -4,9 +4,9 @@ $toolName = $data.tool_name
 if (-not $toolName) { exit 0 }
 $lower = $toolName.ToLower()
 
-$isConnector = ($lower -match "outlook") -or ($lower -match "gdrive") -or ($lower -match "google_drive") -or ($lower -match "googledrive") -or ($lower -match "drive")
+$isOutlook = ($lower -match "outlook") -or ($lower -match "microsoft_365") -or ($lower -match "microsoft365") -or ($lower -match "m365")
 
-if (-not $isConnector) { exit 0 }
+if (-not $isOutlook) { exit 0 }
 
 $isCalendarCreate = ($lower -match "calendar") -and (($lower -match "create") -or ($lower -match "add") -or ($lower -match "insert") -or ($lower -match "new") -or ($lower -match "event"))
 
@@ -20,7 +20,7 @@ $isWrite = $false
 foreach ($w in $writeActions) { if ($lower -match $w) { $isWrite = $true; break } }
 
 if ($isWrite) {
-    @{ hookSpecificOutput = @{ hookEventName = "PreToolUse"; permissionDecision = "deny"; permissionDecisionReason = "Outlook and Google Drive are read-only except calendar event creation. This action was blocked by policy." } } | ConvertTo-Json -Compress
+    @{ hookSpecificOutput = @{ hookEventName = "PreToolUse"; permissionDecision = "deny"; permissionDecisionReason = "Outlook is read-only except calendar event creation. This action was blocked by policy." } } | ConvertTo-Json -Compress
     exit 0
 }
 
