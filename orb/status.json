@@ -1,8 +1,3 @@
 ﻿{
-    "audioToken":  1784797438068,
-    "status":  "idle",
-    "tasks":  [
-                  "Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example"
-              ],
-    "lastMessage":  "Created C:\\Jarvis\\vault\\Templates."
+    "status":  "thinking"
 }

@@ -323,7 +323,28 @@ async function pollKG() {
     const res = await fetch("knowledge.json?t=" + Date.now());
     const data = await res.json();
     kgSyncData(data);
+    kgSyncNotes(data.notes || []);
   } catch (e) {}
+}
+
+function kgSyncNotes(notes) {
+  const wantIds = new Set(kgNodes.filter(n => n.type !== "note").map(n => n.id));
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+  notes.forEach(n => {
+    const id = "note:" + n.folder + "/" + n.title;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "note", label: n.title, folder: n.folder, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 4, color: "#c9a6ff" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => n.type !== "note" || wantIds.has(n.id));
+  kgNodes.filter(n => n.type === "note" && n.folder === "Projects").forEach(n => {
+    const projNode = kgNodes.find(p => p.type === "project" && p.label.toLowerCase() === n.label.toLowerCase());
+    if (projNode && !kgEdges.find(e => e.source === n.id && e.target === projNode.id)) {
+      kgEdges.push({ source: n.id, target: projNode.id });
+    }
+  });
 }
 setInterval(pollKG, 5000);
 pollKG();

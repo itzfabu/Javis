@@ -1,5 +1,5 @@
 ﻿from flask import Flask, request, jsonify, send_from_directory
-import subprocess, os, time, json, socket
+import subprocess, os, time, json, socket, threading
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
@@ -49,6 +49,15 @@ def run_claude(message):
         with open(SESSION_MARKER, "w") as f:
             f.write("created")
     return result.stdout.strip() or "Sorry, I could not process that."
+
+def background_backup():
+    try:
+        subprocess.run(
+            ["powershell", "-ExecutionPolicy", "Bypass", "-File", r"C:\Jarvis\.claude\hooks\git-backup.ps1"],
+            timeout=60
+        )
+    except Exception:
+        pass
 
 @app.before_request
 def check_origin():
@@ -103,6 +112,8 @@ def chat():
 
     tasks = get_open_tasks()
     write_status("speaking" if audio_token else "idle", reply, tasks, audio_token)
+
+    threading.Thread(target=background_backup, daemon=True).start()
 
     return jsonify({"reply": reply, "audioToken": audio_token, "tasks": tasks})
 

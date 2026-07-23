@@ -1,4 +1,4 @@
-﻿$projectsPath = "C:\Jarvis\knowledge\PROJECTS.md"
+$projectsPath = "C:\Jarvis\knowledge\PROJECTS.md"
 $tasksPath = "C:\Jarvis\TASKS.md"
 $outPath = "C:\Jarvis\orb\knowledge.json"
 
@@ -31,4 +31,15 @@ if (Test-Path $tasksPath) {
     }
 }
 
-@{ agents = $agents; projects = $projects; tasks = $tasks } | ConvertTo-Json -Depth 4 | Set-Content -Path $outPath -Encoding UTF8
+$notes = @()
+$vaultFolders = @("Projects","Areas","Resources")
+foreach ($folder in $vaultFolders) {
+    $folderPath = "C:\Jarvis\vault\$folder"
+    if (Test-Path $folderPath) {
+        Get-ChildItem -Path $folderPath -Filter "*.md" -File | ForEach-Object {
+            $notes += @{ title = $_.BaseName; folder = $folder }
+        }
+    }
+}
+
+@{ agents = $agents; projects = $projects; tasks = $tasks; notes = $notes } | ConvertTo-Json -Depth 4 | Set-Content -Path $outPath -Encoding UTF8

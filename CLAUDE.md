@@ -17,6 +17,8 @@
 - Use wikilinks to connect related notes where it makes sense.
 - When I mention an idea, a decision, or something worth keeping, offer to save it as a note in the vault rather than letting it disappear at the end of the conversation.
 - The vault follows the PARA method (see vault/README.md): new project notes go in vault/Projects, ongoing responsibilities in vault/Areas, reference material in vault/Resources, inactive things in vault/Archive. Always place new notes in the right folder rather than the vault root.
+- When creating a new note, use the matching template from vault/Templates (Project Note, Area Note, Resource Note, or Idea Note) as the structure — fill in the title and content instead of writing free-form.
+- When creating or editing a note, add real `[[wikilinks]]` to related notes wherever relevant (e.g., a project note linking to its resource or area notes) — not just mentioned by name in prose. This keeps Obsidian's native graph view reflecting actual connections between notes.
 
 # Knowledge System
 - Projects live in knowledge/PROJECTS.md. Tasks in TASKS.md can be tagged with #project-name to link them to a project.
