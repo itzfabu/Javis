@@ -18,6 +18,8 @@ Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #projec
 
 \- \[ ] Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | #jarvis-as-a-service
 
+\- \[ ] Write up "Claude Flowstate" idea as a note | priority: low
+
 \- \[ ] Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example
 
 ## Done
