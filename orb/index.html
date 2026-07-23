@@ -23,6 +23,9 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #tasklist { list-style: none; }
 #tasklist li { padding: 2px 0; opacity: 0.8; }
 #tasklist li:after { content: " â—‚"; color: #6fffe0; }
+#notesPanel { position: absolute; top: 220px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
+#noteslist { list-style: none; }
+#noteslist li { padding: 2px 0; opacity: 0.75; }
 #logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 360px; font-size: 11px; z-index: 3; text-align: center; }
 #chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
 #globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
@@ -50,6 +53,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 
 <div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
 <div id="taskList"><div class="lbl">OPEN TASKS</div><ul id="tasklist"><li>none</li></ul></div>
+<div id="notesPanel"><div class="lbl">NOTES</div><ul id="noteslist"><li>none</li></ul></div>
 <div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
 
@@ -325,6 +329,7 @@ async function pollKG() {
     kgSyncData(data);
     kgSyncNotes(data.notes || []);
     kgSyncGoals(data.goals || [], data.projects || []);
+    renderNotesPanel(data.notes || []);
   } catch (e) {}
   try {
     const wres = await fetch("knowledge-warnings.json?t=" + Date.now());
@@ -387,6 +392,15 @@ function kgSyncNotes(notes) {
       kgEdges.push({ source: n.id, target: projNode.id });
     }
   });
+}
+function renderNotesPanel(notes) {
+  const list = document.getElementById("noteslist");
+  list.innerHTML = "";
+  if (notes && notes.length > 0) {
+    notes.forEach(n => { const li = document.createElement("li"); li.textContent = n.title; list.appendChild(li); });
+  } else {
+    list.innerHTML = "<li>none</li>";
+  }
 }
 setInterval(pollKG, 5000);
 pollKG();
