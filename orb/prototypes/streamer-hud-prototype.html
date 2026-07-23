@@ -1,126 +1,43 @@
-<!--
-Streamer HUD Widget - feasibility prototype
-Tests the ONE open question that determines whether this pivot is viable:
-can the sphere react to mic/system audio automatically, with no click needed,
-so it works unattended as an OBS browser source?
-
-No Claude backend, no Flask, no knowledge graph - just the particle sphere
-+ live Web Audio analysis, plus an on-screen diagnostic panel (since OBS
-browser sources don't expose devtools by default, this file reports its
-own pass/fail state visually).
-
-How to test in OBS:
-1. Add a Browser Source, point "Local file" at this file.
-2. Watch the diagnostic panel top-left. If it never turns green on its own,
-   right-click the source > Interact, grant the mic permission once, close
-   the Interact window, and see if it goes green without any further click.
-3. Restart OBS (or remove/re-add the source) and check whether it goes
-   green again WITHOUT a repeat Interact/click - that's the actual question.
--->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Streamer HUD Prototype</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { background: transparent; height: 100vh; width: 100vw; overflow: hidden; }
-  body { font-family: "Consolas", "Courier New", monospace; color: #baffef; }
-  #stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 220px; }
-  #diag {
-    position: absolute; top: 10px; left: 10px; z-index: 10;
-    background: rgba(0,10,10,0.55); border: 1px solid rgba(90,255,230,0.4); border-radius: 6px;
-    padding: 8px 10px; font-size: 11px; line-height: 1.5; min-width: 230px;
-  }
-  #diag .row { display: flex; align-items: center; gap: 6px; }
-  #dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5a5a; flex: none; }
-  #dot.ok { background: #5aff8a; }
-  #dot.pending { background: #ffd27f; }
-  #ampBar { width: 120px; height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; display: inline-block; vertical-align: middle; }
-  #ampFill { height: 100%; width: 0%; background: #5affe6; }
-  #enableBtn {
-    margin-top: 6px; background: #5affe6; color: #04141a; border: none; border-radius: 4px;
-    padding: 4px 10px; font-family: inherit; font-size: 11px; cursor: pointer; display: none;
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: transparent !important;
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+html.bg-dark, html.bg-dark body {
+  background: #0b0b0f !important;
+}
+#coreContainer {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px; height: 260px;
+}
+#diag {
+  position: absolute; bottom: 8px; left: 8px;
+  font-family: monospace; font-size: 10px;
+  color: #5affe6; background: rgba(0,0,0,0.4);
+  padding: 4px 8px; border-radius: 4px;
+  display: none;
+}
 </style>
 </head>
 <body>
-
-<div id="diag">
-  <div class="row"><span id="dot"></span><b id="statusText">initializing...</b></div>
-  <div>AudioContext: <span id="ctxState">-</span></div>
-  <div>Mic permission: <span id="micState">pending</span></div>
-  <div>Amplitude: <span id="ampBar"><span id="ampFill"></span></span> <span id="ampVal">0.00</span></div>
-  <div>Auto-start (no click): <span id="autoStart">-</span></div>
-  <div>Loaded at: <span id="loadTime"></span></div>
-  <button id="enableBtn">Enable audio manually</button>
-</div>
-
-<div id="stage"><div id="coreContainer"></div></div>
-
+<div id="coreContainer"></div>
+<div id="diag">Diagnostics loading...</div>
 <script>
-document.getElementById("loadTime").textContent = new Date().toLocaleTimeString();
-
-const dot = document.getElementById("dot");
-const statusText = document.getElementById("statusText");
-const ctxStateEl = document.getElementById("ctxState");
-const micStateEl = document.getElementById("micState");
-const ampValEl = document.getElementById("ampVal");
-const ampFillEl = document.getElementById("ampFill");
-const autoStartEl = document.getElementById("autoStart");
-const enableBtn = document.getElementById("enableBtn");
-
-function setStatus(kind, text) {
-  dot.className = kind;
-  statusText.textContent = text;
-}
-
-let audioCtx, analyser, freqData, audioReady = false;
-let gotFirstAmplitudeWithoutClick = null; // null = unknown yet, true/false once known
-let userHasClicked = false;
-document.addEventListener("click", () => { userHasClicked = true; }, { capture: true });
-
-async function startMic() {
-  micStateEl.textContent = "requesting...";
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    micStateEl.textContent = "granted";
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    ctxStateEl.textContent = audioCtx.state;
-    const source = audioCtx.createMediaStreamSource(stream);
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    freqData = new Uint8Array(analyser.frequencyBinCount);
-    source.connect(analyser);
-    // deliberately NOT connecting analyser to audioCtx.destination - we only
-    // want to analyze mic input, never play it back out (avoids feedback/echo).
-    if (audioCtx.state === "suspended") {
-      try { await audioCtx.resume(); } catch (e) {}
-    }
-    ctxStateEl.textContent = audioCtx.state;
-    audioReady = true;
-    enableBtn.style.display = "none";
-    setStatus("ok", "audio pipeline live");
-  } catch (err) {
-    micStateEl.textContent = "error: " + err.name + " (" + err.message + ")";
-    setStatus("pending", "blocked - needs manual enable");
-    enableBtn.style.display = "inline-block";
-  }
-}
-
-enableBtn.addEventListener("click", startMic);
-
-// The actual test: try to start with NO prior click at all, immediately on load.
-setStatus("pending", "attempting auto-start...");
-startMic();
-
-function getAudioAmplitude() {
-  if (!analyser) return 0;
-  analyser.getByteFrequencyData(freqData);
-  let sum = 0;
-  for (let i = 0; i < freqData.length; i++) sum += freqData[i];
-  return (sum / freqData.length) / 255;
+const params = new URLSearchParams(window.location.search);
+const showDiag = params.has("diag");
+if (showDiag) document.getElementById("diag").style.display = "block";
+if (params.get("bg") === "dark") document.documentElement.classList.add("bg-dark");
+function logDiag(text) {
+  if (showDiag) document.getElementById("diag").textContent = text;
 }
 
 let coreScene, coreCamera, coreRenderer, coreParticles, basePositions;
@@ -132,7 +49,7 @@ function initCore() {
   coreCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
   coreCamera.position.z = 3.2;
   coreRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  coreRenderer.setSize(220, 220);
+  coreRenderer.setSize(260, 260);
   container.appendChild(coreRenderer.domElement);
   const count = 4500;
   basePositions = new Float32Array(count * 3);
@@ -164,36 +81,95 @@ function initCore() {
   animateCore();
 }
 
+let audioCtx, analyser, timeData, freqData, low, mid, high;
+let voiceActive = false, voiceActiveTimer = 0;
+
+async function initAudio() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    freqData = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+    logDiag("AudioContext: " + audioCtx.state + " | Mic: granted");
+  } catch (e) {
+    logDiag("Mic error: " + e.message);
+  }
+}
+
+function getBandLevels() {
+  if (!analyser) return { low: 0, mid: 0, high: 0, overall: 0 };
+  analyser.getByteFrequencyData(freqData);
+  const n = freqData.length;
+  const lowEnd = Math.floor(n * 0.15), midEnd = Math.floor(n * 0.5);
+  let lowSum = 0, midSum = 0, highSum = 0;
+  for (let i = 0; i < lowEnd; i++) lowSum += freqData[i];
+  for (let i = lowEnd; i < midEnd; i++) midSum += freqData[i];
+  for (let i = midEnd; i < n; i++) highSum += freqData[i];
+  const low = (lowSum / lowEnd) / 255;
+  const mid = (midSum / (midEnd - lowEnd)) / 255;
+  const high = (highSum / (n - midEnd)) / 255;
+  return { low, mid, high, overall: (low + mid + high) / 3 };
+}
+
 function animateCore() {
   requestAnimationFrame(animateCore);
+  const bands = getBandLevels();
   const posAttr = coreParticles.geometry.attributes.position;
   const arr = posAttr.array;
-  const amp = getAudioAmplitude();
 
-  ampValEl.textContent = amp.toFixed(3);
-  ampFillEl.style.width = Math.min(100, amp * 260) + "%";
-
-  if (audioReady && gotFirstAmplitudeWithoutClick === null) {
-    gotFirstAmplitudeWithoutClick = !userHasClicked;
-    autoStartEl.textContent = gotFirstAmplitudeWithoutClick ? "YES - no click needed" : "NO - required a click first";
+  if (bands.overall > 0.06) {
+    voiceActive = true;
+    voiceActiveTimer = 30;
+  } else if (voiceActiveTimer > 0) {
+    voiceActiveTimer--;
+  } else {
+    voiceActive = false;
   }
 
-  speakTime += 0.05 + amp * 0.15;
-  for (let i = 0; i < arr.length / 3; i++) {
-    const wobble = 1 + amp * 0.25 * Math.sin(speakTime * 2 + i * 0.3) + 0.02 * Math.sin(speakTime * 1.2 + i * 0.1);
-    arr[i*3] = basePositions[i*3] * wobble;
-    arr[i*3+1] = basePositions[i*3+1] * wobble;
-    arr[i*3+2] = basePositions[i*3+2] * wobble;
-  }
-  posAttr.needsUpdate = true;
-  coreParticles.rotation.y += 0.003 + amp * 0.025;
-  coreParticles.material.color.setHex(amp > 0.08 ? 0xbaffef : 0x5affe6);
+  speakTime += 0.08 + bands.overall * 0.15;
 
-  if (audioCtx) ctxStateEl.textContent = audioCtx.state;
+  if (voiceActive) {
+    const wobbleAmount = 0.08 + bands.high * 0.25;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + (bands.low * 0.15 + wobbleAmount * Math.sin(speakTime * 2 + i * 0.3));
+      arr[i*3] = basePositions[i*3] * wobble;
+      arr[i*3+1] = basePositions[i*3+1] * wobble;
+      arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.006 + bands.overall * 0.03;
+    const hue = 0.5 - bands.high * 0.15;
+    coreParticles.material.color.setHSL(hue, 1, 0.65);
+  } else {
+    const idleWobble = 1 + Math.sin(speakTime * 0.6) * 0.02;
+    for (let i = 0; i < arr.length / 3; i++) {
+      arr[i*3] = basePositions[i*3] * idleWobble;
+      arr[i*3+1] = basePositions[i*3+1] * idleWobble;
+      arr[i*3+2] = basePositions[i*3+2] * idleWobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.002;
+    coreParticles.material.color.setHex(0x5affe6);
+  }
+
+  if (showDiag) {
+    logDiag(
+      "Audio: " + (audioCtx ? audioCtx.state : "none") +
+      " | low:" + bands.low.toFixed(2) +
+      " mid:" + bands.mid.toFixed(2) +
+      " high:" + bands.high.toFixed(2) +
+      " | voice: " + (voiceActive ? "ACTIVE" : "idle")
+    );
+  }
 
   coreRenderer.render(coreScene, coreCamera);
 }
-if (window.THREE) initCore();
+
+initCore();
+initAudio();
 </script>
 </body>
 </html>
