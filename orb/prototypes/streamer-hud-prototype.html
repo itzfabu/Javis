@@ -1,0 +1,199 @@
+<!--
+Streamer HUD Widget - feasibility prototype
+Tests the ONE open question that determines whether this pivot is viable:
+can the sphere react to mic/system audio automatically, with no click needed,
+so it works unattended as an OBS browser source?
+
+No Claude backend, no Flask, no knowledge graph - just the particle sphere
++ live Web Audio analysis, plus an on-screen diagnostic panel (since OBS
+browser sources don't expose devtools by default, this file reports its
+own pass/fail state visually).
+
+How to test in OBS:
+1. Add a Browser Source, point "Local file" at this file.
+2. Watch the diagnostic panel top-left. If it never turns green on its own,
+   right-click the source > Interact, grant the mic permission once, close
+   the Interact window, and see if it goes green without any further click.
+3. Restart OBS (or remove/re-add the source) and check whether it goes
+   green again WITHOUT a repeat Interact/click - that's the actual question.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Streamer HUD Prototype</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: transparent; height: 100vh; width: 100vw; overflow: hidden; }
+  body { font-family: "Consolas", "Courier New", monospace; color: #baffef; }
+  #stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 220px; }
+  #diag {
+    position: absolute; top: 10px; left: 10px; z-index: 10;
+    background: rgba(0,10,10,0.55); border: 1px solid rgba(90,255,230,0.4); border-radius: 6px;
+    padding: 8px 10px; font-size: 11px; line-height: 1.5; min-width: 230px;
+  }
+  #diag .row { display: flex; align-items: center; gap: 6px; }
+  #dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5a5a; flex: none; }
+  #dot.ok { background: #5aff8a; }
+  #dot.pending { background: #ffd27f; }
+  #ampBar { width: 120px; height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; display: inline-block; vertical-align: middle; }
+  #ampFill { height: 100%; width: 0%; background: #5affe6; }
+  #enableBtn {
+    margin-top: 6px; background: #5affe6; color: #04141a; border: none; border-radius: 4px;
+    padding: 4px 10px; font-family: inherit; font-size: 11px; cursor: pointer; display: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="diag">
+  <div class="row"><span id="dot"></span><b id="statusText">initializing...</b></div>
+  <div>AudioContext: <span id="ctxState">-</span></div>
+  <div>Mic permission: <span id="micState">pending</span></div>
+  <div>Amplitude: <span id="ampBar"><span id="ampFill"></span></span> <span id="ampVal">0.00</span></div>
+  <div>Auto-start (no click): <span id="autoStart">-</span></div>
+  <div>Loaded at: <span id="loadTime"></span></div>
+  <button id="enableBtn">Enable audio manually</button>
+</div>
+
+<div id="stage"><div id="coreContainer"></div></div>
+
+<script>
+document.getElementById("loadTime").textContent = new Date().toLocaleTimeString();
+
+const dot = document.getElementById("dot");
+const statusText = document.getElementById("statusText");
+const ctxStateEl = document.getElementById("ctxState");
+const micStateEl = document.getElementById("micState");
+const ampValEl = document.getElementById("ampVal");
+const ampFillEl = document.getElementById("ampFill");
+const autoStartEl = document.getElementById("autoStart");
+const enableBtn = document.getElementById("enableBtn");
+
+function setStatus(kind, text) {
+  dot.className = kind;
+  statusText.textContent = text;
+}
+
+let audioCtx, analyser, freqData, audioReady = false;
+let gotFirstAmplitudeWithoutClick = null; // null = unknown yet, true/false once known
+let userHasClicked = false;
+document.addEventListener("click", () => { userHasClicked = true; }, { capture: true });
+
+async function startMic() {
+  micStateEl.textContent = "requesting...";
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    micStateEl.textContent = "granted";
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    ctxStateEl.textContent = audioCtx.state;
+    const source = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    freqData = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+    // deliberately NOT connecting analyser to audioCtx.destination - we only
+    // want to analyze mic input, never play it back out (avoids feedback/echo).
+    if (audioCtx.state === "suspended") {
+      try { await audioCtx.resume(); } catch (e) {}
+    }
+    ctxStateEl.textContent = audioCtx.state;
+    audioReady = true;
+    enableBtn.style.display = "none";
+    setStatus("ok", "audio pipeline live");
+  } catch (err) {
+    micStateEl.textContent = "error: " + err.name + " (" + err.message + ")";
+    setStatus("pending", "blocked - needs manual enable");
+    enableBtn.style.display = "inline-block";
+  }
+}
+
+enableBtn.addEventListener("click", startMic);
+
+// The actual test: try to start with NO prior click at all, immediately on load.
+setStatus("pending", "attempting auto-start...");
+startMic();
+
+function getAudioAmplitude() {
+  if (!analyser) return 0;
+  analyser.getByteFrequencyData(freqData);
+  let sum = 0;
+  for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+  return (sum / freqData.length) / 255;
+}
+
+let coreScene, coreCamera, coreRenderer, coreParticles, basePositions;
+let speakTime = 0;
+
+function initCore() {
+  const container = document.getElementById("coreContainer");
+  coreScene = new THREE.Scene();
+  coreCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  coreCamera.position.z = 3.2;
+  coreRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  coreRenderer.setSize(220, 220);
+  container.appendChild(coreRenderer.domElement);
+  const count = 4500;
+  basePositions = new Float32Array(count * 3);
+  const radius = 1.15;
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r;
+    const jitter = 1 + (Math.random() - 0.5) * 0.08;
+    basePositions[i*3] = x * radius * jitter;
+    basePositions[i*3+1] = y * radius * jitter;
+    basePositions[i*3+2] = z * radius * jitter;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(basePositions.slice(), 3));
+  const canvas = document.createElement("canvas");
+  canvas.width = 16; canvas.height = 16;
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createRadialGradient(8,8,0,8,8,8);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad; ctx.fillRect(0,0,16,16);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.PointsMaterial({ size: 0.05, map: tex, transparent: true, opacity: 0.9, color: 0x5affe6, depthWrite: false, blending: THREE.AdditiveBlending });
+  coreParticles = new THREE.Points(geo, mat);
+  coreScene.add(coreParticles);
+  animateCore();
+}
+
+function animateCore() {
+  requestAnimationFrame(animateCore);
+  const posAttr = coreParticles.geometry.attributes.position;
+  const arr = posAttr.array;
+  const amp = getAudioAmplitude();
+
+  ampValEl.textContent = amp.toFixed(3);
+  ampFillEl.style.width = Math.min(100, amp * 260) + "%";
+
+  if (audioReady && gotFirstAmplitudeWithoutClick === null) {
+    gotFirstAmplitudeWithoutClick = !userHasClicked;
+    autoStartEl.textContent = gotFirstAmplitudeWithoutClick ? "YES - no click needed" : "NO - required a click first";
+  }
+
+  speakTime += 0.05 + amp * 0.15;
+  for (let i = 0; i < arr.length / 3; i++) {
+    const wobble = 1 + amp * 0.25 * Math.sin(speakTime * 2 + i * 0.3) + 0.02 * Math.sin(speakTime * 1.2 + i * 0.1);
+    arr[i*3] = basePositions[i*3] * wobble;
+    arr[i*3+1] = basePositions[i*3+1] * wobble;
+    arr[i*3+2] = basePositions[i*3+2] * wobble;
+  }
+  posAttr.needsUpdate = true;
+  coreParticles.rotation.y += 0.003 + amp * 0.025;
+  coreParticles.material.color.setHex(amp > 0.08 ? 0xbaffef : 0x5affe6);
+
+  if (audioCtx) ctxStateEl.textContent = audioCtx.state;
+
+  coreRenderer.render(coreScene, coreCamera);
+}
+if (window.THREE) initCore();
+</script>
+</body>
+</html>

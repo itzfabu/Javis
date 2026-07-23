@@ -7,9 +7,15 @@
                          "goal":  "Get Jarvis into daily use"
                      },
                      {
-                         "status":  "active",
+                         "status":  "paused",
                          "name":  "Jarvis-as-a-Service Launch",
                          "owner":  "project-manager",
+                         "goal":  "Monetize the Jarvis System"
+                     },
+                     {
+                         "status":  "active",
+                         "name":  "Streamer HUD Widget",
+                         "owner":  "business-analyst",
                          "goal":  "Monetize the Jarvis System"
                      }
                  ],
@@ -39,6 +45,21 @@
                   }
               ],
     "notes":  [
-
+                  {
+                      "folder":  "Projects",
+                      "title":  "Jarvis-as-a-Service Launch"
+                  },
+                  {
+                      "folder":  "Projects",
+                      "title":  "Jarvis-as-a-Service Pricing Research"
+                  },
+                  {
+                      "folder":  "Projects",
+                      "title":  "Streamer HUD Widget Market Research"
+                  },
+                  {
+                      "folder":  "Projects",
+                      "title":  "Streamer HUD Widget"
+                  }
               ]
 }

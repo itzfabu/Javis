@@ -42,7 +42,7 @@ def run_claude(message):
         cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--resume", WEBCHAT_SESSION_ID]
     else:
         cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--session-id", WEBCHAT_SESSION_ID]
-    result = subprocess.run(cmd, cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+    result = subprocess.run(cmd, cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
     if result.returncode != 0 and result.stderr.strip():
         raise RuntimeError(result.stderr.strip()[:300])
     if not os.path.exists(SESSION_MARKER):
