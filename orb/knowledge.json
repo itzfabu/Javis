@@ -1,6 +1,17 @@
 ﻿{
     "projects":  [
-
+                     {
+                         "status":  "active",
+                         "name":  "Some Real Project",
+                         "owner":  "planner",
+                         "goal":  "Get Jarvis into daily use"
+                     },
+                     {
+                         "status":  "active",
+                         "name":  "Jarvis-as-a-Service Launch",
+                         "owner":  "project-manager",
+                         "goal":  "Monetize the Jarvis System"
+                     }
                  ],
     "agents":  [
                    "researcher",
@@ -13,9 +24,18 @@
                    "project-manager"
                ],
     "tasks":  [
+
+              ],
+    "goals":  [
                   {
-                      "text":  "Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example",
-                      "project":  "example"
+                      "status":  "active",
+                      "timeframe":  "quarterly",
+                      "name":  "Get Jarvis into daily use"
+                  },
+                  {
+                      "status":  "active",
+                      "timeframe":  "quarterly",
+                      "name":  "Monetize the Jarvis System"
                   }
               ],
     "notes":  [

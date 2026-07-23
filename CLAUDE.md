@@ -22,13 +22,15 @@
 
 # Knowledge System
 - Projects live in knowledge/PROJECTS.md. Tasks in TASKS.md can be tagged with #project-name to link them to a project.
+- Goals live in knowledge/GOALS.md. Projects link to a goal via a "Goal: Goal Name" line in their PROJECTS.md entry.
 - Before starting any project-related work, check knowledge/PROJECTS.md first for existing context; if it's something new, add it there before diving in.
 - The project-manager agent should always consult this file before delegating to other agents.
 
 # Tasks (TASKS.md)
 - Format: `- [ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #project-tag`
 - When adding a task, always include priority and due date if known.
-- When asked what to work on, use the planner agent and prioritize by due date first, then priority level.
+- When asked what to work on, use the planner agent and prioritize by due date first, then priority level, and give extra weight to work that ladders up to an active goal in knowledge/GOALS.md over work that doesn't.
+- The planner agent should check whether current tasks and projects actually connect to an active goal; flag any project with no linked goal (or no goal at all defined) as an open question rather than silently planning around it.
 - Move completed tasks to the "Done" section instead of deleting them.
 
 # Feste Regeln

@@ -23,7 +23,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #tasklist { list-style: none; }
 #tasklist li { padding: 2px 0; opacity: 0.8; }
 #tasklist li:after { content: " â—‚"; color: #6fffe0; }
-#logText { position: absolute; bottom: 40px; left: 40px; font-size: 11px; max-width: 300px; z-index: 3; }
+#logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 360px; font-size: 11px; z-index: 3; text-align: center; }
 #chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
 #globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
 #globeContainer { width: 150px; height: 150px; margin: 0 auto; }
@@ -57,7 +57,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 
 <div id="chatInput">
   <input id="msgInput" type="text" placeholder="talk to jarvis...">
-  <button id="micBtn">&#127908;</button>
+  <button id="micBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
   <button id="sendBtn">&#10148;</button>
 </div>
 
@@ -324,7 +324,49 @@ async function pollKG() {
     const data = await res.json();
     kgSyncData(data);
     kgSyncNotes(data.notes || []);
+    kgSyncGoals(data.goals || [], data.projects || []);
   } catch (e) {}
+  try {
+    const wres = await fetch("knowledge-warnings.json?t=" + Date.now());
+    if (wres.ok) {
+      const warnings = await wres.json();
+      let badge = document.getElementById("kgWarningBadge");
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.id = "kgWarningBadge";
+        badge.style.cssText = "position:absolute; top:2px; right:2px; background:#ff6b6b; color:#1a0505; font-size:9px; padding:2px 5px; border-radius:4px; cursor:help;";
+        document.getElementById("knowledgeGraphPanel").style.position = "relative";
+        document.getElementById("knowledgeGraphPanel").appendChild(badge);
+      }
+      badge.textContent = warnings.length + " parse issue" + (warnings.length === 1 ? "" : "s");
+      badge.title = warnings.join("\n");
+    } else {
+      const badge = document.getElementById("kgWarningBadge");
+      if (badge) badge.remove();
+    }
+  } catch (e) {}
+}
+
+function kgSyncGoals(goals, projects) {
+  const wantIds = new Set(kgNodes.filter(n => n.type !== "goal").map(n => n.id));
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+  goals.forEach((g, i) => {
+    const id = "goal:" + g.name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "goal", label: g.name, x: (Math.random()-0.5)*40, y: (Math.random()-0.5)*40, vx: 0, vy: 0, radius: 9, color: "#ffd27f" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => n.type !== "goal" || wantIds.has(n.id));
+  projects.forEach(p => {
+    if (!p.goal) return;
+    const projNode = kgNodes.find(n => n.type === "project" && n.label === p.name);
+    const goalNode = kgNodes.find(n => n.type === "goal" && n.label.toLowerCase() === p.goal.toLowerCase());
+    if (projNode && goalNode && !kgEdges.find(e => e.source === projNode.id && e.target === goalNode.id)) {
+      kgEdges.push({ source: projNode.id, target: goalNode.id });
+    }
+  });
 }
 
 function kgSyncNotes(notes) {
