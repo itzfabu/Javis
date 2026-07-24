@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Streamer HUD - Settings</title>
+<title>Reactive HUD Pack - Settings</title>
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Inter", sans-serif; }
@@ -36,14 +36,18 @@ h1 { font-size: 20px; margin-bottom: 4px; }
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
 </div>
 <div class="left" id="settingsLeft">
-    <h1>Streamer HUD Widget</h1>
-    <div class="sub">Pick a look, then copy the URL into your OBS Browser Source.</div>
+    <h1>Reactive HUD Pack</h1>
+    <div class="sub">4 audio-reactive styles included. Pick a look, then copy the URL into your OBS Browser Source.</div>
 
     <div class="test-toggle">
       <input type="checkbox" id="testToggle" checked>
       <label for="testToggle">Preview with demo animation (no mic needed here)</label>
     </div>
 
+    <div class="section">
+      <h3>Widget Style</h3>
+      <div class="sizes" id="styles"></div>
+    </div>
     <div class="section">
       <h3>Color Theme</h3>
       <div class="swatches" id="swatches">
@@ -82,7 +86,28 @@ const SIZES = ["small", "medium", "large"];
 
 let selectedTheme = "cyan";
 let selectedSize = "medium";
+let selectedStyle = "sphere";
 let customColor = null;
+
+const STYLES = [
+  { name: "sphere", label: "Sphere", file: "streamer-hud-widget.html" },
+  { name: "waveform", label: "Waveform", file: "waveform-widget.html" },
+  { name: "vuring", label: "VU Ring", file: "vu-ring-widget.html" },
+  { name: "burst", label: "Particle Burst", file: "particle-burst-widget.html" }
+];
+const stylesEl = document.getElementById("styles");
+STYLES.forEach(s => {
+  const el = document.createElement("button");
+  el.className = "size-btn" + (s.name === selectedStyle ? " selected" : "");
+  el.textContent = s.label;
+  el.addEventListener("click", () => {
+    selectedStyle = s.name;
+    document.querySelectorAll("#styles .size-btn").forEach(b => b.classList.remove("selected"));
+    el.classList.add("selected");
+    update();
+  });
+  stylesEl.appendChild(el);
+});
 
 const swatchesEl = document.getElementById("swatches");
 THEMES.forEach(t => {
@@ -124,12 +149,13 @@ SIZES.forEach(s => {
 document.getElementById("testToggle").addEventListener("change", update);
 
 function update() {
+  const styleObj = STYLES.find(s => s.name === selectedStyle) || STYLES[0];
   const colorParam = customColor ? ("&color=" + customColor) : ("&theme=" + selectedTheme);
-  const url = "http://localhost:8877/streamer-hud-widget.html?size=" + selectedSize + colorParam;
+  const url = "http://localhost:8877/" + styleObj.file + "?size=" + selectedSize + colorParam;
   document.getElementById("urlBox").textContent = url;
 
   const testMode = document.getElementById("testToggle").checked;
-  const previewSrc = "streamer-hud-widget.html?size=" + selectedSize + colorParam + "&bg=dark" + (testMode ? "&test=1" : "");
+  const previewSrc = styleObj.file + "?size=" + selectedSize + colorParam + "&bg=dark" + (testMode ? "&test=1" : "");
   document.getElementById("previewFrame").src = previewSrc;
 }
 
@@ -152,4 +178,7 @@ document.getElementById("settingsGear").addEventListener("click", () => {
 </script>
 </body>
 </html>
+
+
+
 

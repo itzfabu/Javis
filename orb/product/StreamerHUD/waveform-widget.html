@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Streamer HUD Widget - Waveform</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: transparent !important;
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+body.bg-dark { background: #0a0a12 !important; }
+#container {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+#diag {
+  position: absolute; bottom: 8px; left: 8px;
+  font-family: monospace; font-size: 10px;
+  color: #5affe6; background: rgba(0,0,0,0.4);
+  padding: 4px 8px; border-radius: 4px;
+  display: none;
+  white-space: pre;
+}
+</style>
+</head>
+<body>
+<div id="container"><canvas id="c"></canvas></div>
+<div id="diag">Diagnostics loading...</div>
+<script>
+const params = new URLSearchParams(window.location.search);
+const showDiag = params.has("diag");
+if (showDiag) document.getElementById("diag").style.display = "block";
+if (params.get("bg") === "dark") document.body.classList.add("bg-dark");
+
+const THEMES = {
+  cyan: "#5affe6", purple: "#b266ff", gold: "#ffcf7f", red: "#ff5a6e", green: "#6fff8f"
+};
+const themeName = params.get("theme") || "cyan";
+const customColor = params.get("color");
+const barColor = customColor ? ("#" + customColor) : (THEMES[themeName] || THEMES.cyan);
+
+const SIZES = { small: { w: 220, h: 90, bars: 20 }, medium: { w: 320, h: 130, bars: 28 }, large: { w: 460, h: 180, bars: 36 } };
+const sizeName = params.get("size") || "medium";
+const dims = SIZES[sizeName] || SIZES.medium;
+
+const testMode = params.has("test");
+
+const canvas = document.getElementById("c");
+canvas.width = dims.w;
+canvas.height = dims.h;
+const ctx = canvas.getContext("2d");
+
+let persistedError = null;
+function logDiag(statusLine) {
+  if (!showDiag) return;
+  const el = document.getElementById("diag");
+  el.textContent = persistedError ? ("ERROR: " + persistedError + "\n" + statusLine) : statusLine;
+}
+
+let audioCtx, analyser, freqData;
+let testClock = 0;
+
+async function initAudio() {
+  if (testMode) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    freqData = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+  } catch (e) {
+    persistedError = e.name + ": " + e.message;
+  }
+}
+
+function getBarLevels(count) {
+  if (testMode) {
+    testClock += 0.05;
+    const levels = [];
+    for (let i = 0; i < count; i++) {
+      const base = (Math.sin(testClock * 1.3 + i * 0.4) + 1) / 2;
+      const burst = Math.max(0, Math.sin(testClock * 0.25));
+      levels.push(base * burst * 0.8);
+    }
+    return levels;
+  }
+  if (!analyser) return new Array(count).fill(0);
+  analyser.getByteFrequencyData(freqData);
+  const levels = [];
+  const usableBins = Math.floor(freqData.length * 0.7);
+  const perBar = usableBins / count;
+  for (let i = 0; i < count; i++) {
+    let sum = 0;
+    const start = Math.floor(i * perBar), end = Math.floor((i + 1) * perBar);
+    for (let j = start; j < end; j++) sum += freqData[j];
+    levels.push((sum / (end - start || 1)) / 255);
+  }
+  return levels;
+}
+
+const smoothedLevels = new Array(dims.bars).fill(0);
+let overallActivity = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const raw = getBarLevels(dims.bars);
+
+  let sum = 0;
+  for (let i = 0; i < dims.bars; i++) {
+    smoothedLevels[i] += (raw[i] - smoothedLevels[i]) * 0.18;
+    sum += smoothedLevels[i];
+  }
+  const avg = sum / dims.bars;
+  overallActivity += ((Math.min(1, avg / 0.12)) - overallActivity) * 0.06;
+
+  ctx.clearRect(0, 0, dims.w, dims.h);
+
+  const barWidth = dims.w / dims.bars;
+  const gap = barWidth * 0.25;
+  const minHeight = dims.h * 0.04 * (1 + Math.sin(Date.now() * 0.002) * 0.3);
+
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = barColor;
+  ctx.fillStyle = barColor;
+
+  for (let i = 0; i < dims.bars; i++) {
+    const activeHeight = smoothedLevels[i] * dims.h * 0.9 * (0.4 + overallActivity * 0.6);
+    const barHeight = Math.max(minHeight, activeHeight);
+    const x = i * barWidth + gap / 2;
+    const y = (dims.h - barHeight) / 2;
+    const w = barWidth - gap;
+    const r = Math.min(w / 2, 4);
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(x, y, w, barHeight, r);
+    } else {
+      ctx.rect(x, y, w, barHeight);
+    }
+    ctx.fill();
+  }
+
+  logDiag(
+    "Theme: " + themeName + " | Size: " + sizeName +
+    " | Audio: " + (audioCtx ? audioCtx.state : (testMode ? "test-mode" : "none")) +
+    " | activity:" + overallActivity.toFixed(2)
+  );
+}
+
+animate();
+initAudio();
+</script>
+</body>
+</html>
