@@ -1,0 +1,799 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reactive HUD Pack</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Inter", sans-serif; }
+html, body { background: transparent !important; width: 100%; height: 100%; overflow: hidden; }
+body.bg-dark { background: #0a0a12 !important; }
+#stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+#gear { position: absolute; top: 12px; right: 12px; cursor: pointer; opacity: 0.5; z-index: 20; }
+#gear:hover { opacity: 0.9; }
+#panel { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,10,16,0.92); z-index: 30; overflow-y: auto; padding: 20px; color: #eee; font-size: 12px; }
+#panel h2 { font-size: 15px; margin-bottom: 14px; }
+.sec { margin-bottom: 16px; }
+.sec h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #333; background: #1e1e28; color: #eee; cursor: pointer; font-size: 11px; }
+.btn.on { background: #3d3d55; border-color: #7f7fff; }
+.btn.locked { opacity: 0.45; }
+.swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+.swatch.on { border-color: #fff; }
+.custom-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px dashed #555; cursor: pointer; position: relative; overflow: hidden; background: #222; display: flex; align-items: center; justify-content: center; }
+.custom-swatch input { position: absolute; opacity: 0; width: 100%; height: 100%; }
+input[type=text] { padding: 6px; border-radius: 6px; border: 1px solid #333; background: #1e1e28; color: #eee; font-size: 11px; width: 100%; }
+#closePanel { position: absolute; top: 12px; right: 12px; cursor: pointer; font-size: 20px; }
+#diag { position: absolute; bottom: 8px; left: 8px; font-family: monospace; font-size: 10px; color: #5affe6; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 4px; display: none; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="gear" title="Settings">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</div>
+
+<div id="panel">
+  <span id="closePanel">&times;</span>
+  <h2>Reactive HUD Pack - Settings</h2>
+
+  <div class="sec">
+    <h3>License Key</h3>
+    <div class="row" style="margin-bottom:6px;">
+      <input type="text" id="licenseInput" placeholder="SHUD-XXXX-XXXX-XXXX">
+      <button class="btn" id="unlockBtn">Unlock</button>
+    </div>
+    <div id="licenseStatus"></div>
+  </div>
+
+  <div class="sec">
+    <h3>Style</h3>
+    <div class="row" id="styleRow"></div>
+  </div>
+
+  <div class="sec">
+    <h3>Color</h3>
+    <div class="row" id="colorRow">
+      <div class="custom-swatch" id="customSwatch"><input type="color" id="customColorInput"><span style="font-size:14px;">+</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Size</h3>
+    <div class="row" id="sizeRow"></div>
+  </div>
+
+  <div class="sec" id="twitchSec" style="display:none;">
+    <h3>Twitch Client ID (for Events style)</h3>
+    <input type="text" id="twitchClientInput" placeholder="paste your Twitch app Client ID">
+    <div id="twitchStatus" style="margin-top:6px; opacity:0.7;"></div>
+  </div>
+</div>
+
+<div id="stage">
+  <canvas id="canvas2d"></canvas>
+  <div id="threeContainer"></div>
+</div>
+<div id="diag"></div>
+
+<script>
+const STATE_KEY = "shudState";
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch (e) { return {}; }
+}
+function saveState(patch) {
+  const s = Object.assign(loadState(), patch);
+  localStorage.setItem(STATE_KEY, JSON.stringify(s));
+  return s;
+}
+let state = Object.assign({ style: "sphere", theme: "cyan", customColor: null, size: "medium", proUnlocked: false, twitchClientId: "" }, loadState());
+
+const params = new URLSearchParams(window.location.search);
+const showDiag = params.has("diag");
+document.getElementById("diag").style.display = showDiag ? "block" : "none";
+if (params.get("bg") === "dark") document.body.classList.add("bg-dark");
+const testMode = params.has("test");
+
+const THEMES = { cyan: "#5affe6", purple: "#b266ff", gold: "#ffcf7f", red: "#ff5a6e", green: "#6fff8f" };
+const STYLES = [
+  { name: "sphere", label: "Sphere", pro: false },
+  { name: "waveform", label: "Waveform", pro: false },
+  { name: "vuring", label: "VU Ring", pro: true },
+  { name: "burst", label: "Particle Burst", pro: true },
+  { name: "eventreactive", label: "Twitch Events", pro: true },
+  { name: "orbitrings", label: "Orbit Rings", pro: true },
+  { name: "mirrored", label: "Mirrored Waveform", pro: true },
+  { name: "arcring", label: "Arc Gauge", pro: true },
+  { name: "firework", label: "Firework", pro: true },
+  { name: "hologram", label: "Hologram Grid", pro: true },
+  { name: "radar", label: "Radar Sweep", pro: true },
+  { name: "datastream", label: "Data Stream", pro: true }
+];
+const SIZES2D = { small: 220, medium: 320, large: 460 };
+const SIZES3D = { small: 200, medium: 300, large: 420 };
+
+function isValidLicenseKey(key) {
+  if (!key || key.length < 10) return false;
+  const clean = key.replace(/-/g, "").toUpperCase();
+  let sum = 0;
+  for (let i = 0; i < clean.length; i++) sum += clean.charCodeAt(i) * (i + 1);
+  return sum % 97 === 42;
+}
+
+function currentColorHex() {
+  return state.customColor ? ("#" + state.customColor) : (THEMES[state.theme] || THEMES.cyan);
+}
+function hexToRgb(hex) {
+  const h = hex.replace("#", "");
+  return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)];
+}
+
+// ---------- Panel UI ----------
+const styleRow = document.getElementById("styleRow");
+function renderStyleButtons() {
+  styleRow.innerHTML = "";
+  STYLES.forEach(s => {
+    const el = document.createElement("button");
+    el.className = "btn" + (s.name === state.style ? " on" : "") + ((s.pro && !state.proUnlocked) ? " locked" : "");
+    el.textContent = s.label + (s.pro ? " (PRO)" : "");
+    el.addEventListener("click", () => {
+      const url = new URL(window.location.href);
+      if (s.pro && !state.proUnlocked) {
+        url.searchParams.set("preview", s.name);
+      } else {
+        state = saveState({ style: s.name });
+        url.searchParams.delete("preview");
+      }
+      window.location.href = url.toString();
+    });
+    styleRow.appendChild(el);
+  });
+}
+renderStyleButtons();
+
+const colorRow = document.getElementById("colorRow");
+Object.entries(THEMES).forEach(([name, hex]) => {
+  const el = document.createElement("div");
+  el.className = "swatch" + (!state.customColor && state.theme === name ? " on" : "");
+  el.style.background = hex;
+  el.addEventListener("click", () => {
+    state = saveState({ theme: name, customColor: null });
+    location.reload();
+  });
+  colorRow.insertBefore(el, document.getElementById("customSwatch"));
+});
+document.getElementById("customColorInput").addEventListener("input", (e) => {
+  state = saveState({ customColor: e.target.value.replace("#", "") });
+  location.reload();
+});
+
+const sizeRow = document.getElementById("sizeRow");
+["small", "medium", "large"].forEach(s => {
+  const el = document.createElement("button");
+  el.className = "btn" + (s === state.size ? " on" : "");
+  el.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+  el.addEventListener("click", () => {
+    state = saveState({ size: s });
+    location.reload();
+  });
+  sizeRow.appendChild(el);
+});
+
+document.getElementById("licenseStatus").textContent = state.proUnlocked ? "Pro unlocked" : "Enter your key to unlock Pro styles";
+document.getElementById("unlockBtn").addEventListener("click", () => {
+  const key = document.getElementById("licenseInput").value.trim();
+  if (isValidLicenseKey(key)) {
+    state = saveState({ proUnlocked: true });
+    location.reload();
+  } else {
+    document.getElementById("licenseStatus").textContent = "Invalid key";
+  }
+});
+
+if (state.style === "eventreactive") {
+  document.getElementById("twitchSec").style.display = "block";
+  document.getElementById("twitchClientInput").value = state.twitchClientId || "";
+  document.getElementById("twitchClientInput").addEventListener("change", (e) => {
+    state = saveState({ twitchClientId: e.target.value.trim() });
+    location.reload();
+  });
+}
+
+document.getElementById("gear").addEventListener("click", () => { document.getElementById("panel").style.display = "block"; });
+document.getElementById("closePanel").addEventListener("click", () => { document.getElementById("panel").style.display = "none"; });
+
+// ---------- Rendering ----------
+const canvas2d = document.getElementById("canvas2d");
+const ctx = canvas2d.getContext("2d");
+const threeContainer = document.getElementById("threeContainer");
+const colorHex = currentColorHex();
+const [rC, gC, bC] = hexToRgb(colorHex);
+
+let audioCtx, analyser, freqData;
+let persistedError = null;
+async function initMicAudio() {
+  if (testMode) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    freqData = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+  } catch (e) { persistedError = e.name + ": " + e.message; }
+}
+let testClock = 0;
+function getBands() {
+  if (testMode) {
+    testClock += 0.03;
+    const burst = Math.max(0, Math.sin(testClock * 0.4));
+    const wave = (Math.sin(testClock * 2) + 1) / 2;
+    const v = burst * wave * 0.8;
+    return { low: v * 0.5, mid: v * 0.4, high: v * 0.6, overall: v * 0.5 };
+  }
+  if (!analyser) return { low: 0, mid: 0, high: 0, overall: 0 };
+  analyser.getByteFrequencyData(freqData);
+  const n = freqData.length, lowEnd = Math.floor(n * 0.15), midEnd = Math.floor(n * 0.5);
+  let lowSum = 0, midSum = 0, highSum = 0;
+  for (let i = 0; i < lowEnd; i++) lowSum += freqData[i];
+  for (let i = lowEnd; i < midEnd; i++) midSum += freqData[i];
+  for (let i = midEnd; i < n; i++) highSum += freqData[i];
+  const low = (lowSum / lowEnd) / 255, mid = (midSum / (midEnd - lowEnd)) / 255, high = (highSum / (n - midEnd)) / 255;
+  return { low, mid, high, overall: (low + mid + high) / 3 };
+}
+
+function logDiag(line) { if (showDiag) document.getElementById("diag").textContent = (persistedError ? "ERROR: " + persistedError + "\n" : "") + line; }
+
+const previewStyleName = new URLSearchParams(window.location.search).get("preview");
+const previewStyleObj = STYLES.find(s => s.name === previewStyleName && s.pro && !state.proUnlocked);
+const effectiveStyle = previewStyleObj ? previewStyleObj.name : state.style;
+if (previewStyleObj) {
+  const badge = document.createElement("div");
+  badge.textContent = "PRO PREVIEW";
+  badge.style.cssText = "position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:1px; color:#ffcf7f; background:rgba(0,0,0,0.5); padding:3px 10px; border-radius:10px; z-index:15;";
+  document.body.appendChild(badge);
+}
+
+if (effectiveStyle === "sphere") {
+  canvas2d.style.display = "none";
+  const dim = SIZES3D[state.size] || 300;
+  threeContainer.style.width = dim + "px"; threeContainer.style.height = dim + "px";
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.z = 4.2;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(dim, dim);
+  threeContainer.appendChild(renderer.domElement);
+  const count = 4500;
+  const basePositions = new Float32Array(count * 3);
+  const radius = 1.0;
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2, r = Math.sqrt(1 - y * y), th = Math.PI * (1 + Math.sqrt(5)) * i;
+    const jitter = 1 + (Math.random() - 0.5) * 0.06;
+    basePositions[i*3] = Math.cos(th) * r * radius * jitter;
+    basePositions[i*3+1] = y * radius * jitter;
+    basePositions[i*3+2] = Math.sin(th) * r * radius * jitter;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(basePositions.slice(), 3));
+  const tcanvas = document.createElement("canvas"); tcanvas.width = 16; tcanvas.height = 16;
+  const tctx = tcanvas.getContext("2d");
+  const grad = tctx.createRadialGradient(8,8,0,8,8,8);
+  grad.addColorStop(0, "rgba(255,255,255,1)"); grad.addColorStop(1, "rgba(255,255,255,0)");
+  tctx.fillStyle = grad; tctx.fillRect(0,0,16,16);
+  const tex = new THREE.CanvasTexture(tcanvas);
+  const mat = new THREE.PointsMaterial({ size: 0.045, map: tex, transparent: true, opacity: 0.9, color: parseInt(colorHex.replace("#","0x")), depthWrite: false, blending: THREE.AdditiveBlending });
+  const particles = new THREE.Points(geo, mat);
+  scene.add(particles);
+  let speakTime = 0, activity = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    const bands = getBands();
+    const targetActivity = Math.min(1, bands.overall / 0.15);
+    activity += (targetActivity - activity) * 0.05;
+    speakTime += 0.05 + activity * 0.05;
+    const wobbleAmount = 0.012 + activity * (0.02 + bands.high * 0.05);
+    const posAttr = particles.geometry.attributes.position;
+    const arr = posAttr.array;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + (bands.low * 0.04 * activity + wobbleAmount * Math.sin(speakTime * 2 + i * 0.3));
+      arr[i*3] = basePositions[i*3] * wobble; arr[i*3+1] = basePositions[i*3+1] * wobble; arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    particles.rotation.y += 0.0015 + activity * (0.004 + bands.overall * 0.006);
+    logDiag("Style: sphere | activity:" + activity.toFixed(2));
+    renderer.render(scene, camera);
+  }
+  animate();
+  initMicAudio();
+
+} else if (effectiveStyle === "waveform") {
+  threeContainer.style.display = "none";
+  const bars = state.size === "small" ? 20 : state.size === "large" ? 36 : 28;
+  const dims = { w: SIZES2D[state.size] || 320, h: (SIZES2D[state.size] || 320) * 0.4, bars };
+  canvas2d.width = dims.w; canvas2d.height = dims.h;
+  const smoothedLevels = new Array(bars).fill(0);
+  function animate() {
+    requestAnimationFrame(animate);
+    const bands = getBands();
+    const raw = testMode ? Array.from({length: bars}, (_, i) => Math.max(0, Math.sin(testClock * 1.3 + i * 0.4)) * bands.overall * 1.5) : (() => {
+      analyser && analyser.getByteFrequencyData(freqData);
+      const levels = []; const usable = analyser ? Math.floor(freqData.length * 0.7) : 0; const per = usable / bars;
+      for (let i = 0; i < bars; i++) {
+        if (!analyser) { levels.push(0); continue; }
+        let sum = 0; const s = Math.floor(i*per), e = Math.floor((i+1)*per);
+        for (let j = s; j < e; j++) sum += freqData[j];
+        levels.push((sum/(e-s||1))/255);
+      }
+      return levels;
+    })();
+    let sum = 0;
+    for (let i = 0; i < bars; i++) { smoothedLevels[i] += (raw[i] - smoothedLevels[i]) * 0.18; sum += smoothedLevels[i]; }
+    const overallActivity = Math.min(1, (sum/bars)/0.12);
+    ctx.clearRect(0,0,dims.w,dims.h);
+    const barWidth = dims.w/bars, gap = barWidth*0.25, minHeight = dims.h*0.04*(1+Math.sin(Date.now()*0.002)*0.3);
+    for (let i = 0; i < bars; i++) {
+      const bandPos = i/bars, shift = smoothedLevels[i]*90;
+      const r2 = Math.min(255, rC+(bandPos<0.4?shift:0)), g2 = Math.min(255, gC+shift*0.5), b2 = Math.min(255, bC+(bandPos>0.6?shift:0));
+      const activeHeight = smoothedLevels[i]*dims.h*0.9*(0.4+overallActivity*0.6);
+      const barHeight = Math.max(minHeight, activeHeight);
+      const x = i*barWidth+gap/2, y = (dims.h-barHeight)/2, w = barWidth-gap, r = Math.min(w/2,4);
+      const grad = ctx.createLinearGradient(0,y,0,y+barHeight);
+      grad.addColorStop(0, "rgba("+r2+","+g2+","+b2+",1)"); grad.addColorStop(1, "rgba("+rC+","+gC+","+bC+",0.55)");
+      ctx.shadowBlur = 10+smoothedLevels[i]*10; ctx.shadowColor = colorHex; ctx.fillStyle = grad;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x,y,w,barHeight,r); else ctx.rect(x,y,w,barHeight);
+      ctx.fill();
+    }
+    logDiag("Style: waveform | activity:" + overallActivity.toFixed(2));
+  }
+  animate(); initMicAudio();
+
+} else if (effectiveStyle === "vuring") {
+  threeContainer.style.display = "none";
+  const dim = SIZES2D[state.size] || 320;
+  canvas2d.width = dim; canvas2d.height = dim;
+  const SEGMENTS = 48;
+  let smoothedLevel = 0, rotation = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    const bands = getBands();
+    smoothedLevel += (bands.overall - smoothedLevel) * 0.1;
+    rotation += 0.004 + smoothedLevel*0.015;
+    ctx.clearRect(0,0,dim,dim);
+    const cx=dim/2, cy=dim/2, outerR=dim*0.42, segLen=dim*0.09, innerR=outerR-segLen;
+    for (let i=0;i<SEGMENTS;i++) {
+      const angle=(i/SEGMENTS)*Math.PI*2+rotation;
+      const wave=(Math.sin(angle*3-rotation*4)+1)/2;
+      const brightness=0.15+wave*0.25+smoothedLevel*0.7;
+      const clamped=Math.min(1,brightness);
+      const x1=cx+Math.cos(angle)*innerR, y1=cy+Math.sin(angle)*innerR, x2=cx+Math.cos(angle)*outerR, y2=cy+Math.sin(angle)*outerR;
+      ctx.lineCap="round"; ctx.shadowBlur=0;
+      ctx.strokeStyle="rgba("+rC+","+gC+","+bC+","+(clamped*0.25)+")"; ctx.lineWidth=dim*0.026;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.strokeStyle="rgba("+rC+","+gC+","+bC+","+clamped+")"; ctx.lineWidth=dim*0.012;
+      ctx.shadowBlur=6*clamped; ctx.shadowColor=colorHex;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+    const centerPulse=innerR*0.35*(0.7+smoothedLevel*0.5);
+    const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,centerPulse);
+    grad.addColorStop(0,"rgba("+rC+","+gC+","+bC+","+(0.5+smoothedLevel*0.4)+")"); grad.addColorStop(1,"rgba("+rC+","+gC+","+bC+",0)");
+    ctx.shadowBlur=0; ctx.fillStyle=grad;
+    ctx.beginPath(); ctx.arc(cx,cy,centerPulse,0,Math.PI*2); ctx.fill();
+    logDiag("Style: vuring | level:" + smoothedLevel.toFixed(2));
+  }
+  animate(); initMicAudio();
+
+} else if (effectiveStyle === "burst" || effectiveStyle === "eventreactive") {
+  threeContainer.style.display = "none";
+  const dim = SIZES2D[state.size] || 320;
+  canvas2d.width = dim; canvas2d.height = dim;
+  let particlesArr = [];
+  const ambient = [];
+  for (let i=0;i<14;i++) ambient.push({angle:Math.random()*Math.PI*2, radius:dim*(0.05+Math.random()*0.12), speed:0.002+Math.random()*0.003, size:1.5+Math.random()*2});
+  function spawnBurst(intensity) {
+    const count = Math.round(50*intensity);
+    for (let i=0;i<count;i++) {
+      const angle=Math.random()*Math.PI*2, speed=(1.5+Math.random()*3.5)*intensity;
+      particlesArr.push({x:0,y:0,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,decay:0.006+Math.random()*0.01,size:2+Math.random()*3});
+    }
+  }
+  window.spawnBurst = spawnBurst;
+  function render() {
+    requestAnimationFrame(render);
+    ctx.clearRect(0,0,dim,dim);
+    const cx=dim/2, cy=dim/2;
+    ambient.forEach(a => {
+      a.angle += a.speed;
+      const x=cx+Math.cos(a.angle)*a.radius, y=cy+Math.sin(a.angle)*a.radius;
+      ctx.beginPath(); ctx.arc(x,y,a.size,0,Math.PI*2);
+      ctx.fillStyle="rgba("+rC+","+gC+","+bC+",0.35)"; ctx.shadowBlur=4; ctx.shadowColor=colorHex; ctx.fill();
+    });
+    particlesArr = particlesArr.filter(p=>p.life>0);
+    particlesArr.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vx*=0.97; p.vy*=0.97; p.life-=p.decay;
+      const life=Math.max(0,p.life); const r=p.size*life*2.2;
+      if (r>0.1) {
+        const px=cx+p.x, py=cy+p.y;
+        const grad=ctx.createRadialGradient(px,py,0,px,py,r);
+        grad.addColorStop(0,"rgba("+rC+","+gC+","+bC+","+life+")");
+        grad.addColorStop(0.5,"rgba("+rC+","+gC+","+bC+","+(life*0.4)+")");
+        grad.addColorStop(1,"rgba("+rC+","+gC+","+bC+",0)");
+        ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+      }
+    });
+    logDiag("Style: " + effectiveStyle + " | particles:" + particlesArr.length);
+  }
+  render();
+
+  if (effectiveStyle === "burst") {
+    let rollingAvg = 0.03, burstCooldown = 0;
+    function checkBurst() {
+      const bands = getBands();
+      rollingAvg += (bands.overall - rollingAvg) * 0.01;
+      if (burstCooldown > 0) burstCooldown--;
+      if (bands.overall > rollingAvg*2.2 && bands.overall > 0.15 && burstCooldown <= 0) { spawnBurst(1); burstCooldown = 30; }
+      requestAnimationFrame(checkBurst);
+    }
+    checkBurst(); initMicAudio();
+  } else {
+    // eventreactive: Twitch OAuth + EventSub WebSocket
+    const CLIENT_ID = state.twitchClientId;
+    const twitchStatus = document.getElementById("twitchStatus");
+    async function twitchMain() {
+      if (!CLIENT_ID) { logDiag("Set your Twitch Client ID in settings (gear icon)"); return; }
+      const hash = new URLSearchParams(window.location.hash.replace("#", "?"));
+      let token = hash.get("access_token") || localStorage.getItem("twitchAccessToken");
+      if (!token) {
+        const redirectUri = window.location.origin + window.location.pathname;
+        const authUrl = "https://id.twitch.tv/oauth2/authorize?client_id="+CLIENT_ID+"&redirect_uri="+encodeURIComponent(redirectUri)+"&response_type=token&scope="+encodeURIComponent("channel:read:subscriptions moderator:read:followers");
+        logDiag("Not logged in - open settings and check Twitch status for the login link");
+        if (twitchStatus) twitchStatus.innerHTML = '<a href="'+authUrl+'" style="color:#5affe6;">Click to authorize Twitch</a>';
+        return;
+      }
+      localStorage.setItem("twitchAccessToken", token);
+      if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
+      let userRes;
+      try {
+        userRes = await fetch("https://api.twitch.tv/helix/users", { headers: { "Authorization": "Bearer "+token, "Client-Id": CLIENT_ID } });
+        if (!userRes.ok) throw new Error("HTTP "+userRes.status);
+      } catch (e) { localStorage.removeItem("twitchAccessToken"); logDiag("Twitch login expired, reload to log in again"); return; }
+      const userData = await userRes.json();
+      const broadcasterId = userData.data[0].id;
+      const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
+      let sessionId = null;
+      ws.onmessage = async (msg) => {
+        const data = JSON.parse(msg.data);
+        if (data.metadata.message_type === "session_welcome") {
+          sessionId = data.payload.session.id;
+          await sub("channel.follow", "2", { broadcaster_user_id: broadcasterId, moderator_user_id: broadcasterId });
+          await sub("channel.subscribe", "1", { broadcaster_user_id: broadcasterId });
+          await sub("channel.raid", "1", { to_broadcaster_user_id: broadcasterId });
+          logDiag("Style: eventreactive | listening for follows/subs/raids");
+        } else if (data.metadata.message_type === "notification") {
+          const type = data.metadata.subscription_type;
+          spawnBurst(type === "channel.raid" ? 2 : type === "channel.subscribe" ? 1.5 : 1);
+        }
+      };
+      async function sub(type, version, condition) {
+        await fetch("https://api.twitch.tv/helix/eventsub/subscriptions", {
+          method: "POST", headers: { "Authorization":"Bearer "+token, "Client-Id":CLIENT_ID, "Content-Type":"application/json" },
+          body: JSON.stringify({ type, version, condition, transport: { method: "websocket", session_id: sessionId } })
+        });
+      }
+    }
+    if (testMode) { setInterval(() => spawnBurst(1+Math.random()), 4000+Math.random()*6000); }
+    else { twitchMain(); }
+  }
+
+} else if (effectiveStyle === "orbitrings") {
+  canvas2d.style.display = "none";
+  const dim = SIZES3D[state.size] || 300;
+  threeContainer.style.width = dim + "px"; threeContainer.style.height = dim + "px";
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.z = 4.2;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(dim, dim);
+  threeContainer.appendChild(renderer.domElement);
+  const tcanvas = document.createElement("canvas"); tcanvas.width = 16; tcanvas.height = 16;
+  const tctx = tcanvas.getContext("2d");
+  const tgrad = tctx.createRadialGradient(8,8,0,8,8,8);
+  tgrad.addColorStop(0, "rgba(255,255,255,1)"); tgrad.addColorStop(1, "rgba(255,255,255,0)");
+  tctx.fillStyle = tgrad; tctx.fillRect(0,0,16,16);
+  const tex = new THREE.CanvasTexture(tcanvas);
+  const ringDefs = [
+    { radius: 1.0, tilt: 0.3, speed: 0.004, count: 500 },
+    { radius: 1.3, tilt: -0.5, speed: -0.003, count: 400 },
+    { radius: 0.7, tilt: 1.1, speed: 0.006, count: 300 }
+  ];
+  const ringGroups = ringDefs.map(def => {
+    const positions = new Float32Array(def.count * 3);
+    for (let i = 0; i < def.count; i++) {
+      const angle = (i / def.count) * Math.PI * 2;
+      const jitter = 1 + (Math.random() - 0.5) * 0.04;
+      positions[i*3] = Math.cos(angle) * def.radius * jitter;
+      positions[i*3+1] = (Math.random() - 0.5) * 0.05;
+      positions[i*3+2] = Math.sin(angle) * def.radius * jitter;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({ size: 0.04, map: tex, transparent: true, opacity: 0.9, color: parseInt(colorHex.replace("#","0x")), depthWrite: false, blending: THREE.AdditiveBlending });
+    const points = new THREE.Points(geo, mat);
+    points.rotation.x = def.tilt;
+    scene.add(points);
+    return { points, def, basePositions: positions.slice() };
+  });
+  let activity3 = 0;
+  function animateOrbit() {
+    requestAnimationFrame(animateOrbit);
+    const bands = getBands();
+    const targetActivity = Math.min(1, bands.overall / 0.15);
+    activity3 += (targetActivity - activity3) * 0.05;
+    ringGroups.forEach(g => {
+      g.points.rotation.y += g.def.speed * (1 + activity3 * 2);
+      const posAttr = g.points.geometry.attributes.position;
+      const arr = posAttr.array;
+      const scale = 1 + activity3 * 0.15 * Math.sin(Date.now()*0.003);
+      for (let i = 0; i < arr.length; i++) arr[i] = g.basePositions[i] * (i % 3 === 1 ? 1 : scale);
+      posAttr.needsUpdate = true;
+    });
+    logDiag("Style: orbitrings | activity:" + activity3.toFixed(2));
+    renderer.render(scene, camera);
+  }
+  animateOrbit();
+  initMicAudio();
+
+} else if (effectiveStyle === "mirrored") {
+  threeContainer.style.display = "none";
+  const barsM = state.size === "small" ? 20 : state.size === "large" ? 36 : 28;
+  const dimsM = { w: SIZES2D[state.size] || 320, h: (SIZES2D[state.size] || 320) * 0.5, bars: barsM };
+  canvas2d.width = dimsM.w; canvas2d.height = dimsM.h;
+  const smoothedM = new Array(barsM).fill(0);
+  function animateMirrored() {
+    requestAnimationFrame(animateMirrored);
+    const bands = getBands();
+    const raw = testMode ? Array.from({length: barsM}, (_, i) => Math.max(0, Math.sin(testClock * 1.3 + i * 0.4)) * bands.overall * 1.5) : (() => {
+      analyser && analyser.getByteFrequencyData(freqData);
+      const levels = []; const usable = analyser ? Math.floor(freqData.length * 0.7) : 0; const per = usable / barsM;
+      for (let i = 0; i < barsM; i++) {
+        if (!analyser) { levels.push(0); continue; }
+        let sum = 0; const s = Math.floor(i*per), e = Math.floor((i+1)*per);
+        for (let j = s; j < e; j++) sum += freqData[j];
+        levels.push((sum/(e-s||1))/255);
+      }
+      return levels;
+    })();
+    for (let i = 0; i < barsM; i++) smoothedM[i] += (raw[i] - smoothedM[i]) * 0.18;
+    ctx.clearRect(0,0,dimsM.w,dimsM.h);
+    const barWidthM = dimsM.w/barsM, gapM = barWidthM*0.25, centerY = dimsM.h/2;
+    for (let i = 0; i < barsM; i++) {
+      const bandPos = i/barsM, shift = smoothedM[i]*90;
+      const r2 = Math.min(255, rC+(bandPos<0.4?shift:0)), g2 = Math.min(255, gC+shift*0.5), b2 = Math.min(255, bC+(bandPos>0.6?shift:0));
+      const halfHeight = Math.max(dimsM.h*0.02, smoothedM[i]*dimsM.h*0.45);
+      const x = i*barWidthM+gapM/2, w = barWidthM-gapM, r = Math.min(w/2,4);
+      ctx.shadowBlur = 8+smoothedM[i]*10; ctx.shadowColor = colorHex;
+      ctx.fillStyle = "rgba("+r2+","+g2+","+b2+",0.95)";
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, centerY-halfHeight, w, halfHeight*2, r); else ctx.rect(x, centerY-halfHeight, w, halfHeight*2);
+      ctx.fill();
+    }
+    logDiag("Style: mirrored");
+  }
+  animateMirrored(); initMicAudio();
+
+} else if (effectiveStyle === "arcring") {
+  threeContainer.style.display = "none";
+  const dimA = SIZES2D[state.size] || 320;
+  canvas2d.width = dimA; canvas2d.height = dimA*0.65;
+  const SEGMENTS_A = 32;
+  let smoothedA = 0;
+  function animateArc() {
+    requestAnimationFrame(animateArc);
+    const bands = getBands();
+    smoothedA += (bands.overall - smoothedA) * 0.1;
+    ctx.clearRect(0,0,canvas2d.width,canvas2d.height);
+    const cx=canvas2d.width/2, cy=canvas2d.height*0.9, outerR=dimA*0.42, segLen=dimA*0.09, innerR=outerR-segLen;
+    const startAngle = Math.PI, endAngle = 2*Math.PI;
+    for (let i=0;i<SEGMENTS_A;i++) {
+      const t = i/(SEGMENTS_A-1);
+      const angle = startAngle + t*(endAngle-startAngle);
+      const lit = t <= smoothedA + 0.05;
+      const brightness = lit ? (0.4 + smoothedA*0.6) : 0.1;
+      const x1=cx+Math.cos(angle)*innerR, y1=cy+Math.sin(angle)*innerR, x2=cx+Math.cos(angle)*outerR, y2=cy+Math.sin(angle)*outerR;
+      ctx.lineCap="round";
+      ctx.strokeStyle="rgba("+rC+","+gC+","+bC+","+(brightness*0.3)+")"; ctx.lineWidth=dimA*0.03; ctx.shadowBlur=0;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.strokeStyle="rgba("+rC+","+gC+","+bC+","+brightness+")"; ctx.lineWidth=dimA*0.014;
+      ctx.shadowBlur=lit?8:0; ctx.shadowColor=colorHex;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+    logDiag("Style: arcring | level:" + smoothedA.toFixed(2));
+  }
+  animateArc(); initMicAudio();
+
+} else if (effectiveStyle === "firework") {
+  threeContainer.style.display = "none";
+  const dimF = SIZES2D[state.size] || 320;
+  canvas2d.width = dimF; canvas2d.height = dimF;
+  let particlesF = [];
+  function spawnFirework(intensity) {
+    const count = Math.round(45*intensity);
+    const launchAngle = -Math.PI/2 + (Math.random()-0.5)*0.6;
+    const launchSpeed = 3 + Math.random()*1.5;
+    for (let i=0;i<count;i++) {
+      const spread = (Math.random()-0.5)*3;
+      particlesF.push({
+        x:0, y: dimF*0.3,
+        vx: Math.cos(launchAngle)*launchSpeed*0.3 + spread,
+        vy: Math.sin(launchAngle)*launchSpeed - 2,
+        life:1, decay:0.008+Math.random()*0.01, size:2+Math.random()*2.5
+      });
+    }
+  }
+  window.spawnBurst = spawnFirework;
+  function renderFirework() {
+    requestAnimationFrame(renderFirework);
+    ctx.clearRect(0,0,dimF,dimF);
+    const cx=dimF/2, cy=dimF/2;
+    particlesF = particlesF.filter(p=>p.life>0);
+    particlesF.forEach(p=>{
+      p.vy += 0.08;
+      p.x+=p.vx; p.y+=p.vy; p.vx*=0.98; p.life-=p.decay;
+      const life=Math.max(0,p.life); const r=p.size*life*1.8;
+      if (r>0.1) {
+        const px=cx+p.x, py=cy+p.y;
+        const grad=ctx.createRadialGradient(px,py,0,px,py,r);
+        grad.addColorStop(0,"rgba("+rC+","+gC+","+bC+","+life+")");
+        grad.addColorStop(1,"rgba("+rC+","+gC+","+bC+",0)");
+        ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+      }
+    });
+    logDiag("Style: firework | particles:" + particlesF.length);
+  }
+  renderFirework();
+  let rollingAvgF = 0.03, cooldownF = 0;
+  function checkFirework() {
+    const bands = getBands();
+    rollingAvgF += (bands.overall - rollingAvgF) * 0.01;
+    if (cooldownF > 0) cooldownF--;
+    if (bands.overall > rollingAvgF*2.2 && bands.overall > 0.15 && cooldownF <= 0) { spawnFirework(1); cooldownF = 40; }
+    requestAnimationFrame(checkFirework);
+  }
+  if (testMode) { setInterval(() => spawnFirework(1+Math.random()), 4000+Math.random()*6000); }
+  else { checkFirework(); initMicAudio(); }
+
+} else if (effectiveStyle === "hologram") {
+  canvas2d.style.display = "none";
+  const dimH = SIZES3D[state.size] || 300;
+  threeContainer.style.width = dimH + "px"; threeContainer.style.height = dimH + "px";
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.z = 4;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(dimH, dimH);
+  threeContainer.appendChild(renderer.domElement);
+  const geo = new THREE.IcosahedronGeometry(1.2, 1);
+  const mat = new THREE.MeshBasicMaterial({ color: parseInt(colorHex.replace("#","0x")), wireframe: true, transparent: true, opacity: 0.8 });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  const geo2 = new THREE.IcosahedronGeometry(1.35, 0);
+  const mat2 = new THREE.MeshBasicMaterial({ color: parseInt(colorHex.replace("#","0x")), wireframe: true, transparent: true, opacity: 0.25 });
+  const mesh2 = new THREE.Mesh(geo2, mat2);
+  scene.add(mesh2);
+  let activityH = 0, glitchTimer = 0;
+  function animateHologram() {
+    requestAnimationFrame(animateHologram);
+    const bands = getBands();
+    const target = Math.min(1, bands.overall/0.15);
+    activityH += (target - activityH) * 0.08;
+    mesh.rotation.y += 0.006 + activityH*0.02;
+    mesh.rotation.x += 0.002;
+    mesh2.rotation.y -= 0.003;
+    const scale = 1 + activityH * 0.15 * Math.sin(Date.now()*0.005);
+    mesh.scale.set(scale,scale,scale);
+    glitchTimer -= 1;
+    if (glitchTimer <= 0 && Math.random() < 0.01 + activityH*0.02) {
+      mat.opacity = 0.2 + Math.random()*0.3;
+      glitchTimer = 4;
+    } else if (glitchTimer <= 0) {
+      mat.opacity = 0.8;
+    }
+    logDiag("Style: hologram | activity:" + activityH.toFixed(2));
+    renderer.render(scene, camera);
+  }
+  animateHologram();
+  initMicAudio();
+
+} else if (effectiveStyle === "radar") {
+  threeContainer.style.display = "none";
+  const dimR = SIZES2D[state.size] || 320;
+  canvas2d.width = dimR; canvas2d.height = dimR;
+  let sweepAngle = 0;
+  let blips = [];
+  let rollingAvgR = 0.03, cooldownR = 0;
+  function animateRadar() {
+    requestAnimationFrame(animateRadar);
+    const bands = getBands();
+    rollingAvgR += (bands.overall - rollingAvgR) * 0.01;
+    if (cooldownR > 0) cooldownR--;
+    if (bands.overall > rollingAvgR*1.8 && bands.overall > 0.1 && cooldownR <= 0) {
+      blips.push({ angle: Math.random()*Math.PI*2, dist: 0.3+Math.random()*0.6, life: 1 });
+      cooldownR = 15;
+    }
+    sweepAngle += 0.02 + bands.overall*0.03;
+    ctx.clearRect(0,0,dimR,dimR);
+    const cx=dimR/2, cy=dimR/2, maxR=dimR*0.42;
+    ctx.strokeStyle = "rgba("+rC+","+gC+","+bC+",0.25)"; ctx.lineWidth = 1;
+    for (let ring=1; ring<=3; ring++) { ctx.beginPath(); ctx.arc(cx,cy,maxR*ring/3,0,Math.PI*2); ctx.stroke(); }
+    for (let a=0; a<8; a++) {
+      const ang = a/8*Math.PI*2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(ang)*maxR, cy+Math.sin(ang)*maxR); ctx.stroke();
+    }
+    if (ctx.createConicGradient) {
+      const grad = ctx.createConicGradient(sweepAngle-0.5, cx, cy);
+      grad.addColorStop(0, "rgba("+rC+","+gC+","+bC+",0)");
+      grad.addColorStop(0.15, "rgba("+rC+","+gC+","+bC+",0.35)");
+      grad.addColorStop(0.16, "rgba("+rC+","+gC+","+bC+",0)");
+      grad.addColorStop(1, "rgba("+rC+","+gC+","+bC+",0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx,cy,maxR,0,Math.PI*2); ctx.fill();
+    }
+    ctx.strokeStyle = "rgba("+rC+","+gC+","+bC+",0.9)"; ctx.lineWidth = 2;
+    ctx.shadowBlur = 8; ctx.shadowColor = colorHex;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(sweepAngle)*maxR, cy+Math.sin(sweepAngle)*maxR); ctx.stroke();
+    ctx.shadowBlur = 0;
+    blips = blips.filter(b => b.life > 0);
+    blips.forEach(b => {
+      b.life -= 0.01;
+      const bx = cx+Math.cos(b.angle)*maxR*b.dist, by = cy+Math.sin(b.angle)*maxR*b.dist;
+      ctx.fillStyle = "rgba("+rC+","+gC+","+bC+","+b.life+")";
+      ctx.shadowBlur = 6*b.life; ctx.shadowColor = colorHex;
+      ctx.beginPath(); ctx.arc(bx,by,3,0,Math.PI*2); ctx.fill();
+    });
+    logDiag("Style: radar | blips:" + blips.length);
+  }
+  animateRadar();
+  initMicAudio();
+
+} else if (effectiveStyle === "datastream") {
+  threeContainer.style.display = "none";
+  const dimD = SIZES2D[state.size] || 320;
+  canvas2d.width = dimD; canvas2d.height = dimD;
+  const streams = [];
+  for (let i=0;i<12;i++) {
+    streams.push({ x: (i+0.5)/12*dimD, y: Math.random()*dimD, speed: 1+Math.random()*1.5, len: 20+Math.random()*30 });
+  }
+  function animateStream() {
+    requestAnimationFrame(animateStream);
+    const bands = getBands();
+    ctx.clearRect(0,0,dimD,dimD);
+    const speedMult = 1 + bands.overall*4;
+    streams.forEach(s => {
+      s.y += s.speed*speedMult;
+      if (s.y - s.len > dimD) s.y = -Math.random()*100;
+      const grad = ctx.createLinearGradient(s.x, s.y-s.len, s.x, s.y);
+      grad.addColorStop(0, "rgba("+rC+","+gC+","+bC+",0)");
+      grad.addColorStop(1, "rgba("+rC+","+gC+","+bC+","+(0.5+bands.overall*0.5)+")");
+      ctx.strokeStyle = grad; ctx.lineWidth = 2;
+      ctx.shadowBlur = 4+bands.overall*8; ctx.shadowColor = colorHex;
+      ctx.beginPath(); ctx.moveTo(s.x, s.y-s.len); ctx.lineTo(s.x, s.y); ctx.stroke();
+      ctx.fillStyle = "rgba("+rC+","+gC+","+bC+",0.9)";
+      ctx.beginPath(); ctx.arc(s.x, s.y, 2, 0, Math.PI*2); ctx.fill();
+    });
+    logDiag("Style: datastream");
+  }
+  animateStream();
+  initMicAudio();
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
