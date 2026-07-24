@@ -22,7 +22,14 @@ Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #projec
 
 \- \[ ] Example task, replace with real ones | priority: medium | due: 2026-08-01 | #example
 
+- [ ] Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud
+- [ ] Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud
+- [ ] Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud
+- [ ] Write basic licensing terms | priority: low | #streamer-hud
+
 ## Done
 
 (move completed tasks here instead of deleting them)
+
+- [x] Add color/theme customization options to the streamer HUD widget | priority: high | #streamer-hud
 

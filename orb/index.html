@@ -19,7 +19,7 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #dateTime { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3; }
 #clock { font-size: 26px; font-weight: 500; color: #baffef; letter-spacing: 2px; }
 #dateline { font-size: 11px; opacity: 0.6; margin-top: 2px; letter-spacing: 1px; }
-#notesPanel { position: absolute; top: 40px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
+#notesPanel { position: absolute; top: 70px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
 #noteslist { list-style: none; }
 #noteslist li { padding: 2px 0; opacity: 0.75; }
 #logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 360px; font-size: 11px; z-index: 3; text-align: center; }
@@ -38,6 +38,40 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 </style>
 </head>
 <body>
+<div id="settingsIcon" style="position:absolute; top:34px; right:40px; z-index:5; cursor:pointer; opacity:0.6;" title="Settings">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</div>
+<div id="settingsPanel" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(4,20,26,0.92); z-index:10; backdrop-filter:blur(4px);">
+  <div style="max-width:480px; margin:60px auto; background:rgba(10,40,45,0.9); border:1px solid rgba(90,255,230,0.35); border-radius:12px; padding:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+      <h2 style="font-size:16px; letter-spacing:2px;">SETTINGS</h2>
+      <span id="closeSettings" style="cursor:pointer; opacity:0.7; font-size:20px;">&times;</span>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">ACCOUNT</div>
+      <div style="font-size:12px; line-height:1.8;">
+        Google Drive: <span style="color:#6fff8f;">connected</span><br>
+        GitHub: <span style="color:#6fff8f;">connected</span><br>
+        Outlook: <span style="color:#ffcf7f;">paused</span>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">VISUAL - ACCENT COLOR</div>
+      <div id="accentSwatches" style="display:flex; gap:10px;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">LANGUAGE (dashboard labels)</div>
+      <div style="display:flex; gap:8px;">
+        <button class="lang-btn" data-lang="en" style="padding:6px 14px; border-radius:6px; border:1px solid #333; background:#1e3a3d; color:#eee; cursor:pointer; font-size:12px;">English</button>
+        <button class="lang-btn" data-lang="de" style="padding:6px 14px; border-radius:6px; border:1px solid #333; background:#1e1e28; color:#eee; cursor:pointer; font-size:12px;">Deutsch</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">MORE</div>
+      <div style="font-size:12px; opacity:0.8;">System docs: <a href="https://github.com/itzfabu/Javis/blob/main/README.md" target="_blank" style="color:#5affe6;">README on GitHub</a></div>
+    </div>
+  </div>
+</div>
 <div class="scanlines"></div>
 <div class="vignette"></div>
 
@@ -489,8 +523,53 @@ async function poll() {
   } catch (e) {}
   setTimeout(poll, 400);
 }
+const ACCENT_COLORS = { cyan: 0x5affe6, purple: 0xb266ff, gold: 0xffcf7f, red: 0xff5a6e, green: 0x6fff8f };
+const swatchEl = document.getElementById("accentSwatches");
+Object.entries(ACCENT_COLORS).forEach(([name, hex]) => {
+  const sw = document.createElement("div");
+  sw.style.cssText = "width:32px; height:32px; border-radius:50%; cursor:pointer; background:#" + hex.toString(16).padStart(6,"0") + "; border:2px solid transparent;";
+  sw.addEventListener("click", () => {
+    localStorage.setItem("jarvisAccent", hex);
+    document.querySelectorAll("#accentSwatches div").forEach(s => s.style.borderColor = "transparent");
+    sw.style.borderColor = "#fff";
+    if (coreParticles && currentState !== "speaking" && currentState !== "thinking") {
+      coreParticles.material.color.setHex(hex);
+    }
+  });
+  swatchEl.appendChild(sw);
+});
+
+const LABELS = {
+  en: { tasks: "OPEN TASKS", response: "LAST RESPONSE", world: "WORLD", activity: "ACTIVITY" },
+  de: { tasks: "OFFENE AUFGABEN", response: "LETZTE ANTWORT", world: "WELT", activity: "AKTIVITAET" }
+};
+function applyLanguage(lang) {
+  localStorage.setItem("jarvisDashLang", lang);
+  document.querySelectorAll(".lang-btn").forEach(b => b.style.background = b.dataset.lang === lang ? "#1e3a3d" : "#1e1e28");
+  const l = LABELS[lang] || LABELS.en;
+  document.querySelectorAll("#taskList .lbl").forEach(el => el.textContent = l.tasks);
+  document.querySelectorAll("#logText .lbl").forEach(el => el.textContent = l.response);
+  document.querySelectorAll("#globePanel .lbl").forEach(el => el.textContent = l.world);
+  document.querySelectorAll("#activityLog .lbl").forEach(el => el.textContent = l.activity);
+}
+document.querySelectorAll(".lang-btn").forEach(b => b.addEventListener("click", () => applyLanguage(b.dataset.lang)));
+
+document.getElementById("settingsIcon").addEventListener("click", () => {
+  document.getElementById("settingsPanel").style.display = "block";
+});
+document.getElementById("closeSettings").addEventListener("click", () => {
+  document.getElementById("settingsPanel").style.display = "none";
+});
+
+const savedAccent = localStorage.getItem("jarvisAccent");
+if (savedAccent) {
+  setTimeout(() => { if (coreParticles) coreParticles.material.color.setHex(parseInt(savedAccent)); }, 500);
+}
+const savedLang = localStorage.getItem("jarvisDashLang");
+if (savedLang) applyLanguage(savedLang);
 poll();
 </script>
 </body>
 </html>
+
 

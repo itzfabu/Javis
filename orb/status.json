@@ -1,8 +1,3 @@
 ﻿{
-    "audioToken":  1784873838623,
-    "status":  "idle",
-    "tasks":  [
-
-              ],
-    "lastMessage":  "The background HTTP server on port 8765 was stopped (killed), likely because you closed the terminal or ended the session. Let me know if you want it restarted."
+    "status":  "thinking"
 }

@@ -25,7 +25,7 @@ Tag related tasks in TASKS.md with #project-name to link them here.
 
 ## Streamer HUD Widget
 - Status: active
-- Owner agent: business-analyst
+- Owner agent: webdesigner
 - Goal: Monetize the Jarvis System
-- Notes: Pivoted from "sell personal Jarvis builds" to "live, audio-reactive HUD widget for streamers" - packaging the orb dashboard as an OBS browser-source, not a personal assistant service. Differentiator vs. existing Etsy/Nerd or Die overlays: theirs are pre-rendered loops, ours actually reacts to real voice/data live. Core mechanic validated: a bare Three.js-sphere + Web Audio prototype (no Claude/Flask backend) was built and live-tested in Chrome - mic-reactive audio pipeline auto-starts with no code-side click gating, and the one unavoidable browser permission grant persists across reload with zero further clicks (confirmed empirically, not just assumed). Remaining open item: confirm the same persistence holds inside an actual OBS Browser Source restart, not just a browser tab. Full findings: vault/Projects/Streamer HUD Widget Market Research.md.
+- Notes: Standalone widget, no Claude/Flask backend - just the audio-reactive sphere as a pure OBS Browser Source. De-scoped deliberately from the earlier personal-assistant pivot to avoid the multi-tenant/hosting problem. Full findings: vault/Projects/Streamer HUD Widget Market Research.md.
 

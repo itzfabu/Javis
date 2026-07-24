@@ -19,3 +19,4 @@ Package the orb dashboard's audio-reactive particle-sphere as an OBS browser-sou
 ## Related
 - [[Streamer HUD Widget Market Research]]
 - [[Jarvis-as-a-Service Launch]]
+- [[Streamer HUD Widget - Premium Persona Tier Idea]]

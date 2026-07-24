@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -44,7 +44,26 @@ const THEMES = {
   green:  { hex: 0x6fff8f, hueBase: 0.33 }
 };
 const themeName = params.get("theme") || "cyan";
-const theme = THEMES[themeName] || THEMES.cyan;
+const customColorParam = params.get("color");
+const theme = customColorParam
+  ? { hex: parseInt(customColorParam, 16), hueBase: null }
+  : (THEMES[themeName] || THEMES.cyan);
+
+if (theme.hueBase === null) {
+  const r = ((theme.hex >> 16) & 255) / 255, g = ((theme.hex >> 8) & 255) / 255, b = (theme.hex & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0;
+  if (max !== min) {
+    const d = max - min;
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0));
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h /= 6;
+  }
+  theme.hueBase = h;
+}
+
+const testMode = params.has("test");
 
 // Size preset - customization option #2
 const SIZES = { small: 200, medium: 300, large: 420 };
@@ -106,6 +125,7 @@ let smoothedLow = 0, smoothedMid = 0, smoothedHigh = 0, smoothedOverall = 0;
 let activity = 0;
 
 async function initAudio() {
+  if (testMode) return;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -119,7 +139,14 @@ async function initAudio() {
   }
 }
 
+let testClock = 0;
 function getBandLevels() {
+  if (testMode) {
+    testClock += 0.02;
+    const wave = (Math.sin(testClock) + 1) / 2;
+    const talkBurst = Math.max(0, Math.sin(testClock * 0.3)) * wave;
+    return { low: talkBurst * 0.5, mid: talkBurst * 0.4, high: talkBurst * 0.6, overall: talkBurst * 0.5 };
+  }
   if (!analyser) return { low: 0, mid: 0, high: 0, overall: 0 };
   analyser.getByteFrequencyData(freqData);
   const n = freqData.length;
@@ -178,3 +205,4 @@ initAudio();
 </script>
 </body>
 </html>
+
