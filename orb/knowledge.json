@@ -15,7 +15,7 @@
                      {
                          "status":  "active",
                          "name":  "Streamer HUD Widget",
-                         "owner":  "business-analyst",
+                         "owner":  "webdesigner",
                          "goal":  "Monetize the Jarvis System"
                      }
                  ],
@@ -30,7 +30,22 @@
                    "project-manager"
                ],
     "tasks":  [
-
+                  {
+                      "text":  "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
+                      "project":  "streamer-hud"
+                  },
+                  {
+                      "text":  "Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud",
+                      "project":  "streamer-hud"
+                  },
+                  {
+                      "text":  "Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud",
+                      "project":  "streamer-hud"
+                  },
+                  {
+                      "text":  "Write basic licensing terms | priority: low | #streamer-hud",
+                      "project":  "streamer-hud"
+                  }
               ],
     "goals":  [
                   {
@@ -52,6 +67,10 @@
                   {
                       "folder":  "Projects",
                       "title":  "Jarvis-as-a-Service Pricing Research"
+                  },
+                  {
+                      "folder":  "Projects",
+                      "title":  "Streamer HUD Widget - Premium Persona Tier Idea"
                   },
                   {
                       "folder":  "Projects",

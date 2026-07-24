@@ -1,3 +1,1 @@
-﻿{
-    "status":  "thinking"
-}
+{"status": "speaking", "lastMessage": "Moved the NOTES panel down to `top: 70px` (was `40px`, overlapping the settings gear icon at `34px`) \u2014 now it sits clear below the icon with a small gap.", "tasks": ["Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud", "Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud", "Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud", "Write basic licensing terms | priority: low | #streamer-hud"], "audioToken": "1784883767531"}
