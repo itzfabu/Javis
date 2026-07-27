@@ -79,6 +79,10 @@
                   {
                       "folder":  "Projects",
                       "title":  "Streamer HUD Widget"
+                  },
+                  {
+                      "folder":  "Resources",
+                      "title":  "Insights"
                   }
               ]
 }
