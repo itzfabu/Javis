@@ -113,6 +113,18 @@
                       "title":  "Streamer HUD Widget"
                   },
                   {
+                      "folder":  "Areas",
+                      "title":  "Automatisches Wikilinking"
+                  },
+                  {
+                      "folder":  "Areas",
+                      "title":  "Jarvis Proaktiv statt Reaktiv"
+                  },
+                  {
+                      "folder":  "Areas",
+                      "title":  "Jarvis Provider-Unabhaengigkeit - Roadmap"
+                  },
+                  {
                       "folder":  "Resources",
                       "title":  "Insights"
                   }

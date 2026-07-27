@@ -205,6 +205,10 @@
   },
   "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
+    "Areas/Automatisches Wikilinking.md",
+    "Areas/Jarvis Proaktiv statt Reaktiv.md",
+    "Areas/Jarvis Provider-Unabhaengigkeit - Roadmap.md",
+    "Areas/Jarvis Provider-Unabhaengigkeit - Roadmap.md.tmp.35652.91bce9bfb972",
     "knowledge/CAPABILITIES.md",
     "knowledge/CAPABILITIES.md.tmp.35652.4c50cc9b8bd2",
     "orb/app.py.tmp.35652.7d77c05730f7",
@@ -230,7 +234,6 @@
     "orb/product/StreamerHUD/reactive-hud-pack.html",
     "orb/prototypes/streamer-hud-prototype.html",
     "orb/prototypes/server.log",
-    "orb/__pycache__/app.cpython-312.pyc",
     "Projects/Streamer HUD Widget.md",
     "Projects/Streamer HUD Widget Market Research.md",
     "Projects/Jarvis-as-a-Service Launch.md",
