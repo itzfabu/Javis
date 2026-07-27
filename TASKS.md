@@ -25,6 +25,8 @@ Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #projec
 - [ ] Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud
 - [ ] Write basic licensing terms | priority: low | #streamer-hud
 
+- [ ] Research the best GitHub repos to integrate into Jarvis to expand/improve it | priority: medium | due: 2026-07-28 | #jarvis-core
+
 ## Done
 
 (move completed tasks here instead of deleting them)

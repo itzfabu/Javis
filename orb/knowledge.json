@@ -77,6 +77,10 @@
                   {
                       "text":  "Write basic licensing terms | priority: low | #streamer-hud",
                       "project":  "streamer-hud"
+                  },
+                  {
+                      "text":  "Research the best GitHub repos to integrate into Jarvis to expand/improve it | priority: medium | due: 2026-07-28 | #jarvis-core",
+                      "project":  "jarvis-core"
                   }
               ],
     "goals":  [
