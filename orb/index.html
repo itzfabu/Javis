@@ -22,8 +22,12 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #notesPanel { position: absolute; top: 70px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
 #noteslist { list-style: none; }
 #noteslist li { padding: 2px 0; opacity: 0.75; }
-#logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 360px; font-size: 11px; z-index: 3; text-align: center; }
-#chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; }
+#logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 420px; font-size: 11px; z-index: 3; text-align: center; }
+#logText .lbl { text-align: center; }
+#chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; text-align: left; max-height: 140px; overflow-y: auto; padding: 8px 12px; background: rgba(10,40,45,0.25); border-radius: 8px; user-select: text; cursor: text; scrollbar-width: thin; scrollbar-color: rgba(90,255,230,0.4) transparent; }
+#chatlog::-webkit-scrollbar { width: 6px; }
+#chatlog::-webkit-scrollbar-thumb { background: rgba(90,255,230,0.4); border-radius: 3px; }
+#chatlog::-webkit-scrollbar-track { background: transparent; }
 #globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
 #globeContainer { width: 150px; height: 150px; margin: 0 auto; }
 .platform { width: 130px; height: 10px; margin: -6px auto 0; background: radial-gradient(ellipse at center, rgba(90,255,230,0.35), transparent 70%); border-radius: 50%; }
