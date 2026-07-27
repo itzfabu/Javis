@@ -31,14 +31,18 @@
             "id": "f39a5cd8e1a390e2",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "knowledge/PROJECTS.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "PROJECTS"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -199,13 +203,21 @@
       "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "f39a5cd8e1a390e2",
+  "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
-    "TASKS.md",
-    "CLAUDE.md",
-    "Jarvis-README.md",
     "knowledge/PROJECTS.md",
     "knowledge/GOALS.md",
+    "Templates/Resource Note.md",
+    "Templates/Project Note.md",
+    "Templates/Idea Note.md",
+    "Templates/Area Note.md",
+    "TASKS.md",
+    "README.md",
+    "Unbenannt.canvas",
+    "Untitled.canvas",
+    "Willkommen.md",
+    "CLAUDE.md",
+    "Jarvis-README.md",
     "knowledge",
     "orb/product/_stage/Start-Widget-Server.bat",
     "orb/product/_stage/Setup-Guide.md",
@@ -222,12 +234,6 @@
     "Projects/Streamer HUD Widget Market Research.md",
     "Projects/Jarvis-as-a-Service Launch.md",
     "Projects/Jarvis-as-a-Service Pricing Research.md",
-    "Decisions-Log.md",
-    "Templates/Resource Note.md",
-    "Templates/Project Note.md",
-    "Templates/Idea Note.md",
-    "Templates/Area Note.md",
-    "Unbenannt.canvas",
-    "Willkommen.md"
+    "Decisions-Log.md"
   ]
 }

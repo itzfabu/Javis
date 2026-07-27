@@ -1,4 +1,4 @@
-﻿# Tasks
+# Tasks
 
 Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #project-tag
 

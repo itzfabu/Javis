@@ -1,4 +1,4 @@
-﻿# Vault Map
+# Vault Map
 
 This vault uses the PARA method:
 
