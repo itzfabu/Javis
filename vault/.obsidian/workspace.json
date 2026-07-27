@@ -205,6 +205,9 @@
   },
   "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
+    "knowledge/CAPABILITIES.md",
+    "knowledge/CAPABILITIES.md.tmp.35652.4c50cc9b8bd2",
+    "orb/app.py.tmp.35652.7d77c05730f7",
     "knowledge/PROJECTS.md",
     "knowledge/GOALS.md",
     "Templates/Resource Note.md",
@@ -228,8 +231,6 @@
     "orb/prototypes/streamer-hud-prototype.html",
     "orb/prototypes/server.log",
     "orb/__pycache__/app.cpython-312.pyc",
-    "orb/prototypes/obs-transparency-test.html",
-    "orb/product/_stage",
     "Projects/Streamer HUD Widget.md",
     "Projects/Streamer HUD Widget Market Research.md",
     "Projects/Jarvis-as-a-Service Launch.md",

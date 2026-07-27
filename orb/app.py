@@ -1,5 +1,6 @@
 ﻿from flask import Flask, request, jsonify, send_from_directory
 import subprocess, os, time, json, socket, threading
+import requests
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
@@ -8,6 +9,21 @@ HISTORY_PATH = r"C:\Jarvis\orb\history.json"
 SESSION_MARKER = r"C:\Jarvis\orb\webchat_session_created.flag"
 WEBCHAT_SESSION_ID = "8f14e45f-ceea-467e-9575-5c3c4a5c6f2b"
 SECRET_TOKEN = "bfee9c861c8a6a792a579f613b8bda86a3a6ac9fb5513d78"
+
+def load_env_file():
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, _, value = line.partition("=")
+                os.environ.setdefault(key.strip(), value.strip())
+
+load_env_file()
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+FALLBACK_KEYWORDS = ("usage limit", "rate limit", "429", "quota", "overloaded")
 
 def get_open_tasks():
     tasks = []
@@ -19,9 +35,9 @@ def get_open_tasks():
                     tasks.append(line[5:].strip())
     return tasks
 
-def write_status(status, message, tasks, token):
+def write_status(status, message, tasks, token, source="claude"):
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
-        json.dump({"status": status, "lastMessage": message, "tasks": tasks, "audioToken": token}, f)
+        json.dump({"status": status, "lastMessage": message, "tasks": tasks, "audioToken": token, "source": source}, f)
 
 def add_history(text):
     history = []
@@ -43,12 +59,30 @@ def run_claude(message):
     else:
         cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--session-id", WEBCHAT_SESSION_ID]
     result = subprocess.run(cmd, cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
-    if result.returncode != 0 and result.stderr.strip():
-        raise RuntimeError(result.stderr.strip()[:300])
+    combined = ((result.stdout or "") + "\n" + (result.stderr or "")).lower()
+    needs_fallback = result.returncode != 0 or any(kw in combined for kw in FALLBACK_KEYWORDS)
+    if needs_fallback:
+        reason = (result.stderr.strip() or result.stdout.strip() or "unknown error")[:300]
+        return None, reason
     if not os.path.exists(SESSION_MARKER):
         with open(SESSION_MARKER, "w") as f:
             f.write("created")
-    return result.stdout.strip() or "Sorry, I could not process that."
+    return result.stdout.strip() or "Sorry, I could not process that.", None
+
+def call_openai_fallback(message):
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY not set")
+    try:
+        resp = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": message}]},
+            timeout=60,
+        )
+        resp.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"OpenAI fallback failed: {e}")
+    return resp.json()["choices"][0]["message"]["content"].strip()
 
 def background_backup():
     try:
@@ -85,7 +119,7 @@ def chat():
     write_status("thinking", "", tasks, None)
 
     try:
-        reply = run_claude(message)
+        reply, fail_reason = run_claude(message)
     except subprocess.TimeoutExpired:
         write_status("idle", "Sorry, that request timed out.", tasks, None)
         return jsonify({"error": "timeout"}), 504
@@ -93,8 +127,18 @@ def chat():
         write_status("idle", "Something went wrong: " + str(e), tasks, None)
         return jsonify({"error": str(e)}), 500
 
+    source = "claude"
+    if reply is None:
+        print(f"[{time.strftime('%H:%M:%S')}] Claude CLI issue ({fail_reason}) -> using OpenAI fallback (via ChatGPT-Fallback)")
+        source = "openai"
+        try:
+            reply = call_openai_fallback(message)
+        except Exception as e:
+            write_status("idle", "Something went wrong: " + str(e), tasks, None)
+            return jsonify({"error": str(e)}), 500
+
     add_history(reply)
-    write_status("speaking", reply, tasks, None)
+    write_status("speaking", reply, tasks, None, source=source)
 
     audio_token = None
     try:
@@ -111,7 +155,7 @@ def chat():
         pass
 
     tasks = get_open_tasks()
-    write_status("speaking" if audio_token else "idle", reply, tasks, audio_token)
+    write_status("speaking" if audio_token else "idle", reply, tasks, audio_token, source=source)
 
     threading.Thread(target=background_backup, daemon=True).start()
 
