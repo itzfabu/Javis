@@ -1,3 +1,1 @@
-﻿{
-    "status":  "thinking"
-}
+{"status": "speaking", "lastMessage": "Good Morning, Sir.\n\nZurich is at 30\u00b0C. Four open items, all under #streamer-hud: packaging for end customers (high priority), customer-facing setup instructions, picking a sales channel (Gumroad/Etsy/itch.io/own site), and basic licensing terms (low priority). What would you like to tackle first?", "tasks": ["Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud", "Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud", "Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud", "Write basic licensing terms | priority: low | #streamer-hud"], "audioToken": "1785132964564"}
