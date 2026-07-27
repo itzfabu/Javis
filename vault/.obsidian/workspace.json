@@ -8,16 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "b549ee4fb48c679e",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
-            }
-          },
-          {
             "id": "9f7c1ee8a3d0914b",
             "type": "leaf",
             "state": {
@@ -40,9 +30,18 @@
               "icon": "lucide-file",
               "title": "PROJECTS"
             }
+          },
+          {
+            "id": "e5c072c6ed920d1c",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -205,6 +204,8 @@
   },
   "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
+    "knowledge/PROJECTS.md",
+    "Areas/Jarvis - Gesamtstatus.md",
     "Areas/Automatisches Wikilinking.md",
     "Areas/Jarvis Proaktiv statt Reaktiv.md",
     "Areas/Jarvis Provider-Unabhaengigkeit - Roadmap.md",
@@ -212,7 +213,6 @@
     "knowledge/CAPABILITIES.md",
     "knowledge/CAPABILITIES.md.tmp.35652.4c50cc9b8bd2",
     "orb/app.py.tmp.35652.7d77c05730f7",
-    "knowledge/PROJECTS.md",
     "knowledge/GOALS.md",
     "Templates/Resource Note.md",
     "Templates/Project Note.md",
