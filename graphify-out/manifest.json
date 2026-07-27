@@ -1,0 +1,267 @@
+{
+  ".claude/hooks/fetch-context.ps1": {
+    "mtime": 1784720562.3299768,
+    "ast_hash": "ebdaeeccd86ab0755c27e8312a11a5d5",
+    "semantic_hash": "ebdaeeccd86ab0755c27e8312a11a5d5"
+  },
+  ".claude/hooks/git-backup.ps1": {
+    "mtime": 1784808646.2121022,
+    "ast_hash": "bd7c2ba888dbd05440deed23564abce4",
+    "semantic_hash": "bd7c2ba888dbd05440deed23564abce4"
+  },
+  ".claude/hooks/guard-connectors.ps1": {
+    "mtime": 1784806501.117229,
+    "ast_hash": "f384c42296aeff1250579513a4b8b54f",
+    "semantic_hash": "f384c42296aeff1250579513a4b8b54f"
+  },
+  ".claude/hooks/set-thinking.ps1": {
+    "mtime": 1784712363.660724,
+    "ast_hash": "7f2e567851f6504aecac0bef19f5f3c4",
+    "semantic_hash": "7f2e567851f6504aecac0bef19f5f3c4"
+  },
+  ".claude/hooks/speak-response.ps1": {
+    "mtime": 1784725576.53546,
+    "ast_hash": "dc621e1d54a93e1c4ca98932453c7550",
+    "semantic_hash": "dc621e1d54a93e1c4ca98932453c7550"
+  },
+  ".claude/hooks/sync-knowledge.ps1": {
+    "mtime": 1784808523.6836967,
+    "ast_hash": "d20899c275aca707e6045023dc6deaf2",
+    "semantic_hash": "d20899c275aca707e6045023dc6deaf2"
+  },
+  ".claude/hooks/watch-knowledge.ps1": {
+    "mtime": 1784806500.733764,
+    "ast_hash": "ab49a163a6cb80140e1b9886a91680f4",
+    "semantic_hash": "ab49a163a6cb80140e1b9886a91680f4"
+  },
+  ".claude/settings.json": {
+    "mtime": 1784806500.835565,
+    "ast_hash": "88da6309648cf07faca9bd1ee2c21c1f",
+    "semantic_hash": "88da6309648cf07faca9bd1ee2c21c1f"
+  },
+  "orb/app.py": {
+    "mtime": 1784810155.7891345,
+    "ast_hash": "9795897ddda870e1a7d40d987912ac33",
+    "semantic_hash": "9795897ddda870e1a7d40d987912ac33"
+  },
+  "orb/history.json": {
+    "mtime": 1785135413.4107249,
+    "ast_hash": "94bb973a8d229180e6c4c00d4f685cdc",
+    "semantic_hash": "94bb973a8d229180e6c4c00d4f685cdc"
+  },
+  "orb/knowledge.json": {
+    "mtime": 1785135420.9644663,
+    "ast_hash": "ccd419fa58c985e98de0c05e01ff2150",
+    "semantic_hash": "ccd419fa58c985e98de0c05e01ff2150"
+  },
+  "orb/status.json": {
+    "mtime": 1785147531.4357884,
+    "ast_hash": "50456f6cc1c480a61388592848999d8a",
+    "semantic_hash": "50456f6cc1c480a61388592848999d8a"
+  },
+  "vault/.obsidian/app.json": {
+    "mtime": 1785146129.401943,
+    "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
+    "semantic_hash": "99914b932bd37a50b983c5e7c90ae93b"
+  },
+  "vault/.obsidian/appearance.json": {
+    "mtime": 1785146129.4034483,
+    "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
+    "semantic_hash": "99914b932bd37a50b983c5e7c90ae93b"
+  },
+  "vault/.obsidian/core-plugins.json": {
+    "mtime": 1785146129.384014,
+    "ast_hash": "7c877bea49eaeabb100563bd157b9051",
+    "semantic_hash": "7c877bea49eaeabb100563bd157b9051"
+  },
+  "vault/.obsidian/graph.json": {
+    "mtime": 1785146131.066,
+    "ast_hash": "5cadfdac6854bec485760c404839e431",
+    "semantic_hash": "5cadfdac6854bec485760c404839e431"
+  },
+  "vault/.obsidian/templates.json": {
+    "mtime": 1784806500.7641063,
+    "ast_hash": "d36c34f902deb03506af9c1252be191f",
+    "semantic_hash": "d36c34f902deb03506af9c1252be191f"
+  },
+  "vault/.obsidian/workspace.json": {
+    "mtime": 1785146129.669416,
+    "ast_hash": "fd0ac89cc5a4f22350c4a25ce2d6168c",
+    "semantic_hash": "fd0ac89cc5a4f22350c4a25ce2d6168c"
+  },
+  ".claude/agents/business-analyst.md": {
+    "mtime": 1784731229.1242776,
+    "ast_hash": "922f6043179b8074cd9a8336e441ecb4",
+    "semantic_hash": "922f6043179b8074cd9a8336e441ecb4"
+  },
+  ".claude/agents/coder.md": {
+    "mtime": 1784731229.1194496,
+    "ast_hash": "09a43be58181e71dad3238402d901772",
+    "semantic_hash": "09a43be58181e71dad3238402d901772"
+  },
+  ".claude/agents/debugger.md": {
+    "mtime": 1784731229.1194496,
+    "ast_hash": "bd37ce57a19be580ebc0cda136bbfb98",
+    "semantic_hash": "bd37ce57a19be580ebc0cda136bbfb98"
+  },
+  ".claude/agents/planner.md": {
+    "mtime": 1784731229.1242776,
+    "ast_hash": "8a9f17fc8fb218e471e31a4be714289c",
+    "semantic_hash": "8a9f17fc8fb218e471e31a4be714289c"
+  },
+  ".claude/agents/project-manager.md": {
+    "mtime": 1784728423.2708786,
+    "ast_hash": "a3e76921997037525ffe743eaddcc8b1",
+    "semantic_hash": "a3e76921997037525ffe743eaddcc8b1"
+  },
+  ".claude/agents/researcher.md": {
+    "mtime": 1784731229.1160424,
+    "ast_hash": "6276090a7ef0d16986ec35ca03b634c6",
+    "semantic_hash": "6276090a7ef0d16986ec35ca03b634c6"
+  },
+  ".claude/agents/webdesigner.md": {
+    "mtime": 1784731229.1331606,
+    "ast_hash": "9e24aba561c0c9e14cbc8b9444c8892b",
+    "semantic_hash": "9e24aba561c0c9e14cbc8b9444c8892b"
+  },
+  ".claude/agents/writer.md": {
+    "mtime": 1784731229.1242776,
+    "ast_hash": "3ccbbd49e2716c66082c12a747d3be55",
+    "semantic_hash": "3ccbbd49e2716c66082c12a747d3be55"
+  },
+  "CLAUDE.md": {
+    "mtime": 1784807847.7949722,
+    "ast_hash": "11adf767dccae05d5371e41918da6865",
+    "semantic_hash": "11adf767dccae05d5371e41918da6865"
+  },
+  "DAILY-BRIEF.md": {
+    "mtime": 1785132480.2977505,
+    "ast_hash": "0f12e7049c7f94862da61daee037d3ea",
+    "semantic_hash": "0f12e7049c7f94862da61daee037d3ea"
+  },
+  "README.md": {
+    "mtime": 1784807108.5830553,
+    "ast_hash": "30087034d961bef52e5599d6c93a2d6b",
+    "semantic_hash": "30087034d961bef52e5599d6c93a2d6b"
+  },
+  "TASKS.md": {
+    "mtime": 1785133631.314316,
+    "ast_hash": "b9c06c260967de96976810dabcbf658d",
+    "semantic_hash": "b9c06c260967de96976810dabcbf658d"
+  },
+  "knowledge/GOALS.md": {
+    "mtime": 1784809720.3927658,
+    "ast_hash": "e8a5ef46521d25be5eb0da3a2b642926",
+    "semantic_hash": "e8a5ef46521d25be5eb0da3a2b642926"
+  },
+  "knowledge/PROJECTS.md": {
+    "mtime": 1784880693.0613418,
+    "ast_hash": "1134c81bb3790c607912287e47d908ed",
+    "semantic_hash": "1134c81bb3790c607912287e47d908ed"
+  },
+  "orb/License-Key-Generator-SELLER-ONLY.html": {
+    "mtime": 1784894407.2546177,
+    "ast_hash": "cb2121a478f52d31ff2b83266f94ea30",
+    "semantic_hash": "cb2121a478f52d31ff2b83266f94ea30"
+  },
+  "orb/index.html": {
+    "mtime": 1785133869.9239483,
+    "ast_hash": "a3424a5cb604531d2978b3986a9accea",
+    "semantic_hash": "a3424a5cb604531d2978b3986a9accea"
+  },
+  "orb/product/StreamerHUD/Setup-Guide.md": {
+    "mtime": 1785133631.3173513,
+    "ast_hash": "0a0f2e2890031d476343b47dafb1032c",
+    "semantic_hash": "0a0f2e2890031d476343b47dafb1032c"
+  },
+  "orb/product/StreamerHUD/reactive-hud-pack.html": {
+    "mtime": 1785132480.410971,
+    "ast_hash": "6ef955c7f5b1639ed04c7fa1aad872e6",
+    "semantic_hash": "6ef955c7f5b1639ed04c7fa1aad872e6"
+  },
+  "orb/product/_stage/Setup-Guide.md": {
+    "mtime": 1785133631.3177197,
+    "ast_hash": "0a0f2e2890031d476343b47dafb1032c",
+    "semantic_hash": "0a0f2e2890031d476343b47dafb1032c"
+  },
+  "orb/product/_stage/reactive-hud-pack.html": {
+    "mtime": 1785133631.3177197,
+    "ast_hash": "6ef955c7f5b1639ed04c7fa1aad872e6",
+    "semantic_hash": "6ef955c7f5b1639ed04c7fa1aad872e6"
+  },
+  "orb/prototypes/obs-transparency-test.html": {
+    "mtime": 1784874712.5952556,
+    "ast_hash": "97dba3cdd724e2039f1d06948de08ac7",
+    "semantic_hash": "97dba3cdd724e2039f1d06948de08ac7"
+  },
+  "orb/prototypes/streamer-hud-prototype.html": {
+    "mtime": 1784880738.4419236,
+    "ast_hash": "7bd9e9d9b2280117fac7fa4b75cfff41",
+    "semantic_hash": "7bd9e9d9b2280117fac7fa4b75cfff41"
+  },
+  "vault/Decisions-Log.md": {
+    "mtime": 1784806926.9695127,
+    "ast_hash": "509e30160eeb0176cf25ac6032f30f1b",
+    "semantic_hash": "509e30160eeb0176cf25ac6032f30f1b"
+  },
+  "vault/Projects/Jarvis-as-a-Service Launch.md": {
+    "mtime": 1784811044.2119398,
+    "ast_hash": "e28e6ed58e254042880227052c7bbf73",
+    "semantic_hash": "e28e6ed58e254042880227052c7bbf73"
+  },
+  "vault/Projects/Jarvis-as-a-Service Pricing Research.md": {
+    "mtime": 1784810907.9082825,
+    "ast_hash": "9831142d3748f33a9a5c1228b5c2372c",
+    "semantic_hash": "9831142d3748f33a9a5c1228b5c2372c"
+  },
+  "vault/Projects/Streamer HUD Widget - Premium Persona Tier Idea.md": {
+    "mtime": 1784882345.446498,
+    "ast_hash": "ba1fbe157923b8cba9939f832c342cd1",
+    "semantic_hash": "ba1fbe157923b8cba9939f832c342cd1"
+  },
+  "vault/Projects/Streamer HUD Widget Market Research.md": {
+    "mtime": 1784815886.8372638,
+    "ast_hash": "8ef329a0bce5f35d4ba5c7bd2a33f979",
+    "semantic_hash": "8ef329a0bce5f35d4ba5c7bd2a33f979"
+  },
+  "vault/Projects/Streamer HUD Widget.md": {
+    "mtime": 1784882348.5031366,
+    "ast_hash": "266a946f68edddb13477e968343ccffd",
+    "semantic_hash": "266a946f68edddb13477e968343ccffd"
+  },
+  "vault/README.md": {
+    "mtime": 1784747560.7254832,
+    "ast_hash": "7039df7a7630aa655a4fb4a645e9217c",
+    "semantic_hash": "7039df7a7630aa655a4fb4a645e9217c"
+  },
+  "vault/Resources/Insights.md": {
+    "mtime": 1785133631.2275043,
+    "ast_hash": "add8b31d9e1adcb44067d4453157009d",
+    "semantic_hash": "add8b31d9e1adcb44067d4453157009d"
+  },
+  "vault/Templates/Area Note.md": {
+    "mtime": 1784806500.767093,
+    "ast_hash": "3e655c8fb24dd63f1d4088f8b9b542a7",
+    "semantic_hash": "3e655c8fb24dd63f1d4088f8b9b542a7"
+  },
+  "vault/Templates/Idea Note.md": {
+    "mtime": 1784806500.7683647,
+    "ast_hash": "ea2724cce218619688a90a9b70908a81",
+    "semantic_hash": "ea2724cce218619688a90a9b70908a81"
+  },
+  "vault/Templates/Project Note.md": {
+    "mtime": 1784806500.7703724,
+    "ast_hash": "54a5511101d6a7831c459a3d6584e062",
+    "semantic_hash": "54a5511101d6a7831c459a3d6584e062"
+  },
+  "vault/Templates/Resource Note.md": {
+    "mtime": 1784806501.1255057,
+    "ast_hash": "3ed75dee29686a26f80ab2fb5e42aaa7",
+    "semantic_hash": "3ed75dee29686a26f80ab2fb5e42aaa7"
+  },
+  "vault/Willkommen.md": {
+    "mtime": 1784730272.9735756,
+    "ast_hash": "eb3602273acf100c0f9e8b16fc57f33a",
+    "semantic_hash": "eb3602273acf100c0f9e8b16fc57f33a"
+  }
+}

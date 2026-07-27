@@ -64,8 +64,8 @@ if (Test-Path $projectsPath) {
 
 $tasks = @()
 if (Test-Path $tasksPath) {
-    Get-Content $tasksPath | Where-Object { $_ -match "^\s*-\s*\[ \]" } | ForEach-Object {
-        $line = $_ -replace "^\s*-\s*\[ \]\s*", ""
+    Get-Content $tasksPath | Where-Object { $_ -match "^\s*\\?-\s*\\?\[ \\?\]" } | ForEach-Object {
+        $line = $_ -replace "^\s*\\?-\s*\\?\[ \\?\]\s*", ""
         $project = ""
         if ($line -match "#([\w-]+)") { $project = $matches[1] }
         $tasks += @{ text = $line; project = $project }

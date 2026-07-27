@@ -1,1 +1,3 @@
-{"status": "speaking", "lastMessage": "You've hit your session limit \u00b7 resets 11am (Europe/London)", "tasks": ["Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud", "Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud", "Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud", "Write basic licensing terms | priority: low | #streamer-hud"], "audioToken": "1785135415570"}
+﻿{
+    "status":  "thinking"
+}

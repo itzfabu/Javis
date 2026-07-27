@@ -16,8 +16,29 @@
               "icon": "lucide-git-fork",
               "title": "Graph view"
             }
+          },
+          {
+            "id": "9f7c1ee8a3d0914b",
+            "type": "leaf",
+            "state": {
+              "type": "3d-graph-view",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "3d graph"
+            }
+          },
+          {
+            "id": "f39a5cd8e1a390e2",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -173,10 +194,12 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian42-brat:BRAT": false,
+      "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "b549ee4fb48c679e",
+  "active": "f39a5cd8e1a390e2",
   "lastOpenFiles": [
     "Projects/Streamer HUD Widget.md",
     "Projects/Streamer HUD Widget Market Research.md",

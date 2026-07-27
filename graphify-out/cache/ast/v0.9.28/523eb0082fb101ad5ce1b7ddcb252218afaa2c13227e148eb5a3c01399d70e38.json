@@ -1,0 +1,1 @@
+{"nodes": [{"id": "c_jarvis_claude_hooks_speak_response_ps1", "label": "speak-response.ps1", "file_type": "code", "source_file": ".claude/hooks/speak-response.ps1", "source_location": "L1"}], "edges": [], "raw_calls": []}

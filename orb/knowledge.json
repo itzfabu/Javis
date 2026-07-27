@@ -31,6 +31,38 @@
                ],
     "tasks":  [
                   {
+                      "text":  "Validate pricing and positioning against direct competitors on Fiverr/Upwork | priority: high | due: 2026-07-30 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Build a portfolio/demo site showcasing the orb dashboard | priority: high | due: 2026-08-05 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Draft the actual gig/listing copy | priority: medium | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Record a 3-5 min demo video of the orb dashboard and agent delegation in action | priority: high | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Decide target buyer: individual assistant-seekers vs. small-business automation clients | priority: high | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Scope a productization checklist (auth, config isolation, docs) before quoting client work | priority: medium | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "Write up \"Claude Flowstate\" idea as a note | priority: low",
+                      "project":  ""
+                  },
+                  {
                       "text":  "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
                       "project":  "streamer-hud"
                   },
