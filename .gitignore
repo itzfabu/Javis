@@ -3,3 +3,13 @@
 # Broad on purpose: only scratch/temp output is ever named .txt in this repo
 # (e.g. voice-response staging). No real notes or docs use .txt - those are .md.
 *.txt
+
+# Junctions/hardlinks into vault/ for Obsidian's 3D-graph vault scope (#see graphify session 2026-07-27).
+# Git can't see these as links - it walks through them - so ignore the vault-side paths
+# and keep tracking only the real C:\Jarvis locations.
+vault/orb/
+vault/.claude/
+vault/knowledge/
+vault/CLAUDE.md
+vault/TASKS.md
+vault/Jarvis-README.md
