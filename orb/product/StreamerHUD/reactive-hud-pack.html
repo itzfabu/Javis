@@ -48,6 +48,11 @@ input[type=text] { padding: 6px; border-radius: 6px; border: 1px solid #333; bac
   </div>
 
   <div class="sec">
+    <h3>Quick Presets</h3>
+    <div class="row" id="presetRow"></div>
+  </div>
+
+  <div class="sec">
     <h3>Style</h3>
     <div class="row" id="styleRow"></div>
   </div>
@@ -64,6 +69,11 @@ input[type=text] { padding: 6px; border-radius: 6px; border: 1px solid #333; bac
     <div class="row" id="sizeRow"></div>
   </div>
 
+  <div class="sec">
+    <h3>Background Layer (combine with any style above)</h3>
+    <div class="row" id="bgLayerRow"></div>
+  </div>
+
   <div class="sec" id="twitchSec" style="display:none;">
     <h3>Twitch Client ID (for Events style)</h3>
     <input type="text" id="twitchClientInput" placeholder="paste your Twitch app Client ID">
@@ -71,9 +81,17 @@ input[type=text] { padding: 6px; border-radius: 6px; border: 1px solid #333; bac
   </div>
 </div>
 
-<div id="stage">
-  <canvas id="canvas2d"></canvas>
-  <div id="threeContainer"></div>
+<div id="bootOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; z-index:25; transition:opacity 0.6s ease; background:transparent; pointer-events:none;">
+  <div style="text-align:center;">
+    <div id="bootRing" style="width:60px; height:60px; border-radius:50%; border:2px solid rgba(90,255,230,0.6); margin:0 auto 10px; animation:bootpulse 1.2s ease-out;"></div>
+    <div style="font-size:10px; letter-spacing:3px; color:#7fffe8; opacity:0.8;">SYSTEM ONLINE</div>
+  </div>
+</div>
+<style>@keyframes bootpulse { 0% { transform:scale(0.3); opacity:1; } 100% { transform:scale(2.2); opacity:0; } }</style>
+<div id="stage" style="position:absolute; top:50%; left:50%;">
+  <canvas id="canvasBg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:0;"></canvas>
+  <canvas id="canvas2d" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1;"></canvas>
+  <div id="threeContainer" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1;"></div>
 </div>
 <div id="diag"></div>
 
@@ -87,7 +105,7 @@ function saveState(patch) {
   localStorage.setItem(STATE_KEY, JSON.stringify(s));
   return s;
 }
-let state = Object.assign({ style: "sphere", theme: "cyan", customColor: null, size: "medium", proUnlocked: false, twitchClientId: "" }, loadState());
+let state = Object.assign({ style: "sphere", theme: "cyan", customColor: null, size: "medium", proUnlocked: false, twitchClientId: "", bgLayer: "none" }, loadState());
 
 const params = new URLSearchParams(window.location.search);
 const showDiag = params.has("diag");
@@ -97,18 +115,31 @@ const testMode = params.has("test");
 
 const THEMES = { cyan: "#5affe6", purple: "#b266ff", gold: "#ffcf7f", red: "#ff5a6e", green: "#6fff8f" };
 const STYLES = [
-  { name: "sphere", label: "Sphere", pro: false },
-  { name: "waveform", label: "Waveform", pro: false },
-  { name: "vuring", label: "VU Ring", pro: true },
-  { name: "burst", label: "Particle Burst", pro: true },
-  { name: "eventreactive", label: "Twitch Events", pro: true },
-  { name: "orbitrings", label: "Orbit Rings", pro: true },
-  { name: "mirrored", label: "Mirrored Waveform", pro: true },
-  { name: "arcring", label: "Arc Gauge", pro: true },
-  { name: "firework", label: "Firework", pro: true },
-  { name: "hologram", label: "Hologram Grid", pro: true },
-  { name: "radar", label: "Radar Sweep", pro: true },
-  { name: "datastream", label: "Data Stream", pro: true }
+  { name: "sphere", label: "Sphere", pro: false, cat: "Organic" },
+  { name: "orbitrings", label: "Orbit Rings", pro: true, cat: "Organic" },
+  { name: "hologram", label: "Hologram Grid", pro: true, cat: "Tech / HUD" },
+  { name: "radar", label: "Radar Sweep", pro: true, cat: "Tech / HUD" },
+  { name: "datastream", label: "Data Stream", pro: true, cat: "Tech / HUD" },
+  { name: "radarsphere", label: "Radar + Sphere (Combo)", pro: true, cat: "Tech / HUD" },
+  { name: "waveform", label: "Waveform", pro: false, cat: "Classic" },
+  { name: "mirrored", label: "Mirrored Waveform", pro: true, cat: "Classic" },
+  { name: "vuring", label: "VU Ring", pro: true, cat: "Classic" },
+  { name: "arcring", label: "Arc Gauge", pro: true, cat: "Classic" },
+  { name: "heartbeat", label: "Heartbeat Monitor", pro: true, cat: "Classic" },
+  { name: "lightning", label: "Lightning", pro: true, cat: "Impact" },
+  { name: "burst", label: "Particle Burst", pro: true, cat: "Impact" },
+  { name: "firework", label: "Firework", pro: true, cat: "Impact" },
+  { name: "eventreactive", label: "Twitch Events", pro: true, cat: "Impact" }
+];
+
+const PRESETS = [
+  { name: "Cyberpunk", style: "hologram", theme: "purple", size: "medium", bgLayer: "none" },
+  { name: "Zen Mode", style: "sphere", theme: "green", size: "medium", bgLayer: "none" },
+  { name: "Hype Mode", style: "firework", theme: "gold", size: "large", bgLayer: "none" },
+  { name: "Retro Scan", style: "radar", theme: "cyan", size: "medium", bgLayer: "none" },
+  { name: "Radar + Sphere", style: "sphere", theme: "cyan", size: "medium", bgLayer: "radar" },
+  { name: "Halloween", style: "hologram", customColor: "ff7a1a", size: "medium", bgLayer: "none" },
+  { name: "Christmas", style: "firework", theme: "red", size: "medium", bgLayer: "datastream" }
 ];
 const SIZES2D = { small: 220, medium: 320, large: 460 };
 const SIZES3D = { small: 200, medium: 300, large: 420 };
@@ -131,26 +162,50 @@ function hexToRgb(hex) {
 
 // ---------- Panel UI ----------
 const styleRow = document.getElementById("styleRow");
+function styleClickHandler(s) {
+  const url = new URL(window.location.href);
+  if (s.pro && !state.proUnlocked) {
+    url.searchParams.set("preview", s.name);
+  } else {
+    state = saveState({ style: s.name });
+    url.searchParams.delete("preview");
+  }
+  window.location.href = url.toString();
+}
 function renderStyleButtons() {
   styleRow.innerHTML = "";
-  STYLES.forEach(s => {
-    const el = document.createElement("button");
-    el.className = "btn" + (s.name === state.style ? " on" : "") + ((s.pro && !state.proUnlocked) ? " locked" : "");
-    el.textContent = s.label + (s.pro ? " (PRO)" : "");
-    el.addEventListener("click", () => {
-      const url = new URL(window.location.href);
-      if (s.pro && !state.proUnlocked) {
-        url.searchParams.set("preview", s.name);
-      } else {
-        state = saveState({ style: s.name });
-        url.searchParams.delete("preview");
-      }
-      window.location.href = url.toString();
+  const cats = [...new Set(STYLES.map(s => s.cat))];
+  cats.forEach(cat => {
+    const header = document.createElement("div");
+    header.textContent = cat;
+    header.style.cssText = "width:100%; font-size:9px; opacity:0.5; letter-spacing:1px; margin:8px 0 2px;";
+    styleRow.appendChild(header);
+    STYLES.filter(s => s.cat === cat).forEach(s => {
+      const el = document.createElement("button");
+      el.className = "btn" + (s.name === state.style ? " on" : "") + ((s.pro && !state.proUnlocked) ? " locked" : "");
+      el.textContent = s.label + (s.pro ? " (PRO)" : "");
+      el.addEventListener("click", () => styleClickHandler(s));
+      styleRow.appendChild(el);
     });
-    styleRow.appendChild(el);
   });
 }
 renderStyleButtons();
+
+const presetRow = document.getElementById("presetRow");
+PRESETS.forEach(p => {
+  const el = document.createElement("button");
+  el.className = "btn";
+  el.textContent = p.name;
+  el.addEventListener("click", () => {
+    const styleDef = STYLES.find(s => s.name === p.style);
+    if (styleDef && styleDef.pro && !state.proUnlocked) { styleClickHandler(styleDef); return; }
+    state = saveState({ style: p.style, theme: p.theme || "cyan", customColor: p.customColor || null, size: p.size, bgLayer: p.bgLayer || "none" });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    window.location.href = url.toString();
+  });
+  presetRow.appendChild(el);
+});
 
 const colorRow = document.getElementById("colorRow");
 Object.entries(THEMES).forEach(([name, hex]) => {
@@ -199,6 +254,24 @@ if (state.style === "eventreactive") {
     location.reload();
   });
 }
+
+const BG_LAYERS = [
+  { name: "none", label: "None", pro: false },
+  { name: "radar", label: "Radar Sweep", pro: true },
+  { name: "datastream", label: "Data Stream", pro: true }
+];
+const bgLayerRow = document.getElementById("bgLayerRow");
+BG_LAYERS.forEach(b => {
+  const el = document.createElement("button");
+  el.className = "btn" + (b.name === state.bgLayer ? " on" : "") + ((b.pro && !state.proUnlocked) ? " locked" : "");
+  el.textContent = b.label;
+  el.addEventListener("click", () => {
+    if (b.pro && !state.proUnlocked) return;
+    state = saveState({ bgLayer: b.name });
+    location.reload();
+  });
+  bgLayerRow.appendChild(el);
+});
 
 document.getElementById("gear").addEventListener("click", () => { document.getElementById("panel").style.display = "block"; });
 document.getElementById("closePanel").addEventListener("click", () => { document.getElementById("panel").style.display = "none"; });
@@ -758,6 +831,150 @@ if (effectiveStyle === "sphere") {
   animateRadar();
   initMicAudio();
 
+} else if (effectiveStyle === "radarsphere") {
+  const dimRS = SIZES3D[state.size] || 300;
+  canvas2d.width = dimRS; canvas2d.height = dimRS;
+  threeContainer.style.width = dimRS + "px"; threeContainer.style.height = dimRS + "px";
+  threeContainer.style.position = "absolute"; threeContainer.style.top = "0"; threeContainer.style.left = "0"; threeContainer.style.zIndex = "2";
+  canvas2d.style.position = "absolute"; canvas2d.style.top = "0"; canvas2d.style.left = "0"; canvas2d.style.zIndex = "1";
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.z = 4.2;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(dimRS, dimRS);
+  threeContainer.appendChild(renderer.domElement);
+  const count = 3000;
+  const basePositionsRS = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2, r = Math.sqrt(1 - y * y), th = Math.PI * (1 + Math.sqrt(5)) * i;
+    const jitter = 1 + (Math.random() - 0.5) * 0.06;
+    basePositionsRS[i*3] = Math.cos(th) * r * 0.85 * jitter;
+    basePositionsRS[i*3+1] = y * 0.85 * jitter;
+    basePositionsRS[i*3+2] = Math.sin(th) * r * 0.85 * jitter;
+  }
+  const geoRS = new THREE.BufferGeometry();
+  geoRS.setAttribute("position", new THREE.BufferAttribute(basePositionsRS.slice(), 3));
+  const tcanvasRS = document.createElement("canvas"); tcanvasRS.width = 16; tcanvasRS.height = 16;
+  const tctxRS = tcanvasRS.getContext("2d");
+  const tgradRS = tctxRS.createRadialGradient(8,8,0,8,8,8);
+  tgradRS.addColorStop(0, "rgba(255,255,255,1)"); tgradRS.addColorStop(1, "rgba(255,255,255,0)");
+  tctxRS.fillStyle = tgradRS; tctxRS.fillRect(0,0,16,16);
+  const matRS = new THREE.PointsMaterial({ size: 0.045, map: new THREE.CanvasTexture(tcanvasRS), transparent: true, opacity: 0.9, color: parseInt(colorHex.replace("#","0x")), depthWrite: false, blending: THREE.AdditiveBlending });
+  const particlesRS = new THREE.Points(geoRS, matRS);
+  scene.add(particlesRS);
+
+  let sweepAngleRS = 0, blipsRS = [], rollingAvgRS = 0.03, cooldownRS = 0, activityRS = 0;
+  function animateRadarSphere() {
+    requestAnimationFrame(animateRadarSphere);
+    const bands = getBands();
+    const targetActivity = Math.min(1, bands.overall / 0.15);
+    activityRS += (targetActivity - activityRS) * 0.05;
+    particlesRS.rotation.y += 0.003 + activityRS * 0.01;
+    renderer.render(scene, camera);
+
+    rollingAvgRS += (bands.overall - rollingAvgRS) * 0.01;
+    if (cooldownRS > 0) cooldownRS--;
+    if (bands.overall > rollingAvgRS*1.8 && bands.overall > 0.1 && cooldownRS <= 0) {
+      blipsRS.push({ angle: Math.random()*Math.PI*2, dist: 0.4+Math.random()*0.5, life: 1 });
+      cooldownRS = 15;
+    }
+    sweepAngleRS += 0.015;
+    ctx.clearRect(0,0,dimRS,dimRS);
+    const cx=dimRS/2, cy=dimRS/2, maxR=dimRS*0.46;
+    ctx.strokeStyle = "rgba("+rC+","+gC+","+bC+",0.15)"; ctx.lineWidth = 1;
+    for (let ring=1; ring<=3; ring++) { ctx.beginPath(); ctx.arc(cx,cy,maxR*ring/3,0,Math.PI*2); ctx.stroke(); }
+    if (ctx.createConicGradient) {
+      const grad = ctx.createConicGradient(sweepAngleRS-0.5, cx, cy);
+      grad.addColorStop(0, "rgba("+rC+","+gC+","+bC+",0)");
+      grad.addColorStop(0.15, "rgba("+rC+","+gC+","+bC+",0.2)");
+      grad.addColorStop(0.16, "rgba("+rC+","+gC+","+bC+",0)");
+      grad.addColorStop(1, "rgba("+rC+","+gC+","+bC+",0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx,cy,maxR,0,Math.PI*2); ctx.fill();
+    }
+    blipsRS = blipsRS.filter(b => b.life > 0);
+    blipsRS.forEach(b => {
+      b.life -= 0.01;
+      const bx = cx+Math.cos(b.angle)*maxR*b.dist, by = cy+Math.sin(b.angle)*maxR*b.dist;
+      ctx.fillStyle = "rgba("+rC+","+gC+","+bC+","+b.life+")";
+      ctx.beginPath(); ctx.arc(bx,by,2.5,0,Math.PI*2); ctx.fill();
+    });
+    logDiag("Style: radarsphere | activity:" + activityRS.toFixed(2));
+  }
+  animateRadarSphere();
+  initMicAudio();
+
+} else if (effectiveStyle === "heartbeat") {
+  threeContainer.style.display = "none";
+  const dimHb = SIZES2D[state.size] || 320;
+  canvas2d.width = dimHb; canvas2d.height = dimHb*0.5;
+  let scrollX = 0;
+  const historyHb = new Array(Math.floor(dimHb)).fill(0);
+  function animateHeartbeat() {
+    requestAnimationFrame(animateHeartbeat);
+    const bands = getBands();
+    historyHb.shift();
+    historyHb.push(bands.overall);
+    ctx.clearRect(0,0,dimHb,canvas2d.height);
+    const midY = canvas2d.height/2;
+    ctx.strokeStyle = "rgba("+rC+","+gC+","+bC+",0.9)"; ctx.lineWidth = 2;
+    ctx.shadowBlur = 6; ctx.shadowColor = colorHex;
+    ctx.beginPath();
+    for (let i = 0; i < historyHb.length; i++) {
+      const y = midY - historyHb[i]*canvas2d.height*1.8*(historyHb[i]>0.1?1:0.3);
+      if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+    }
+    ctx.stroke();
+    logDiag("Style: heartbeat");
+  }
+  animateHeartbeat();
+  initMicAudio();
+
+} else if (effectiveStyle === "lightning") {
+  threeContainer.style.display = "none";
+  const dimL = SIZES2D[state.size] || 320;
+  canvas2d.width = dimL; canvas2d.height = dimL;
+  let boltsL = [];
+  function spawnBolt(intensity) {
+    let x = dimL/2, y = dimL/2;
+    const points = [{x,y}];
+    const segments = 8;
+    for (let i = 0; i < segments; i++) {
+      const angle = Math.random()*Math.PI*2;
+      const dist = (dimL*0.06) * intensity;
+      x += Math.cos(angle)*dist; y += Math.sin(angle)*dist;
+      points.push({x,y});
+    }
+    boltsL.push({ points, life: 1 });
+  }
+  window.spawnBurst = spawnBolt;
+  function renderLightning() {
+    requestAnimationFrame(renderLightning);
+    ctx.clearRect(0,0,dimL,dimL);
+    boltsL = boltsL.filter(b => b.life > 0);
+    boltsL.forEach(b => {
+      b.life -= 0.06;
+      ctx.strokeStyle = "rgba("+rC+","+gC+","+bC+","+Math.max(0,b.life)+")";
+      ctx.lineWidth = 2; ctx.shadowBlur = 10*b.life; ctx.shadowColor = colorHex;
+      ctx.beginPath();
+      b.points.forEach((p,i) => { if (i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); });
+      ctx.stroke();
+    });
+    logDiag("Style: lightning | bolts:" + boltsL.length);
+  }
+  renderLightning();
+  let rollingAvgL = 0.03, cooldownL = 0;
+  function checkLightning() {
+    const bands = getBands();
+    rollingAvgL += (bands.overall - rollingAvgL) * 0.01;
+    if (cooldownL > 0) cooldownL--;
+    if (bands.overall > rollingAvgL*2.2 && bands.overall > 0.15 && cooldownL <= 0) { spawnBolt(1); cooldownL = 20; }
+    requestAnimationFrame(checkLightning);
+  }
+  if (testMode) { setInterval(() => spawnBolt(1+Math.random()), 3000+Math.random()*4000); }
+  else { checkLightning(); initMicAudio(); }
+
 } else if (effectiveStyle === "datastream") {
   threeContainer.style.display = "none";
   const dimD = SIZES2D[state.size] || 320;
@@ -788,9 +1005,23 @@ if (effectiveStyle === "sphere") {
   animateStream();
   initMicAudio();
 }
+
+setTimeout(() => {
+  const boot = document.getElementById("bootOverlay");
+  if (boot) { boot.style.opacity = "0"; setTimeout(() => boot.remove(), 700); }
+}, 1400);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
