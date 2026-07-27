@@ -1,0 +1,431 @@
+{
+  "communities": {
+    "0": [
+      "vault_projects_jarvis_as_a_service_launch_business_analyst_agent",
+      "vault_projects_jarvis_as_a_service_launch_jarvis_as_a_service_launch",
+      "vault_projects_jarvis_as_a_service_launch_jarvis_system",
+      "vault_projects_jarvis_as_a_service_launch_monetize_the_jarvis_system",
+      "vault_projects_jarvis_as_a_service_launch_project_manager_agent",
+      "vault_projects_jarvis_as_a_service_pricing_research_demo_driven_lead_magnet",
+      "vault_projects_jarvis_as_a_service_pricing_research_fiverr",
+      "vault_projects_jarvis_as_a_service_pricing_research_jarvis_as_a_service_pricing_research",
+      "vault_projects_jarvis_as_a_service_pricing_research_upwork",
+      "vault_projects_streamer_hud_widget_business_analyst_agent",
+      "vault_projects_streamer_hud_widget_market_research_streamer_hud_widget_market_research",
+      "vault_projects_streamer_hud_widget_monetize_the_jarvis_system",
+      "vault_projects_streamer_hud_widget_pivot_rationale",
+      "vault_projects_streamer_hud_widget_premium_persona_tier_idea_persona_tier_concept",
+      "vault_projects_streamer_hud_widget_premium_persona_tier_idea_premium_persona_tier",
+      "vault_projects_streamer_hud_widget_premium_persona_tier_idea_streamerhud_v1",
+      "vault_projects_streamer_hud_widget_price_recommendation",
+      "vault_projects_streamer_hud_widget_streamer_hud_widget",
+      "vault_readme_vault_map",
+      "vault_resources_insights_para_misplacement",
+      "vault_resources_insights_research_outrunning_execution",
+      "vault_resources_insights_weekly_review",
+      "vault_templates_idea_note_idea_note_template",
+      "vault_templates_project_note_project_note_template",
+      "vault_templates_resource_note_resource_note_template"
+    ],
+    "1": [
+      "claude_feste_regeln",
+      "claude_startroutine",
+      "orb_index_sendmessage",
+      "readme_connector_github",
+      "readme_connector_google_drive",
+      "readme_connector_outlook",
+      "readme_connector_playwright",
+      "readme_document",
+      "readme_flask_backend",
+      "readme_gotchas",
+      "readme_hook_fetch_context",
+      "readme_hook_git_backup",
+      "readme_hook_guard_connectors",
+      "readme_hook_set_thinking",
+      "readme_hook_speak_response",
+      "readme_hook_sync_knowledge",
+      "readme_hook_watch_knowledge",
+      "readme_orb_dashboard",
+      "readme_routine_monthly_staleness_review",
+      "readme_routine_weekly_vault_insights",
+      "readme_security"
+    ],
+    "2": [
+      "claude_agents_business_analyst_business_analyst",
+      "claude_agents_coder_coder",
+      "claude_agents_debugger_debugger",
+      "claude_agents_planner_planner",
+      "claude_agents_project_manager_project_manager",
+      "claude_agents_researcher_researcher",
+      "claude_agents_webdesigner_webdesigner",
+      "claude_agents_writer_writer",
+      "claude_knowledge_system",
+      "claude_obsidian_vault_memory",
+      "knowledge_goals_document",
+      "knowledge_goals_get_jarvis_into_daily_use",
+      "knowledge_goals_monetize_the_jarvis_system",
+      "knowledge_projects_document",
+      "knowledge_projects_jarvis_as_a_service_launch",
+      "knowledge_projects_some_real_project",
+      "knowledge_projects_streamer_hud_widget"
+    ],
+    "3": [
+      "tasks_concept_claude_flowstate",
+      "tasks_document",
+      "tasks_tag_jarvis_as_a_service",
+      "tasks_tag_streamer_hud",
+      "tasks_task_add_color_theme_customization",
+      "tasks_task_build_portfolio_demo_site",
+      "tasks_task_build_v1_static_demo_site",
+      "tasks_task_claude_flowstate_note",
+      "tasks_task_decide_delivery_sales_channel",
+      "tasks_task_decide_target_buyer",
+      "tasks_task_draft_gig_listing_copy",
+      "tasks_task_package_for_end_customers",
+      "tasks_task_record_demo_video",
+      "tasks_task_scope_productization_checklist",
+      "tasks_task_validate_pricing_positioning",
+      "tasks_task_write_basic_licensing_terms",
+      "tasks_task_write_customer_facing_setup_instructions"
+    ],
+    "4": [
+      "before_request",
+      "orb_app",
+      "orb_app_add_history",
+      "orb_app_background_backup",
+      "orb_app_chat",
+      "orb_app_check_origin",
+      "orb_app_get_open_tasks",
+      "orb_app_index",
+      "orb_app_port_in_use",
+      "orb_app_run_claude",
+      "orb_app_write_status",
+      "route"
+    ],
+    "5": [
+      "vault_projects_jarvis_as_a_service_pricing_research_differentiators",
+      "vault_projects_streamer_hud_widget_market_research_click_once_bar",
+      "vault_projects_streamer_hud_widget_market_research_getusermedia",
+      "vault_projects_streamer_hud_widget_market_research_kudos_tv",
+      "vault_projects_streamer_hud_widget_market_research_obs_persistence_open_question",
+      "vault_projects_streamer_hud_widget_market_research_orb_dashboard",
+      "vault_projects_streamer_hud_widget_market_research_particle_sphere_state_machine",
+      "vault_projects_streamer_hud_widget_market_research_persistence_confirmation",
+      "vault_projects_streamer_hud_widget_market_research_streamer_hud_prototype",
+      "vault_resources_insights_ai_reactive_no_premium"
+    ],
+    "6": [
+      "daily_brief_berlin_pride_attack",
+      "daily_brief_document",
+      "daily_brief_hormuz_mine_explosion",
+      "daily_brief_kyiv_attacks_lavrov_rubio",
+      "daily_brief_oil_prices_china_growth",
+      "daily_brief_swiss_us_tariff",
+      "readme_routine_daily_news_brief"
+    ],
+    "7": [
+      "orb_license_key_generator_seller_only_checksum",
+      "orb_license_key_generator_seller_only_generate",
+      "orb_product_stage_reactive_hud_pack_isvalidlicensekey",
+      "orb_product_stage_setup_guide_document",
+      "orb_product_streamerhud_reactive_hud_pack_isvalidlicensekey",
+      "orb_product_streamerhud_setup_guide_document",
+      "orb_prototypes_obs_transparency_test_document"
+    ],
+    "8": [
+      "vault_projects_jarvis_as_a_service_launch_demo_site_plan",
+      "vault_projects_jarvis_as_a_service_launch_orb_dashboard",
+      "vault_projects_jarvis_as_a_service_launch_webdesigner_agent",
+      "vault_projects_streamer_hud_widget_market_research_app_py",
+      "vault_projects_streamer_hud_widget_market_research_index_html",
+      "vault_resources_insights_personal_machine_hardcoding_blocker"
+    ],
+    "9": [
+      "orb_index_initcore",
+      "orb_product_stage_reactive_hud_pack_sphere_style",
+      "orb_product_streamerhud_reactive_hud_pack_sphere_style",
+      "orb_prototypes_streamer_hud_prototype_initcore"
+    ],
+    "10": [
+      "orb_index_kgsyncdata",
+      "orb_index_kgsyncgoals",
+      "orb_index_kgsyncnotes",
+      "orb_index_pollkg"
+    ],
+    "11": [
+      "orb_index_animatecore",
+      "orb_index_poll",
+      "orb_prototypes_streamer_hud_prototype_animatecore"
+    ],
+    "12": [
+      "orb_index_kgloop",
+      "orb_index_kgrender",
+      "orb_index_kgstep"
+    ],
+    "13": [
+      "orb_product_stage_reactive_hud_pack_themes",
+      "orb_product_streamerhud_reactive_hud_pack_themes",
+      "orb_prototypes_streamer_hud_prototype_themes"
+    ],
+    "14": [
+      "orb_product_streamerhud_reactive_hud_pack_checkburst",
+      "orb_product_streamerhud_reactive_hud_pack_spawnburst",
+      "orb_product_streamerhud_reactive_hud_pack_twitchmain"
+    ],
+    "15": [
+      "claude_hooks_sync_knowledge",
+      "claude_hooks_sync_knowledge_test_suspiciousheadinglines"
+    ],
+    "16": [
+      "claude_hooks_watch_knowledge",
+      "claude_hooks_watch_knowledge_global_invoke_knowledgesync"
+    ],
+    "17": [
+      "orb_product_streamerhud_reactive_hud_pack_getbands",
+      "orb_prototypes_streamer_hud_prototype_getbandlevels"
+    ],
+    "18": [
+      "orb_product_streamerhud_reactive_hud_pack_initmicaudio",
+      "orb_prototypes_streamer_hud_prototype_initaudio"
+    ],
+    "19": [
+      "claude_hooks_fetch_context"
+    ],
+    "20": [
+      "claude_hooks_git_backup"
+    ],
+    "21": [
+      "claude_hooks_guard_connectors"
+    ],
+    "22": [
+      "claude_hooks_set_thinking"
+    ],
+    "23": [
+      "claude_hooks_speak_response"
+    ],
+    "24": [
+      "claude_persona"
+    ],
+    "25": [
+      "claude_tasks_format"
+    ],
+    "26": [
+      "orb_index_initglobe"
+    ],
+    "27": [
+      "orb_index_pollhistory"
+    ],
+    "28": [
+      "orb_prototypes_streamer_hud_prototype_sizes"
+    ],
+    "29": [
+      "vault_decisions_log_decisions_log"
+    ],
+    "30": [
+      "vault_obsidian_app"
+    ],
+    "31": [
+      "vault_projects_streamer_hud_widget_market_research_etsy"
+    ],
+    "32": [
+      "vault_projects_streamer_hud_widget_market_research_nerd_or_die"
+    ],
+    "33": [
+      "vault_projects_streamer_hud_widget_market_research_own3d"
+    ],
+    "34": [
+      "vault_projects_streamer_hud_widget_market_research_twitch_extensions"
+    ],
+    "35": [
+      "vault_templates_area_note_area_note_template"
+    ],
+    "36": [
+      "vault_willkommen_welcome_page"
+    ]
+  },
+  "cohesion": {
+    "0": 0.11666666666666667,
+    "1": 0.11904761904761904,
+    "2": 0.25,
+    "3": 0.21323529411764705,
+    "4": 0.25757575757575757,
+    "5": 0.2,
+    "6": 0.2857142857142857,
+    "7": 0.38095238095238093,
+    "8": 0.3333333333333333,
+    "9": 0.5,
+    "10": 0.5,
+    "11": 0.6666666666666666,
+    "12": 0.6666666666666666,
+    "13": 0.6666666666666666,
+    "14": 0.6666666666666666,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0
+  },
+  "gods": [
+    {
+      "id": "readme_document",
+      "label": "Jarvis System Documentation (README)",
+      "degree": 26
+    },
+    {
+      "id": "claude_agents_project_manager_project_manager",
+      "label": "Project Manager Agent",
+      "degree": 10
+    },
+    {
+      "id": "vault_projects_jarvis_as_a_service_launch_jarvis_as_a_service_launch",
+      "label": "Jarvis-as-a-Service Launch",
+      "degree": 9
+    },
+    {
+      "id": "vault_projects_jarvis_as_a_service_pricing_research_jarvis_as_a_service_pricing_research",
+      "label": "Jarvis-as-a-Service Pricing Research",
+      "degree": 9
+    },
+    {
+      "id": "vault_projects_streamer_hud_widget_streamer_hud_widget",
+      "label": "Streamer HUD Widget",
+      "degree": 9
+    },
+    {
+      "id": "orb_app_chat",
+      "label": "chat()",
+      "degree": 7
+    },
+    {
+      "id": "claude_obsidian_vault_memory",
+      "label": "Obsidian Vault Memory System",
+      "degree": 7
+    },
+    {
+      "id": "vault_projects_streamer_hud_widget_market_research_streamer_hud_widget_market_research",
+      "label": "Streamer HUD Widget Market Research",
+      "degree": 7
+    },
+    {
+      "id": "tasks_tag_jarvis_as_a_service",
+      "label": "#jarvis-as-a-service (project tag)",
+      "degree": 7
+    },
+    {
+      "id": "daily_brief_document",
+      "label": "Daily Brief 2026-07-27",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Jarvis System Documentation (README)",
+      "target": "Business Analyst Agent",
+      "source_files": [
+        "README.md",
+        ".claude/agents/business-analyst.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Jarvis System Documentation (README)",
+      "target": "Coder Agent",
+      "source_files": [
+        "README.md",
+        ".claude/agents/coder.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Jarvis System Documentation (README)",
+      "target": "Debugger Agent",
+      "source_files": [
+        "README.md",
+        ".claude/agents/debugger.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Jarvis System Documentation (README)",
+      "target": "Planner Agent",
+      "source_files": [
+        "README.md",
+        ".claude/agents/planner.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "Jarvis System Documentation (README)",
+      "target": "Project Manager Agent",
+      "source_files": [
+        "README.md",
+        ".claude/agents/project-manager.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Jarvis-as-a-Service Pricing Research` and `Resource Note Template`?",
+      "why": "Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low."
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Streamer HUD Widget Market Research` and `Resource Note Template`?",
+      "why": "Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low."
+    },
+    {
+      "type": "ambiguous_edge",
+      "question": "What is the exact relationship between `Orb Dashboard particle-sphere core (C:\\Jarvis\\orb)` and `Kudos.tv AI TTS Stream Companion`?",
+      "why": "Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Jarvis System Documentation (README)` connect `Community 1` to `Community 2`, `Community 6`?",
+      "why": "High betweenness centrality (0.090) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Knowledge System (PROJECTS.md/GOALS.md/TASKS.md)` connect `Community 2` to `Community 3`?",
+      "why": "High betweenness centrality (0.057) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Project Manager Agent` connect `Community 2` to `Community 1`?",
+      "why": "High betweenness centrality (0.046) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Tasks Format Convention`, `Jarvis Persona (Sachlich-neutral, effizient)`, `Startup Routine (Greeting + Weather/Tasks Summary)` to the rest of the system?",
+      "why": "54 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
+}

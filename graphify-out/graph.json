@@ -22,6 +22,19 @@
         "source_file": "README.md"
       },
       {
+        "id": "license_key_validation_protocol",
+        "label": "SHUD License Key Checksum Protocol",
+        "nodes": [
+          "orb_license_key_generator_seller_only_checksum",
+          "orb_product_streamerhud_reactive_hud_pack_isvalidlicensekey",
+          "orb_product_stage_reactive_hud_pack_isvalidlicensekey"
+        ],
+        "relation": "implement",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "orb/License-Key-Generator-SELLER-ONLY.html"
+      },
+      {
         "id": "particle_sphere_pattern",
         "label": "Shared Particle-Sphere Visualization Pattern",
         "nodes": [
@@ -34,19 +47,6 @@
         "confidence": "INFERRED",
         "confidence_score": 0.85,
         "source_file": "orb/prototypes/streamer-hud-prototype.html"
-      },
-      {
-        "id": "license_key_validation_protocol",
-        "label": "SHUD License Key Checksum Protocol",
-        "nodes": [
-          "orb_license_key_generator_seller_only_checksum",
-          "orb_product_streamerhud_reactive_hud_pack_isvalidlicensekey",
-          "orb_product_stage_reactive_hud_pack_isvalidlicensekey"
-        ],
-        "relation": "implement",
-        "confidence": "INFERRED",
-        "confidence_score": 0.95,
-        "source_file": "orb/License-Key-Generator-SELLER-ONLY.html"
       },
       {
         "id": "monetization_pivot_chain",
@@ -87,6 +87,39 @@
         "confidence": "INFERRED",
         "confidence_score": 0.85,
         "source_file": "vault/Resources/Insights.md"
+      },
+      {
+        "id": "tasks_hyperedge_jaas_launch_prep",
+        "label": "Jarvis-as-a-Service launch preparation tasks",
+        "nodes": [
+          "tasks_tag_jarvis_as_a_service",
+          "tasks_task_validate_pricing_positioning",
+          "tasks_task_build_portfolio_demo_site",
+          "tasks_task_draft_gig_listing_copy",
+          "tasks_task_record_demo_video",
+          "tasks_task_decide_target_buyer",
+          "tasks_task_scope_productization_checklist",
+          "tasks_task_build_v1_static_demo_site"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "TASKS.md"
+      },
+      {
+        "id": "tasks_hyperedge_streamer_hud_shipping",
+        "label": "Streamer HUD product shipping/packaging tasks",
+        "nodes": [
+          "tasks_tag_streamer_hud",
+          "tasks_task_package_for_end_customers",
+          "tasks_task_write_customer_facing_setup_instructions",
+          "tasks_task_decide_delivery_sales_channel",
+          "tasks_task_write_basic_licensing_terms"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "TASKS.md"
       }
     ]
   },
@@ -188,7 +221,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "orb_app",
-      "community": 3,
+      "community": 4,
       "norm_label": "app.py"
     },
     {
@@ -198,7 +231,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "orb_app_get_open_tasks",
-      "community": 3,
+      "community": 4,
       "norm_label": "get_open_tasks()"
     },
     {
@@ -208,7 +241,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "orb_app_write_status",
-      "community": 3,
+      "community": 4,
       "norm_label": "write_status()"
     },
     {
@@ -218,7 +251,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "orb_app_add_history",
-      "community": 3,
+      "community": 4,
       "norm_label": "add_history()"
     },
     {
@@ -228,7 +261,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "orb_app_run_claude",
-      "community": 3,
+      "community": 4,
       "norm_label": "run_claude()"
     },
     {
@@ -238,7 +271,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "orb_app_background_backup",
-      "community": 3,
+      "community": 4,
       "norm_label": "background_backup()"
     },
     {
@@ -248,7 +281,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "before_request",
-      "community": 3,
+      "community": 4,
       "norm_label": "before_request"
     },
     {
@@ -258,7 +291,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "orb_app_check_origin",
-      "community": 3,
+      "community": 4,
       "norm_label": "check_origin()"
     },
     {
@@ -268,7 +301,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "route",
-      "community": 3,
+      "community": 4,
       "norm_label": "route"
     },
     {
@@ -278,7 +311,7 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "orb_app_index",
-      "community": 3,
+      "community": 4,
       "norm_label": "index()"
     },
     {
@@ -288,7 +321,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "orb_app_chat",
-      "community": 3,
+      "community": 4,
       "norm_label": "chat()"
     },
     {
@@ -298,7 +331,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "orb_app_port_in_use",
-      "community": 3,
+      "community": 4,
       "norm_label": "port_in_use()"
     },
     {
@@ -504,7 +537,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_document",
-      "community": 5,
+      "community": 6,
       "norm_label": "daily brief 2026-07-27"
     },
     {
@@ -517,7 +550,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_berlin_pride_attack",
-      "community": 5,
+      "community": 6,
       "norm_label": "berlin pride terror attack"
     },
     {
@@ -530,7 +563,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_hormuz_mine_explosion",
-      "community": 5,
+      "community": 6,
       "norm_label": "strait of hormuz mine explosion"
     },
     {
@@ -543,7 +576,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_swiss_us_tariff",
-      "community": 5,
+      "community": 6,
       "norm_label": "us 12.5% tariff on switzerland"
     },
     {
@@ -556,7 +589,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_kyiv_attacks_lavrov_rubio",
-      "community": 5,
+      "community": 6,
       "norm_label": "kyiv attacks / lavrov-rubio meeting"
     },
     {
@@ -569,7 +602,7 @@
       "author": null,
       "contributor": null,
       "id": "daily_brief_oil_prices_china_growth",
-      "community": 5,
+      "community": 6,
       "norm_label": "oil prices rise, china growth slows"
     },
     {
@@ -764,7 +797,7 @@
       "author": null,
       "contributor": null,
       "id": "readme_routine_daily_news_brief",
-      "community": 5,
+      "community": 6,
       "norm_label": "daily news brief cloud routine"
     },
     {
@@ -822,58 +855,6 @@
       "norm_label": "common gotchas (lessons learned)"
     },
     {
-      "label": "TASKS.md Task List",
-      "file_type": "document",
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tasks_document",
-      "community": 6,
-      "norm_label": "tasks.md task list"
-    },
-    {
-      "label": "#jarvis-business Tag",
-      "file_type": "concept",
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tasks_tag_jarvis_business",
-      "community": 6,
-      "norm_label": "#jarvis-business tag"
-    },
-    {
-      "label": "#jarvis-as-a-service Tag",
-      "file_type": "concept",
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tasks_tag_jarvis_as_a_service",
-      "community": 6,
-      "norm_label": "#jarvis-as-a-service tag"
-    },
-    {
-      "label": "#streamer-hud Tag",
-      "file_type": "concept",
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tasks_tag_streamer_hud",
-      "community": 6,
-      "norm_label": "#streamer-hud tag"
-    },
-    {
       "label": "GOALS.md",
       "file_type": "document",
       "source_file": "knowledge/GOALS.md",
@@ -909,7 +890,7 @@
       "author": null,
       "contributor": null,
       "id": "knowledge_goals_monetize_the_jarvis_system",
-      "community": 6,
+      "community": 2,
       "norm_label": "goal: monetize the jarvis system"
     },
     {
@@ -948,7 +929,7 @@
       "author": null,
       "contributor": null,
       "id": "knowledge_projects_jarvis_as_a_service_launch",
-      "community": 6,
+      "community": 2,
       "norm_label": "project: jarvis-as-a-service launch"
     },
     {
@@ -961,7 +942,7 @@
       "author": null,
       "contributor": null,
       "id": "knowledge_projects_streamer_hud_widget",
-      "community": 6,
+      "community": 2,
       "norm_label": "project: streamer hud widget"
     },
     {
@@ -1600,7 +1581,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_jarvis_as_a_service_pricing_research_differentiators",
-      "community": 4,
+      "community": 5,
       "norm_label": "jarvis real differentiators (knowledge graph, multi-agent delegation, dashboard)"
     },
     {
@@ -1665,7 +1646,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_orb_dashboard",
-      "community": 4,
+      "community": 5,
       "norm_label": "orb dashboard particle-sphere core (c:\\jarvis\\orb)"
     },
     {
@@ -1704,7 +1685,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_kudos_tv",
-      "community": 4,
+      "community": 5,
       "norm_label": "kudos.tv ai tts stream companion"
     },
     {
@@ -1743,7 +1724,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_particle_sphere_state_machine",
-      "community": 4,
+      "community": 5,
       "norm_label": "particle-sphere state machine (idle/thinking/speaking)"
     },
     {
@@ -1756,7 +1737,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_streamer_hud_prototype",
-      "community": 4,
+      "community": 5,
       "norm_label": "streamer-hud-prototype.html (bare three.js + web audio test)"
     },
     {
@@ -1769,7 +1750,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_getusermedia",
-      "community": 4,
+      "community": 5,
       "norm_label": "getusermedia() mic permission gating"
     },
     {
@@ -1782,7 +1763,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_click_once_bar",
-      "community": 4,
+      "community": 5,
       "norm_label": "'click once, ever' revised target"
     },
     {
@@ -1795,7 +1776,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_persistence_confirmation",
-      "community": 4,
+      "community": 5,
       "norm_label": "mic permission persistence across reload (empirically confirmed)"
     },
     {
@@ -1808,7 +1789,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_projects_streamer_hud_widget_market_research_obs_persistence_open_question",
-      "community": 4,
+      "community": 5,
       "norm_label": "obs browser source persistence (open question)"
     },
     {
@@ -1938,7 +1919,7 @@
       "author": null,
       "contributor": null,
       "id": "vault_resources_insights_ai_reactive_no_premium",
-      "community": 4,
+      "community": 5,
       "norm_label": "'ai/reactive' doesn't buy a price premium (recurring theme)"
     },
     {
@@ -2044,6 +2025,227 @@
       "id": "vault_willkommen_welcome_page",
       "community": 36,
       "norm_label": "willkommen (default obsidian welcome note)"
+    },
+    {
+      "label": "TASKS.md",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_document",
+      "community": 3,
+      "norm_label": "tasks.md"
+    },
+    {
+      "label": "#jarvis-as-a-service (project tag)",
+      "file_type": "concept",
+      "source_file": "TASKS.md",
+      "source_location": "line 7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_tag_jarvis_as_a_service",
+      "community": 3,
+      "norm_label": "#jarvis-as-a-service (project tag)"
+    },
+    {
+      "label": "#streamer-hud (project tag)",
+      "file_type": "concept",
+      "source_file": "TASKS.md",
+      "source_location": "line 23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_tag_streamer_hud",
+      "community": 3,
+      "norm_label": "#streamer-hud (project tag)"
+    },
+    {
+      "label": "Validate pricing and positioning against direct competitors on Fiverr/Upwork",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_validate_pricing_positioning",
+      "community": 3,
+      "norm_label": "validate pricing and positioning against direct competitors on fiverr/upwork"
+    },
+    {
+      "label": "Build a portfolio/demo site showcasing the orb dashboard",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_build_portfolio_demo_site",
+      "community": 3,
+      "norm_label": "build a portfolio/demo site showcasing the orb dashboard"
+    },
+    {
+      "label": "Draft the actual gig/listing copy",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_draft_gig_listing_copy",
+      "community": 3,
+      "norm_label": "draft the actual gig/listing copy"
+    },
+    {
+      "label": "Record a 3-5 min demo video of the orb dashboard and agent delegation in action",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_record_demo_video",
+      "community": 3,
+      "norm_label": "record a 3-5 min demo video of the orb dashboard and agent delegation in action"
+    },
+    {
+      "label": "Decide target buyer: individual assistant-seekers vs. small-business automation clients",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_decide_target_buyer",
+      "community": 3,
+      "norm_label": "decide target buyer: individual assistant-seekers vs. small-business automation clients"
+    },
+    {
+      "label": "Scope a productization checklist (auth, config isolation, docs) before quoting client work",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_scope_productization_checklist",
+      "community": 3,
+      "norm_label": "scope a productization checklist (auth, config isolation, docs) before quoting client work"
+    },
+    {
+      "label": "Build v1 static demo site (screen-recording hero, no live backend) once the recording exists",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_build_v1_static_demo_site",
+      "community": 3,
+      "norm_label": "build v1 static demo site (screen-recording hero, no live backend) once the recording exists"
+    },
+    {
+      "label": "Write up \"Claude Flowstate\" idea as a note",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_claude_flowstate_note",
+      "community": 3,
+      "norm_label": "write up \"claude flowstate\" idea as a note"
+    },
+    {
+      "label": "Claude Flowstate (idea)",
+      "file_type": "concept",
+      "source_file": "TASKS.md",
+      "source_location": "line 21",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_concept_claude_flowstate",
+      "community": 3,
+      "norm_label": "claude flowstate (idea)"
+    },
+    {
+      "label": "Package for end customers (clean file + setup guide, no dev/diag mode visible)",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 23",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_package_for_end_customers",
+      "community": 3,
+      "norm_label": "package for end customers (clean file + setup guide, no dev/diag mode visible)"
+    },
+    {
+      "label": "Write customer-facing setup instructions (OBS flag + one-time mic click)",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 24",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_write_customer_facing_setup_instructions",
+      "community": 3,
+      "norm_label": "write customer-facing setup instructions (obs flag + one-time mic click)"
+    },
+    {
+      "label": "Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site)",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_decide_delivery_sales_channel",
+      "community": 3,
+      "norm_label": "decide delivery/sales channel (gumroad, etsy, itch.io, own site)"
+    },
+    {
+      "label": "Write basic licensing terms",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_write_basic_licensing_terms",
+      "community": 3,
+      "norm_label": "write basic licensing terms"
+    },
+    {
+      "label": "Add color/theme customization options to the streamer HUD widget (done)",
+      "file_type": "document",
+      "source_file": "TASKS.md",
+      "source_location": "line 32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "tasks_task_add_color_theme_customization",
+      "community": 3,
+      "norm_label": "add color/theme customization options to the streamer hud widget (done)"
     }
   ],
   "links": [
@@ -2928,66 +3130,6 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_document",
-      "target": "tasks_tag_jarvis_as_a_service"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_document",
-      "target": "tasks_tag_jarvis_business"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_document",
-      "target": "tasks_tag_streamer_hud"
-    },
-    {
-      "relation": "conceptually_related_to",
-      "confidence": "AMBIGUOUS",
-      "confidence_score": 0.3,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_tag_jarvis_business",
-      "target": "knowledge_projects_jarvis_as_a_service_launch"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_tag_jarvis_as_a_service",
-      "target": "knowledge_projects_jarvis_as_a_service_launch"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "TASKS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tasks_tag_streamer_hud",
-      "target": "knowledge_projects_streamer_hud_widget"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
       "source_file": "knowledge/GOALS.md",
       "source_location": null,
       "weight": 1.0,
@@ -3813,6 +3955,296 @@
       "weight": 1.0,
       "source": "vault_resources_insights_para_misplacement",
       "target": "vault_readme_vault_map"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 32",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_add_color_theme_customization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 9",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_build_portfolio_demo_site"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 19",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_build_v1_static_demo_site"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 21",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_claude_flowstate_note"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 25",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_decide_delivery_sales_channel"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 15",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_decide_target_buyer"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 11",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_draft_gig_listing_copy"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 23",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_package_for_end_customers"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 13",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_record_demo_video"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 17",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_scope_productization_checklist"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 7",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_validate_pricing_positioning"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 26",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_write_basic_licensing_terms"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 24",
+      "weight": 1.0,
+      "source": "tasks_document",
+      "target": "tasks_task_write_customer_facing_setup_instructions"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 9",
+      "weight": 1.0,
+      "source": "tasks_task_build_portfolio_demo_site",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 19",
+      "weight": 1.0,
+      "source": "tasks_task_build_v1_static_demo_site",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 15",
+      "weight": 1.0,
+      "source": "tasks_task_decide_target_buyer",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 11",
+      "weight": 1.0,
+      "source": "tasks_task_draft_gig_listing_copy",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 13",
+      "weight": 1.0,
+      "source": "tasks_task_record_demo_video",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 17",
+      "weight": 1.0,
+      "source": "tasks_task_scope_productization_checklist",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 7",
+      "weight": 1.0,
+      "source": "tasks_task_validate_pricing_positioning",
+      "target": "tasks_tag_jarvis_as_a_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 32",
+      "weight": 1.0,
+      "source": "tasks_task_add_color_theme_customization",
+      "target": "tasks_tag_streamer_hud"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 25",
+      "weight": 1.0,
+      "source": "tasks_task_decide_delivery_sales_channel",
+      "target": "tasks_tag_streamer_hud"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 23",
+      "weight": 1.0,
+      "source": "tasks_task_package_for_end_customers",
+      "target": "tasks_tag_streamer_hud"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 26",
+      "weight": 1.0,
+      "source": "tasks_task_write_basic_licensing_terms",
+      "target": "tasks_tag_streamer_hud"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 24",
+      "weight": 1.0,
+      "source": "tasks_task_write_customer_facing_setup_instructions",
+      "target": "tasks_tag_streamer_hud"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "TASKS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "tasks_task_build_v1_static_demo_site",
+      "target": "tasks_task_build_portfolio_demo_site"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "TASKS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "tasks_task_record_demo_video",
+      "target": "tasks_task_build_v1_static_demo_site"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "TASKS.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "tasks_task_scope_productization_checklist",
+      "target": "tasks_task_package_for_end_customers"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "TASKS.md",
+      "source_location": "line 21",
+      "weight": 1.0,
+      "source": "tasks_task_claude_flowstate_note",
+      "target": "tasks_concept_claude_flowstate"
     }
   ],
   "hyperedges": [
@@ -3835,6 +4267,19 @@
       "source_file": "README.md"
     },
     {
+      "id": "license_key_validation_protocol",
+      "label": "SHUD License Key Checksum Protocol",
+      "nodes": [
+        "orb_license_key_generator_seller_only_checksum",
+        "orb_product_streamerhud_reactive_hud_pack_isvalidlicensekey",
+        "orb_product_stage_reactive_hud_pack_isvalidlicensekey"
+      ],
+      "relation": "implement",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "orb/License-Key-Generator-SELLER-ONLY.html"
+    },
+    {
       "id": "particle_sphere_pattern",
       "label": "Shared Particle-Sphere Visualization Pattern",
       "nodes": [
@@ -3847,19 +4292,6 @@
       "confidence": "INFERRED",
       "confidence_score": 0.85,
       "source_file": "orb/prototypes/streamer-hud-prototype.html"
-    },
-    {
-      "id": "license_key_validation_protocol",
-      "label": "SHUD License Key Checksum Protocol",
-      "nodes": [
-        "orb_license_key_generator_seller_only_checksum",
-        "orb_product_streamerhud_reactive_hud_pack_isvalidlicensekey",
-        "orb_product_stage_reactive_hud_pack_isvalidlicensekey"
-      ],
-      "relation": "implement",
-      "confidence": "INFERRED",
-      "confidence_score": 0.95,
-      "source_file": "orb/License-Key-Generator-SELLER-ONLY.html"
     },
     {
       "id": "monetization_pivot_chain",
@@ -3900,7 +4332,40 @@
       "confidence": "INFERRED",
       "confidence_score": 0.85,
       "source_file": "vault/Resources/Insights.md"
+    },
+    {
+      "id": "tasks_hyperedge_jaas_launch_prep",
+      "label": "Jarvis-as-a-Service launch preparation tasks",
+      "nodes": [
+        "tasks_tag_jarvis_as_a_service",
+        "tasks_task_validate_pricing_positioning",
+        "tasks_task_build_portfolio_demo_site",
+        "tasks_task_draft_gig_listing_copy",
+        "tasks_task_record_demo_video",
+        "tasks_task_decide_target_buyer",
+        "tasks_task_scope_productization_checklist",
+        "tasks_task_build_v1_static_demo_site"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "TASKS.md"
+    },
+    {
+      "id": "tasks_hyperedge_streamer_hud_shipping",
+      "label": "Streamer HUD product shipping/packaging tasks",
+      "nodes": [
+        "tasks_tag_streamer_hud",
+        "tasks_task_package_for_end_customers",
+        "tasks_task_write_customer_facing_setup_instructions",
+        "tasks_task_decide_delivery_sales_channel",
+        "tasks_task_write_basic_licensing_terms"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "TASKS.md"
     }
   ],
-  "built_at_commit": "be3154f1b89af5e93d407febf1e4242a7ca17b2f"
+  "built_at_commit": "31b4e74e49b118ae4700e345f0bb668a249e10b0"
 }

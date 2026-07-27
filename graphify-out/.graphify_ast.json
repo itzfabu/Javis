@@ -1,0 +1,459 @@
+{
+  "nodes": [
+    {
+      "id": "claude_hooks_fetch_context",
+      "label": "fetch-context.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/fetch-context.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_git_backup",
+      "label": "git-backup.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/git-backup.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_guard_connectors",
+      "label": "guard-connectors.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/guard-connectors.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_set_thinking",
+      "label": "set-thinking.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/set-thinking.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_speak_response",
+      "label": "speak-response.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/speak-response.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_sync_knowledge",
+      "label": "sync-knowledge.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/sync-knowledge.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_sync_knowledge_test_suspiciousheadinglines",
+      "label": "Test-SuspiciousHeadingLines()",
+      "file_type": "code",
+      "source_file": ".claude/hooks/sync-knowledge.ps1",
+      "source_location": "L9",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_watch_knowledge",
+      "label": "watch-knowledge.ps1",
+      "file_type": "code",
+      "source_file": ".claude/hooks/watch-knowledge.ps1",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "claude_hooks_watch_knowledge_global_invoke_knowledgesync",
+      "label": "Global:Invoke-KnowledgeSync()",
+      "file_type": "code",
+      "source_file": ".claude/hooks/watch-knowledge.ps1",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app",
+      "label": "app.py",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_get_open_tasks",
+      "label": "get_open_tasks()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L12",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_write_status",
+      "label": "write_status()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L22",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_add_history",
+      "label": "add_history()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L26",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_run_claude",
+      "label": "run_claude()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L40",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_background_backup",
+      "label": "background_backup()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L53",
+      "_origin": "ast"
+    },
+    {
+      "id": "before_request",
+      "label": "before_request",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_check_origin",
+      "label": "check_origin()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L63",
+      "_origin": "ast"
+    },
+    {
+      "id": "route",
+      "label": "route",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_index",
+      "label": "index()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L70",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_chat",
+      "label": "chat()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L74",
+      "_origin": "ast"
+    },
+    {
+      "id": "orb_app_port_in_use",
+      "label": "port_in_use()",
+      "file_type": "code",
+      "source_file": "orb/app.py",
+      "source_location": "L120",
+      "_origin": "ast"
+    },
+    {
+      "id": "vault_obsidian_app",
+      "label": "app.json",
+      "file_type": "code",
+      "source_file": "vault/.obsidian/app.json",
+      "source_location": "L1",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [
+    {
+      "source": "claude_hooks_sync_knowledge",
+      "target": "claude_hooks_sync_knowledge_test_suspiciousheadinglines",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/hooks/sync-knowledge.ps1",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "claude_hooks_watch_knowledge",
+      "target": "claude_hooks_watch_knowledge_global_invoke_knowledgesync",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/hooks/watch-knowledge.ps1",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "flask",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "subprocess",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "time",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "socket",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "threading",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_get_open_tasks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_write_status",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_add_history",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_run_claude",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_background_backup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_check_origin",
+      "target": "before_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_check_origin",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_index",
+      "target": "route",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_index",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "route",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_chat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app",
+      "target": "orb_app_port_in_use",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "orb_app_get_open_tasks",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "orb_app_write_status",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "orb_app_run_claude",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "orb_app_add_history",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "orb/app.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "orb_app_chat",
+      "target": "orb_app_background_backup",
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "orb/app.py",
+      "source_location": "L116",
+      "weight": 1.0,
+      "_origin": "ast"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
