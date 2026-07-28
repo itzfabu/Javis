@@ -69,6 +69,15 @@ tatsaechlich einzubauen.
   jedem Prompt auf gefaehrliche Settings, Credential-Leaks und MCP-
   Risiken prueft. Fuegt automatisch .env, *.pem, *.key zur globalen 
   .gitignore hinzu.
+  GEPRUEFT UND ABGELEHNT (2026-07-28): Repo hat nur 1 Stern, 0 Forks, 
+  3 Commits, keine Contributors. README zitiert "CVE-2025-59536" und 
+  "CVE-2026-21852" als angeblich gepatchte Luecken - beide Nummern 
+  wirken erfunden (zukunftsdatiert, nicht verifizierbar), klassisches 
+  Muster um ein unaudited Tool legitim wirken zu lassen. install.sh 
+  patcht global ~/.claude/settings.json (neuer UserPromptSubmit-Hook, 
+  system-weit) und globalen git core.excludesfile direkt per Skript. 
+  Nicht installiert. Nicht erneut vorschlagen ohne neue, vertrauenswuerdigere 
+  Quelle fuer dieselbe Funktionalitaet.
 - agento-patronum - schuetzt sensible Dateien/Credentials/Shell-Befehle 
   ueber Hooks als eigene Enforcement-Schicht (nicht nur settings.json 
   deny-Regeln). Defaults fuer .env, SSH-Keys, AWS/kubeconfig.
@@ -91,3 +100,28 @@ tatsaechlich einzubauen.
 - getburnd (garvitsurana271) - liest ~/.claude/projects/*.jsonl, 
   identifiziert 8 Verschwendungsmuster (z.B. verbose Context, Tool-
   Loops), zeigt Einsparpotenzial. MIT, keine Telemetrie.
+
+## Skill-Evolution / Referenzlisten
+- awesome-claude-code (hesreallyhim) - Die etablierte kuratierte 
+  Referenzliste fuer Claude-Code-Skills/Hooks/Agents/Plugins, 40k+ 
+  Sterne. Erster Anlaufpunkt vor Eigenbau.
+- HKUDS/OpenSpace - Self-Evolving Skill Engine der University of Hong 
+  Kong Data Science Lab. Agents lernen aus echten Task-Ausfuehrungen, 
+  reparieren/verbessern/leiten Skills automatisch ab, teilbar ueber 
+  Cloud-Community (open-space.cloud). Seriöser Absender, gut 
+  dokumentiert, noch nicht installiert.
+
+## SICHERHEITSWARNUNG - NIEMALS INSTALLIEREN
+- gsd-build/get-shit-done (Original-Repo) - NICHT INSTALLIEREN, auch 
+  nicht zum Ausprobieren. Der urspruengliche Ersteller (TÂCHES/Lex 
+  Christopherson) hat im Mai 2026 einen an das Projekt gekoppelten 
+  $GSD-Krypto-Token per Rug-Pull leergeraeumt, alle Social-Media-Konten 
+  geloescht und ist verschwunden (dokumentierter Exit-Scam, mehrfach 
+  von Sicherheitsmedien bestaetigt). Die urspruenglichen npm-Pakete 
+  (get-shit-done-cc, get-shit-done) sind weiterhin live und stellen ein 
+  Supply-Chain-Risiko dar (Namespace-Uebernahme durch Dritte moeglich).
+  Falls die GSD-Funktionalitaet (Context-Engineering/Spec-Driven-
+  Workflow) je gebraucht wird: NUR ueber den auditierten Community-Fork 
+  open-gsd/get-shit-done-redux (bit-genaue Spiegelung des Codes von vor 
+  dem Rug Pull, keine Token-Referenzen) oder Ableitungen davon wie 
+  buildomator/buildomator.
