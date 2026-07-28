@@ -40,3 +40,54 @@ Business-Richtungen, nicht nur fuer ein bestimmtes Projekt.
 Diese Liste bei Bedarf erweitern, wenn neue Tools geprueft werden - Ziel 
 ist ein wachsendes Nachschlagewerk, keine Verpflichtung, irgendwas davon 
 tatsaechlich einzubauen.
+
+## Referenz-Architekturen (aehnliche Projekte, kein Fertigprodukt)
+- Ramsbaby/jarvis - Sehr aehnliches Konzept zu unserem System: claude -p 
+  headless als 24/7-Ops-Plattform, Discord als mobile UI, 4-Schichten-
+  Self-Healing, Obsidian-Memory-Integration, 98% Kontext-Kompression. 
+  ACHTUNG: nur macOS/Linux nativ (launchd/pm2), kein natives Windows - 
+  fuer uns nur als Architektur-Referenz nutzbar, nicht direkt installierbar. 
+  Relevant fuer [[Jarvis Proaktiv statt Reaktiv]] (Self-Healing-Ansatz) 
+  und [[Jarvis Provider-Unabhaengigkeit - Roadmap]] (claude -p headless 
+  Pattern, das wir selbst schon nutzen).
+
+## Memory/Proaktivitaet
+- claude-mem (thedotmack, 35.9k Sterne) - erfasst automatisch alles was 
+  Claude tut, komprimiert per KI, spielt relevanten Kontext in 
+  zukuenftige Sessions zurueck. Direkt relevant fuer 
+  [[Jarvis Proaktiv statt Reaktiv]].
+- knowledge-graph (hilyfux) - Git-natives Memory-Layer fuer Claude Code, 
+  ~3ms/Event, privacy-first. Referenz-Kandidat fuer unser bestehendes 
+  Knowledge-System, aehnlich wie claude-obsidian.
+
+## Sicherheit - WICHTIG, sollte geprueft werden
+- claude-code-security-hooks (slavaspitsyn) - 7 Verteidigungsschichten 
+  gegen Prompt-Injection, blockiert automatisch Exfiltrations-Versuche 
+  von SSH-Keys/Cloud-Credentials/.env ueber Bash- und Read-Tool-Zugriffe. 
+  47 Tests.
+- claude-code-security-kit (kagioneko) - UserPromptSubmit-Hook, der vor 
+  jedem Prompt auf gefaehrliche Settings, Credential-Leaks und MCP-
+  Risiken prueft. Fuegt automatisch .env, *.pem, *.key zur globalen 
+  .gitignore hinzu.
+- agento-patronum - schuetzt sensible Dateien/Credentials/Shell-Befehle 
+  ueber Hooks als eigene Enforcement-Schicht (nicht nur settings.json 
+  deny-Regeln). Defaults fuer .env, SSH-Keys, AWS/kubeconfig.
+  BEGRUENDUNG FUER PRUEFUNG: Claude Code laedt .env-Dateien laut 
+  mehreren Quellen automatisch, auch wenn in Settings blockiert - genau 
+  die Kategorie Vorfall, die uns heute Abend mit dem OpenAI-Key passiert 
+  ist (Key wurde im Chat-Klartext geteilt). Diese Hooks haetten das 
+  zwar nicht verhindert (das war user-seitiges Teilen, kein Claude-Code-
+  Zugriff), aber sie adressieren das verwandte Risiko dass Claude Code 
+  selbst orb/.env unbeabsichtigt ausliest/verbreitet.
+
+## Token-Kosten-Tracking (Windows-taugliche Alternative zu rtk)
+- ccusage (11.5k Sterne) - analysiert Claude-Code-Nutzung aus lokalen 
+  JSONL-Dateien (Tages-/Monats-/Session-/Billing-Fenster-Reports), 
+  offline, keine API-Calls. Reine Datei-Auswertung statt Bash-Hook-
+  Rewriting wie rtk - sollte nativ unter Windows funktionieren.
+- cc-cost (lob-labs) - Single-File Python-CLI, parst Claude-Code-
+  Transcript-JSONL, zeigt Kosten/Cache-Hit-Rate/teuerste Turns. MIT, 
+  keine Drittanbieter-Abhaengigkeiten.
+- getburnd (garvitsurana271) - liest ~/.claude/projects/*.jsonl, 
+  identifiziert 8 Verschwendungsmuster (z.B. verbose Context, Tool-
+  Loops), zeigt Einsparpotenzial. MIT, keine Telemetrie.
