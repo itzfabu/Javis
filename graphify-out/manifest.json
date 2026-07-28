@@ -25,9 +25,9 @@
     "semantic_hash": "dc621e1d54a93e1c4ca98932453c7550"
   },
   ".claude/hooks/sync-knowledge.ps1": {
-    "mtime": 1784808523.6836967,
-    "ast_hash": "d20899c275aca707e6045023dc6deaf2",
-    "semantic_hash": "d20899c275aca707e6045023dc6deaf2"
+    "mtime": 1785150589.5402787,
+    "ast_hash": "52a5b407adf93e39d090d1a37b6c4f20",
+    "semantic_hash": "52a5b407adf93e39d090d1a37b6c4f20"
   },
   ".claude/hooks/watch-knowledge.ps1": {
     "mtime": 1784806500.733764,
@@ -40,44 +40,44 @@
     "semantic_hash": "88da6309648cf07faca9bd1ee2c21c1f"
   },
   "orb/app.py": {
-    "mtime": 1784810155.7891345,
-    "ast_hash": "9795897ddda870e1a7d40d987912ac33",
-    "semantic_hash": "9795897ddda870e1a7d40d987912ac33"
+    "mtime": 1785185124.3602707,
+    "ast_hash": "1a2c486b7b949067b1ab0ffe3a0ee10f",
+    "semantic_hash": "1a2c486b7b949067b1ab0ffe3a0ee10f"
   },
   "orb/history.json": {
-    "mtime": 1785135413.4107249,
-    "ast_hash": "94bb973a8d229180e6c4c00d4f685cdc",
-    "semantic_hash": "94bb973a8d229180e6c4c00d4f685cdc"
+    "mtime": 1785185325.0500646,
+    "ast_hash": "067e2483b9cdd3d4671d8ea50fa649cd",
+    "semantic_hash": "067e2483b9cdd3d4671d8ea50fa649cd"
   },
   "orb/knowledge.json": {
-    "mtime": 1785135420.9644663,
-    "ast_hash": "ccd419fa58c985e98de0c05e01ff2150",
-    "semantic_hash": "ccd419fa58c985e98de0c05e01ff2150"
+    "mtime": 1785235349.680312,
+    "ast_hash": "9701244b967f48b40bd8681cc6270b82",
+    "semantic_hash": "9701244b967f48b40bd8681cc6270b82"
   },
   "orb/status.json": {
-    "mtime": 1785147531.4357884,
+    "mtime": 1785237922.3625004,
     "ast_hash": "50456f6cc1c480a61388592848999d8a",
     "semantic_hash": "50456f6cc1c480a61388592848999d8a"
   },
   "vault/.obsidian/app.json": {
-    "mtime": 1785146129.401943,
+    "mtime": 1785218441.2954555,
     "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
     "semantic_hash": "99914b932bd37a50b983c5e7c90ae93b"
   },
   "vault/.obsidian/appearance.json": {
-    "mtime": 1785146129.4034483,
+    "mtime": 1785218441.301298,
     "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
     "semantic_hash": "99914b932bd37a50b983c5e7c90ae93b"
   },
   "vault/.obsidian/core-plugins.json": {
-    "mtime": 1785146129.384014,
+    "mtime": 1785218442.4684846,
     "ast_hash": "7c877bea49eaeabb100563bd157b9051",
     "semantic_hash": "7c877bea49eaeabb100563bd157b9051"
   },
   "vault/.obsidian/graph.json": {
-    "mtime": 1785146131.066,
-    "ast_hash": "5cadfdac6854bec485760c404839e431",
-    "semantic_hash": "5cadfdac6854bec485760c404839e431"
+    "mtime": 1785229897.185,
+    "ast_hash": "0ff1b632a50875641df2a11175dfade7",
+    "semantic_hash": "0ff1b632a50875641df2a11175dfade7"
   },
   "vault/.obsidian/templates.json": {
     "mtime": 1784806500.7641063,
@@ -85,9 +85,9 @@
     "semantic_hash": "d36c34f902deb03506af9c1252be191f"
   },
   "vault/.obsidian/workspace.json": {
-    "mtime": 1785146129.669416,
-    "ast_hash": "fd0ac89cc5a4f22350c4a25ce2d6168c",
-    "semantic_hash": "fd0ac89cc5a4f22350c4a25ce2d6168c"
+    "mtime": 1785235324.2819886,
+    "ast_hash": "ba29487e208bc6a02706526e024b4cd1",
+    "semantic_hash": "ba29487e208bc6a02706526e024b4cd1"
   },
   ".claude/agents/business-analyst.md": {
     "mtime": 1784731229.1242776,
@@ -135,9 +135,9 @@
     "semantic_hash": "11adf767dccae05d5371e41918da6865"
   },
   "DAILY-BRIEF.md": {
-    "mtime": 1785132480.2977505,
-    "ast_hash": "0f12e7049c7f94862da61daee037d3ea",
-    "semantic_hash": "0f12e7049c7f94862da61daee037d3ea"
+    "mtime": 1785220613.5938146,
+    "ast_hash": "4f229af4a44c6ddabc0eb6ca2c819a66",
+    "semantic_hash": "4f229af4a44c6ddabc0eb6ca2c819a66"
   },
   "README.md": {
     "mtime": 1784807108.5830553,
@@ -145,9 +145,9 @@
     "semantic_hash": "30087034d961bef52e5599d6c93a2d6b"
   },
   "TASKS.md": {
-    "mtime": 1785133631.314316,
-    "ast_hash": "b9c06c260967de96976810dabcbf658d",
-    "semantic_hash": "b9c06c260967de96976810dabcbf658d"
+    "mtime": 1785185281.3780828,
+    "ast_hash": "a07be4542b8ed92a241aa7f0ecb39ebf",
+    "semantic_hash": "a07be4542b8ed92a241aa7f0ecb39ebf"
   },
   "knowledge/GOALS.md": {
     "mtime": 1784809720.3927658,
@@ -225,14 +225,14 @@
     "semantic_hash": "8ef329a0bce5f35d4ba5c7bd2a33f979"
   },
   "vault/Projects/Streamer HUD Widget.md": {
-    "mtime": 1784882348.5031366,
-    "ast_hash": "266a946f68edddb13477e968343ccffd",
-    "semantic_hash": "266a946f68edddb13477e968343ccffd"
+    "mtime": 1785184483.4572175,
+    "ast_hash": "a7e284374c56d4b3a8f53703a10ac12d",
+    "semantic_hash": "a7e284374c56d4b3a8f53703a10ac12d"
   },
   "vault/README.md": {
-    "mtime": 1784747560.7254832,
-    "ast_hash": "7039df7a7630aa655a4fb4a645e9217c",
-    "semantic_hash": "7039df7a7630aa655a4fb4a645e9217c"
+    "mtime": 1785175167.8370283,
+    "ast_hash": "ae9f7567809fd1ce2802a24d12cb9567",
+    "semantic_hash": "ae9f7567809fd1ce2802a24d12cb9567"
   },
   "vault/Resources/Insights.md": {
     "mtime": 1785133631.2275043,
@@ -240,28 +240,68 @@
     "semantic_hash": "add8b31d9e1adcb44067d4453157009d"
   },
   "vault/Templates/Area Note.md": {
-    "mtime": 1784806500.767093,
-    "ast_hash": "3e655c8fb24dd63f1d4088f8b9b542a7",
-    "semantic_hash": "3e655c8fb24dd63f1d4088f8b9b542a7"
+    "mtime": 1785175172.284967,
+    "ast_hash": "e816852be8b900e9b1804cb025d29d44",
+    "semantic_hash": "e816852be8b900e9b1804cb025d29d44"
   },
   "vault/Templates/Idea Note.md": {
-    "mtime": 1784806500.7683647,
-    "ast_hash": "ea2724cce218619688a90a9b70908a81",
-    "semantic_hash": "ea2724cce218619688a90a9b70908a81"
+    "mtime": 1785175173.1978805,
+    "ast_hash": "76d25f1d4c325161663135a8d5527b4f",
+    "semantic_hash": "76d25f1d4c325161663135a8d5527b4f"
   },
   "vault/Templates/Project Note.md": {
-    "mtime": 1784806500.7703724,
-    "ast_hash": "54a5511101d6a7831c459a3d6584e062",
-    "semantic_hash": "54a5511101d6a7831c459a3d6584e062"
+    "mtime": 1785175173.9738483,
+    "ast_hash": "4c49e2fba5784ef116292d0ef2da5993",
+    "semantic_hash": "4c49e2fba5784ef116292d0ef2da5993"
   },
   "vault/Templates/Resource Note.md": {
-    "mtime": 1784806501.1255057,
-    "ast_hash": "3ed75dee29686a26f80ab2fb5e42aaa7",
-    "semantic_hash": "3ed75dee29686a26f80ab2fb5e42aaa7"
+    "mtime": 1785175178.742663,
+    "ast_hash": "34758373bca1fd12b827cdd3d7e6e7bf",
+    "semantic_hash": "34758373bca1fd12b827cdd3d7e6e7bf"
   },
   "vault/Willkommen.md": {
     "mtime": 1784730272.9735756,
     "ast_hash": "eb3602273acf100c0f9e8b16fc57f33a",
     "semantic_hash": "eb3602273acf100c0f9e8b16fc57f33a"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1785219694.265317,
+    "ast_hash": "5ddad065c9e89641909cca96e7843e70",
+    "semantic_hash": "5ddad065c9e89641909cca96e7843e70"
+  },
+  "vault/.obsidian/community-plugins.json": {
+    "mtime": 1785218441.633245,
+    "ast_hash": "04f3a1b135e11a844d1141795588b445",
+    "semantic_hash": "04f3a1b135e11a844d1141795588b445"
+  },
+  "knowledge/CAPABILITIES.md": {
+    "mtime": 1785223331.0262349,
+    "ast_hash": "546e8ab0e3f76dd8fd2df96ef2ad1006",
+    "semantic_hash": "546e8ab0e3f76dd8fd2df96ef2ad1006"
+  },
+  "vault/Areas/Automatisches Wikilinking.md": {
+    "mtime": 1785182860.6998148,
+    "ast_hash": "bcc3136b13423c4bb066fb9781d27b25",
+    "semantic_hash": "bcc3136b13423c4bb066fb9781d27b25"
+  },
+  "vault/Areas/Jarvis - Gesamtstatus.md": {
+    "mtime": 1785235284.879412,
+    "ast_hash": "44c0c6988b04dd212539b11da7291808",
+    "semantic_hash": "44c0c6988b04dd212539b11da7291808"
+  },
+  "vault/Areas/Jarvis Proaktiv statt Reaktiv.md": {
+    "mtime": 1785182846.9811325,
+    "ast_hash": "dce599ef9b8a2fa95e242d857733deb2",
+    "semantic_hash": "dce599ef9b8a2fa95e242d857733deb2"
+  },
+  "vault/Areas/Jarvis Provider-Unabhaengigkeit - Roadmap.md": {
+    "mtime": 1785235335.995863,
+    "ast_hash": "7e79345c1b5c49da786ad842c3df9b60",
+    "semantic_hash": "7e79345c1b5c49da786ad842c3df9b60"
+  },
+  "vault/Resources/CAPABILITIES.md": {
+    "mtime": 1785235322.5032315,
+    "ast_hash": "db81c58a14f28bd8a786669f5df55012",
+    "semantic_hash": "db81c58a14f28bd8a786669f5df55012"
   }
 }

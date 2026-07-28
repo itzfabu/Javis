@@ -1,8 +1,26 @@
 ---
 tags: [status]
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 # Jarvis - Gesamtstatus (Idee: bei Bedarf aktualisieren)
+
+## OmniRoute + Tool-Installationen (2026-07-28)
+- OmniRoute (lokaler LLM-Unified-Router, `C:\Jarvis\omniroute`) installiert 
+  per npm/npx, abgesichert: nur `127.0.0.1`-Bindung, Secrets zufaellig 
+  generiert (nie im Klartext gezeigt), Passwort-Reset ueber echtes Terminal 
+  statt Pipe. Bewusst OHNE OAuth-Cloaking-Mechanismus verbunden (der haette 
+  Claude Codes eigene Anthropic-Session missbraucht, ToS-Risiko) - noch kein 
+  Provider aktiv, Anthropic-Anbindung wegen separater API-Kosten vorerst 
+  zurueckgestellt. Siehe [[Jarvis Provider-Unabhaengigkeit - Roadmap]].
+- 5 Tools/Repos geprueft und installiert (Details: [[CAPABILITIES]]): 
+  HKUDS/OpenSpace (als MCP-Server registriert), hyperframes (HTML-zu-Video, 
+  automatisch installierte globale Skills inkl. eines Critical-Risk-Skills 
+  wieder entfernt), camofox-browser (Stealth-Browser, Bindung ebenfalls auf 
+  localhost korrigiert), OpenMontage (Setup manuell nachgebildet, `make` 
+  fehlte), claude-code-best-practice (reine Referenz).
+- Git-Repo-Hygiene: OpenSpace war versehentlich als eingebettetes Repo 
+  committet (Gitlink), OmniRoutes Laufzeit-DB/Logs wurden versehentlich 
+  mitversioniert - beides korrigiert, `.gitignore` entsprechend erweitert.
 
 ## Kern-System - fertig
 - orb/app.py: Flask-Backend, Chat-Endpoint, Claude-CLI-Shellout, TTS 

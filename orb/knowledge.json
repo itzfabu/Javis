@@ -134,6 +134,10 @@
                   },
                   {
                       "folder":  "Resources",
+                      "title":  "CAPABILITIES"
+                  },
+                  {
+                      "folder":  "Resources",
                       "title":  "Insights"
                   }
               ]

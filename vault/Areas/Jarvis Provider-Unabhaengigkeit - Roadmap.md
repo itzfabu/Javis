@@ -41,6 +41,15 @@ einzeln, Jarvis bleibt waehrend der Umstellung nutzbar. Naechster
 sinnvoller Schritt waere Phase 2, direkt auf dem bestehenden OpenAI-
 Fallback aufbauend - aber nicht jetzt, nur als Notiz fuer spaeter.
 
+## Externes Tool: OmniRoute (2026-07-28)
+OmniRoute (`C:\Jarvis\omniroute`) installiert und abgesichert (localhost-only, 
+zufaellig generierte Secrets) - ein lokaler Unified-LLM-Router (160+ Provider), 
+kein Ersatz fuer die eigene Abstraktionsschicht aus Phase 2, aber eine 
+externe Alternative dafuer, falls Phase 2 nie umgesetzt wird. Noch kein 
+Provider verbunden (Anthropic-API-Key kostet extra, zurueckgestellt). 
+Bewusst NICHT ueber den mitgelieferten OAuth-Cloaking-Mechanismus verbunden, 
+der Claude Codes eigene Session missbraucht haette. Details: [[CAPABILITIES]].
+
 ## Related
 - [[Jarvis-README]]
 - [[Streamer HUD Widget Market Research]]

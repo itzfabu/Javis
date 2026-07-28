@@ -27,3 +27,17 @@ vault/Jarvis-README.md
 # configured), WAL/SHM files, logs, PID - all generated, changes constantly
 # while the server runs, and broke auto-backup's rebase step (#2026-07-28).
 omniroute/data/
+
+# graphify pipeline intermediates - deleted by the skill's own cleanup step at
+# the end of every run, but an auto-backup firing mid-pipeline can catch them
+# first. graph.json/GRAPH_REPORT.md/graph.html/manifest.json/cost.json/cache/
+# are the real persistent outputs and stay tracked (#2026-07-28).
+graphify-out/.graphify_detect.json
+graphify-out/.graphify_extract.json
+graphify-out/.graphify_ast.json
+graphify-out/.graphify_semantic.json
+graphify-out/.graphify_analysis.json
+graphify-out/.graphify_chunk_*.json
+graphify-out/.graphify_incremental.json
+graphify-out/.graphify_old.json
+graphify-out/.needs_update
