@@ -22,6 +22,25 @@ updated: 2026-07-28
   committet (Gitlink), OmniRoutes Laufzeit-DB/Logs wurden versehentlich 
   mitversioniert - beides korrigiert, `.gitignore` entsprechend erweitert.
 
+## Session-Rotation gegen Token-Wachstum (2026-07-28)
+- Problem: `orb/app.py` hat `localhost:8420` (Webchat) immer per `--resume` 
+  auf dieselbe, nie rotierende `WEBCHAT_SESSION_ID` laufen lassen - jede 
+  Nachricht musste das komplette, seit Tagen wachsende Transkript neu laden. 
+  Das war der konkrete Grund fuer "zu viele Tokens".
+- Fix: `session_state.json` (Session-ID + Turn-Zaehler) ersetzt die 
+  statische ID. Nach `ROTATE_AFTER_TURNS` (aktuell 20) startet automatisch 
+  eine frische Session ohne `--resume`.
+- Warum das nichts verliert: CLAUDE.md, knowledge/PROJECTS.md/GOALS.md/
+  TASKS.md, der Vault und die Auto-Memory-Dateien werden bei jedem 
+  Subprocess-Aufruf ohnehin frisch neu gelesen, unabhaengig von der 
+  Session-ID. Nur das rohe Chat-Transkript wird gekappt - das "Second Brain" 
+  traegt die Kontinuitaet, nicht der teure Rohverlauf.
+- Achtung: Fix greift erst nach Neustart von `orb/app.py` (kein Auto-Reload).
+- Idee dahinter direkt aus [[CAPABILITIES]] uebernommen (claude-mem: 
+  komprimiert/spielt relevanten Kontext zurueck statt Rohverlauf; 
+  knowledge-graph: Git-natives Memory statt Transkript-Replay) - beide 
+  Repos selbst nicht installiert, nur das Funktionsprinzip nachgebaut.
+
 ## Kern-System - fertig
 - orb/app.py: Flask-Backend, Chat-Endpoint, Claude-CLI-Shellout, TTS 
   (edge-tts), Task-Integration, OpenAI-Fallback

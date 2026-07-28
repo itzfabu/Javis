@@ -1,13 +1,31 @@
 ﻿from flask import Flask, request, jsonify, send_from_directory
-import subprocess, os, time, json, socket, threading
-import requests
+import subprocess, os, time, json, socket, threading, uuid
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
 STATUS_PATH = r"C:\Jarvis\orb\status.json"
-SESSION_MARKER = r"C:\Jarvis\orb\webchat_session_created.flag"
-WEBCHAT_SESSION_ID = "8f14e45f-ceea-467e-9575-5c3c4a5c6f2b"
+SESSION_STATE_PATH = r"C:\Jarvis\orb\session_state.json"
 SECRET_TOKEN = "bfee9c861c8a6a792a579f613b8bda86a3a6ac9fb5513d78"
+
+# Resuming the same Claude session forever means every message reloads the
+# whole accumulated transcript. CLAUDE.md, knowledge/*.md, the vault, and the
+# auto-memory files are all re-read fresh on every subprocess call regardless
+# of session id, so continuity survives a rotation - only the raw back-and-forth
+# transcript gets dropped, which is exactly what was making this expensive.
+ROTATE_AFTER_TURNS = 20
+
+def get_session_state():
+    if os.path.exists(SESSION_STATE_PATH):
+        try:
+            with open(SESSION_STATE_PATH, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {"session_id": str(uuid.uuid4()), "turns": 0}
+
+def save_session_state(state):
+    with open(SESSION_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump(state, f)
 
 def load_env_file():
     env_path = os.path.join(os.path.dirname(__file__), ".env")
@@ -39,19 +57,22 @@ def write_status(status, message, tasks, token, source="claude"):
         json.dump({"status": status, "lastMessage": message, "tasks": tasks, "audioToken": token, "source": source}, f)
 
 def run_claude(message):
-    if os.path.exists(SESSION_MARKER):
-        cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--resume", WEBCHAT_SESSION_ID]
+    state = get_session_state()
+    fresh = state["turns"] == 0
+    if fresh:
+        cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--session-id", state["session_id"]]
     else:
-        cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--session-id", WEBCHAT_SESSION_ID]
+        cmd = ["cmd", "/c", "claude", "-p", message, "--permission-mode", "acceptEdits", "--resume", state["session_id"]]
     result = subprocess.run(cmd, cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600)
     combined = ((result.stdout or "") + "\n" + (result.stderr or "")).lower()
     needs_fallback = result.returncode != 0 or any(kw in combined for kw in FALLBACK_KEYWORDS)
     if needs_fallback:
         reason = (result.stderr.strip() or result.stdout.strip() or "unknown error")[:300]
         return None, reason
-    if not os.path.exists(SESSION_MARKER):
-        with open(SESSION_MARKER, "w") as f:
-            f.write("created")
+    state["turns"] += 1
+    if state["turns"] >= ROTATE_AFTER_TURNS:
+        state = {"session_id": str(uuid.uuid4()), "turns": 0}
+    save_session_state(state)
     return result.stdout.strip() or "Sorry, I could not process that.", None
 
 def call_openai_fallback(message):
