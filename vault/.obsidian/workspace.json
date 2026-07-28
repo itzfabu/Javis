@@ -205,6 +205,7 @@
   "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
     "knowledge/PROJECTS.md",
+    "orb/git-backup-warnings.log",
     "Areas/Jarvis - Gesamtstatus.md",
     "Areas/Automatisches Wikilinking.md",
     "Areas/Jarvis Proaktiv statt Reaktiv.md",
@@ -233,7 +234,6 @@
     "orb/product/StreamerHUD/Setup-Guide.md",
     "orb/product/StreamerHUD/reactive-hud-pack.html",
     "orb/prototypes/streamer-hud-prototype.html",
-    "orb/prototypes/server.log",
     "Projects/Streamer HUD Widget.md",
     "Projects/Streamer HUD Widget Market Research.md",
     "Projects/Jarvis-as-a-Service Launch.md",

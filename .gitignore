@@ -14,3 +14,11 @@ vault/knowledge/
 vault/CLAUDE.md
 vault/TASKS.md
 vault/Jarvis-README.md
+
+# Separately-cloned third-party tools with their own .git history - these are
+# independent repos, not part of Jarvis. Ignored to avoid accidental embedded-repo
+# gitlinks (#see 2026-07-28 tool-installation session).
+/OpenSpace/
+/camofox-browser/
+/OpenMontage/
+/reference/
