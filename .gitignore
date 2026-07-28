@@ -22,3 +22,8 @@ vault/Jarvis-README.md
 /camofox-browser/
 /OpenMontage/
 /reference/
+
+# OmniRoute runtime data: SQLite DB (will hold encrypted provider keys once
+# configured), WAL/SHM files, logs, PID - all generated, changes constantly
+# while the server runs, and broke auto-backup's rebase step (#2026-07-28).
+omniroute/data/
