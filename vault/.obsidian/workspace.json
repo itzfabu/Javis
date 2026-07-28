@@ -30,19 +30,8 @@
               "icon": "lucide-file",
               "title": "PROJECTS"
             }
-          },
-          {
-            "id": "e5c072c6ed920d1c",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
-            }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -203,7 +192,7 @@
       "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "e5c072c6ed920d1c",
+  "active": "9f7c1ee8a3d0914b",
   "lastOpenFiles": [
     "knowledge/PROJECTS.md",
     "Resources/CAPABILITIES.md",
