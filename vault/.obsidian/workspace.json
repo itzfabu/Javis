@@ -41,7 +41,8 @@
               "title": "Graph view"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -202,10 +203,10 @@
       "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "9f7c1ee8a3d0914b",
+  "active": "e5c072c6ed920d1c",
   "lastOpenFiles": [
-    "Resources/CAPABILITIES.md",
     "knowledge/PROJECTS.md",
+    "Resources/CAPABILITIES.md",
     "orb/git-backup-warnings.log",
     "Areas/Jarvis - Gesamtstatus.md",
     "Areas/Automatisches Wikilinking.md",
