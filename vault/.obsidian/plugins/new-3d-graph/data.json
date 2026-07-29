@@ -8,96 +8,24 @@
   "showTags": true,
   "groups": [
     {
-      "query": "path:Jarvis-README.md",
+      "query": "path:Architecture/Jarvis System Architecture.md",
       "color": "#2980B9"
     },
     {
-      "query": "path:CLAUDE.md",
-      "color": "#2980B9"
-    },
-    {
-      "query": "path:.claude/agents",
-      "color": "#8E44AD"
-    },
-    {
-      "query": "path:orb/app.py",
-      "color": "#16A085"
-    },
-    {
-      "query": "path:orb/index.html",
-      "color": "#2ECC71"
-    },
-    {
-      "query": "path:knowledge",
-      "color": "#F39C12"
-    },
-    {
-      "query": "path:orb/License-Key-Generator-SELLER-ONLY.html",
-      "color": "#7F8C8D"
-    },
-    {
-      "query": "path:orb/product/StreamerHUD/reactive-hud-pack.html",
-      "color": "#7F8C8D"
-    },
-    {
-      "query": "path:.claude/hooks/sync-knowledge.ps1",
-      "color": "#5D6D7E"
-    },
-    {
-      "query": "path:.claude/hooks/watch-knowledge.ps1",
-      "color": "#566573"
-    },
-    {
-      "query": "path:.claude/hooks/fetch-context.ps1",
-      "color": "#34495E"
-    },
-    {
-      "query": "path:.claude/hooks/git-backup.ps1",
-      "color": "#283747"
-    },
-    {
-      "query": "path:.claude/hooks/guard-connectors.ps1",
-      "color": "#212F3D"
-    },
-    {
-      "query": "path:.claude/hooks/set-thinking.ps1",
-      "color": "#1B2631"
-    },
-    {
-      "query": "path:.claude/hooks/speak-response.ps1",
-      "color": "#4A235A"
-    },
-    {
-      "query": "path:TASKS.md",
+      "query": "path:Boards/Engineering.md",
       "color": "#85C1E9"
-    },
-    {
-      "query": "path:Decisions-Log.md",
-      "color": "#BDC3C7"
     },
     {
       "query": "path:Templates",
       "color": "#D5DBDB"
     },
     {
-      "query": "path:Willkommen.md",
-      "color": "#EAECEE"
-    },
-    {
       "query": "path:Projects/Jarvis-as-a-Service",
       "color": "#E67E22"
     },
     {
-      "query": "path:Projects/Streamer HUD Widget Market Research",
+      "query": "path:Knowledge/Streamer HUD Widget Market Research.md",
       "color": "#D35400"
-    },
-    {
-      "query": "path:orb/prototypes",
-      "color": "#B03A2E"
-    },
-    {
-      "query": "path:orb/product/StreamerHUD",
-      "color": "#27AE60"
     }
   ],
   "useThemeColors": true,

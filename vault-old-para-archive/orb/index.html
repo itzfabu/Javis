@@ -1,0 +1,579 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jarvis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap");
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Orbitron", sans-serif; }
+body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); height: 100vh; width: 100vw; overflow: hidden; color: #7fffe8; position: relative; }
+.scanlines { position: absolute; inset: 0; pointer-events: none; z-index: 6; background: repeating-linear-gradient(to bottom, rgba(90,255,230,0.03) 0px, rgba(90,255,230,0.03) 1px, transparent 1px, transparent 3px); mix-blend-mode: screen; }
+.vignette { position: absolute; inset: 0; pointer-events: none; z-index: 6; box-shadow: inset 0 0 160px 40px rgba(0,0,0,0.85); }
+.lbl { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-bottom: 6px; }
+#knowledgeGraphPanel { position: absolute; top: 40px; left: 40px; z-index: 3; }
+#kgCanvas { cursor: grab; border-radius: 6px; background: rgba(10,40,45,0.25); }
+#activityLog { position: absolute; top: 270px; left: 40px; font-size: 11px; z-index: 3; max-width: 220px; }
+#activitylist { list-style: none; }
+#activitylist li { padding: 2px 0; opacity: 0.75; }
+#dateTime { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 3; }
+#clock { font-size: 26px; font-weight: 500; color: #baffef; letter-spacing: 2px; }
+#dateline { font-size: 11px; opacity: 0.6; margin-top: 2px; letter-spacing: 1px; }
+#notesPanel { position: absolute; top: 70px; right: 40px; text-align: right; font-size: 11px; z-index: 3; max-width: 200px; }
+#noteslist { list-style: none; }
+#noteslist li { padding: 2px 0; opacity: 0.75; }
+#logText { position: absolute; top: calc(50% + 258px); left: 50%; transform: translateX(-50%); width: 420px; font-size: 11px; z-index: 3; text-align: center; }
+#logText .lbl { text-align: center; }
+#chatlog { line-height: 1.5; opacity: 0.85; white-space: pre-wrap; text-align: left; max-height: 140px; overflow-y: auto; padding: 8px 12px; background: rgba(10,40,45,0.25); border-radius: 8px; user-select: text; cursor: text; scrollbar-width: thin; scrollbar-color: rgba(90,255,230,0.4) transparent; }
+#chatlog::-webkit-scrollbar { width: 6px; }
+#chatlog::-webkit-scrollbar-thumb { background: rgba(90,255,230,0.4); border-radius: 3px; }
+#chatlog::-webkit-scrollbar-track { background: transparent; }
+#globePanel { position: absolute; bottom: 40px; right: 40px; text-align: center; z-index: 3; }
+#globeContainer { width: 150px; height: 150px; margin: 0 auto; }
+.platform { width: 130px; height: 10px; margin: -6px auto 0; background: radial-gradient(ellipse at center, rgba(90,255,230,0.35), transparent 70%); border-radius: 50%; }
+.stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; z-index: 2; }
+#coreContainer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; }
+#label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 20px; font-size: 12px; letter-spacing: 4px; opacity: 0.65; white-space: nowrap; }
+#chatInput { position: absolute; top: calc(50% + 190px); left: 50%; transform: translateX(-50%); display: flex; gap: 14px; align-items: center; z-index: 5; background: rgba(10,40,45,0.55); padding: 14px 22px; border-radius: 26px; min-width: 360px; }
+#msgInput { background: transparent; border: none; outline: none; color: #baffef; font-family: Orbitron, sans-serif; font-size: 15px; width: 280px; }
+#micBtn, #sendBtn { background: none; border: none; color: #5affe6; cursor: pointer; }
+#micBtn { font-size: 22px; }
+#sendBtn { font-size: 20px; }
+</style>
+</head>
+<body>
+<div id="settingsIcon" style="position:absolute; top:34px; right:40px; z-index:5; cursor:pointer; opacity:0.6;" title="Settings">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</div>
+<div id="settingsPanel" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(4,20,26,0.92); z-index:10; backdrop-filter:blur(4px);">
+  <div style="max-width:480px; margin:60px auto; background:rgba(10,40,45,0.9); border:1px solid rgba(90,255,230,0.35); border-radius:12px; padding:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+      <h2 style="font-size:16px; letter-spacing:2px;">SETTINGS</h2>
+      <span id="closeSettings" style="cursor:pointer; opacity:0.7; font-size:20px;">&times;</span>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">ACCOUNT</div>
+      <div style="font-size:12px; line-height:1.8;">
+        Google Drive: <span style="color:#6fff8f;">connected</span><br>
+        GitHub: <span style="color:#6fff8f;">connected</span><br>
+        Outlook: <span style="color:#ffcf7f;">paused</span>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">VISUAL - ACCENT COLOR</div>
+      <div id="accentSwatches" style="display:flex; gap:10px;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">LANGUAGE (dashboard labels)</div>
+      <div style="display:flex; gap:8px;">
+        <button class="lang-btn" data-lang="en" style="padding:6px 14px; border-radius:6px; border:1px solid #333; background:#1e3a3d; color:#eee; cursor:pointer; font-size:12px;">English</button>
+        <button class="lang-btn" data-lang="de" style="padding:6px 14px; border-radius:6px; border:1px solid #333; background:#1e1e28; color:#eee; cursor:pointer; font-size:12px;">Deutsch</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; opacity:0.5; letter-spacing:1px; margin-bottom:8px;">MORE</div>
+      <div style="font-size:12px; opacity:0.8;">System docs: <a href="https://github.com/itzfabu/Javis/blob/main/README.md" target="_blank" style="color:#5affe6;">README on GitHub</a></div>
+    </div>
+  </div>
+</div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div id="knowledgeGraphPanel">
+  <div class="lbl">KNOWLEDGE</div>
+  <canvas id="kgCanvas" width="240" height="180"></canvas>
+</div>
+<div id="activityLog"><div class="lbl">ACTIVITY</div><ul id="activitylist"><li style="opacity:0.6;">no activity yet</li></ul></div>
+
+<div id="dateTime"><div id="clock">00:00:00</div><div id="dateline">â€”</div></div>
+<div id="notesPanel"><div class="lbl">NOTES</div><ul id="noteslist"><li>none</li></ul></div>
+<div id="logText"><div class="lbl">LAST RESPONSE</div><div id="chatlog">â€”</div></div>
+<div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
+
+<div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
+
+<div id="chatInput">
+  <input id="msgInput" type="text" placeholder="talk to jarvis...">
+  <button id="micBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
+  <button id="sendBtn">&#10148;</button>
+</div>
+
+<script>
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = now.toLocaleTimeString();
+  document.getElementById("dateline").textContent = now.toLocaleDateString(undefined, { weekday: "short", year: "numeric", month: "short", day: "numeric" });
+}
+updateClock(); setInterval(updateClock, 1000);
+
+let lastRenderedMessage = "";
+function typewrite(text) {
+  if (text === lastRenderedMessage) return;
+  lastRenderedMessage = text;
+  const el = document.getElementById("chatlog"); el.textContent = "";
+  let i = 0;
+  function step() { if (i <= text.length) { el.textContent = text.slice(0, i); i += 3; setTimeout(step, 12); } }
+  step();
+}
+
+let audioCtx, analyser, freqData, audioReady = false;
+const audioEl = new Audio();
+audioEl.crossOrigin = "anonymous";
+function setupAudio() {
+  if (audioReady) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaElementSource(audioEl);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  freqData = new Uint8Array(analyser.frequencyBinCount);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  audioReady = true;
+}
+document.addEventListener("click", setupAudio, { once: true });
+audioEl.addEventListener("ended", () => { currentState = "idle"; document.getElementById("label").textContent = "READY"; });
+function getAudioAmplitude() {
+  if (!analyser) return 0;
+  analyser.getByteFrequencyData(freqData);
+  let sum = 0;
+  for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+  return (sum / freqData.length) / 255;
+}
+
+let coreScene, coreCamera, coreRenderer, coreParticles, basePositions;
+let speakTime = 0;
+let currentState = "idle";
+let lastAudioToken = null;
+function initCore() {
+  const container = document.getElementById("coreContainer");
+  coreScene = new THREE.Scene();
+  coreCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  coreCamera.position.z = 3.2;
+  coreRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  coreRenderer.setSize(200, 200);
+  container.appendChild(coreRenderer.domElement);
+  const count = 4500;
+  basePositions = new Float32Array(count * 3);
+  const radius = 1.15;
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r;
+    const jitter = 1 + (Math.random() - 0.5) * 0.08;
+    basePositions[i*3] = x * radius * jitter;
+    basePositions[i*3+1] = y * radius * jitter;
+    basePositions[i*3+2] = z * radius * jitter;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(basePositions.slice(), 3));
+  const canvas = document.createElement("canvas");
+  canvas.width = 16; canvas.height = 16;
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createRadialGradient(8,8,0,8,8,8);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad; ctx.fillRect(0,0,16,16);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.PointsMaterial({ size: 0.05, map: tex, transparent: true, opacity: 0.9, color: 0x5affe6, depthWrite: false, blending: THREE.AdditiveBlending });
+  coreParticles = new THREE.Points(geo, mat);
+  coreScene.add(coreParticles);
+  animateCore();
+}
+function animateCore() {
+  requestAnimationFrame(animateCore);
+  const posAttr = coreParticles.geometry.attributes.position;
+  const arr = posAttr.array;
+  if (currentState === "speaking") {
+    const amp = getAudioAmplitude();
+    speakTime += 0.1;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + amp * 0.22 * Math.sin(speakTime * 2 + i * 0.3);
+      arr[i*3] = basePositions[i*3] * wobble;
+      arr[i*3+1] = basePositions[i*3+1] * wobble;
+      arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.006 + amp * 0.02;
+  } else if (currentState === "thinking") {
+    speakTime += 0.05;
+    for (let i = 0; i < arr.length / 3; i++) {
+      const wobble = 1 + Math.sin(speakTime * 1.5 + i * 0.2) * 0.03;
+      arr[i*3] = basePositions[i*3] * wobble;
+      arr[i*3+1] = basePositions[i*3+1] * wobble;
+      arr[i*3+2] = basePositions[i*3+2] * wobble;
+    }
+    posAttr.needsUpdate = true;
+    coreParticles.rotation.y += 0.005;
+  } else {
+    if (arr[0] !== basePositions[0]) { arr.set(basePositions); posAttr.needsUpdate = true; }
+    coreParticles.rotation.y += 0.003;
+  }
+  coreRenderer.render(coreScene, coreCamera);
+}
+if (window.THREE) initCore();
+
+let globeScene, globeCamera, globeRenderer, globeMesh;
+function initGlobe() {
+  const container = document.getElementById("globeContainer");
+  globeScene = new THREE.Scene();
+  globeCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  globeCamera.position.z = 3.2;
+  globeRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  globeRenderer.setSize(150, 150);
+  container.appendChild(globeRenderer.domElement);
+  const loader = new THREE.TextureLoader();
+  loader.crossOrigin = "anonymous";
+  const earthTexture = loader.load("https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg");
+  const geo = new THREE.SphereGeometry(1.2, 32, 24);
+  const mat = new THREE.MeshBasicMaterial({ map: earthTexture });
+  globeMesh = new THREE.Mesh(geo, mat);
+  globeScene.add(globeMesh);
+  const wireGeo = new THREE.SphereGeometry(1.22, 24, 16);
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0x5affe6, wireframe: true, transparent: true, opacity: 0.2 });
+  globeScene.add(new THREE.Mesh(wireGeo, wireMat));
+  const atmosGeo = new THREE.SphereGeometry(1.3, 24, 16);
+  const atmosMat = new THREE.MeshBasicMaterial({ color: 0x5affe6, transparent: true, opacity: 0.08 });
+  globeScene.add(new THREE.Mesh(atmosGeo, atmosMat));
+  animateGlobe();
+}
+function animateGlobe() {
+  requestAnimationFrame(animateGlobe);
+  globeMesh.rotation.y += 0.006;
+  globeRenderer.render(globeScene, globeCamera);
+}
+if (window.THREE) initGlobe();
+
+const stage = document.getElementById("stage");
+document.addEventListener("mousemove", (e) => {
+  const dx = (e.clientX / window.innerWidth - 0.5) * 10;
+  const dy = (e.clientY / window.innerHeight - 0.5) * 10;
+  stage.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+});
+
+let kgNodes = [];
+let kgEdges = [];
+function kgSyncData(data) {
+  const wantIds = new Set();
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+
+  (data.agents || []).forEach((name, i) => {
+    const id = "agent:" + name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      const angle = (i / data.agents.length) * Math.PI * 2;
+      kgNodes.push({ id, type: "agent", label: name, x: 50 * Math.cos(angle), y: 50 * Math.sin(angle), vx: 0, vy: 0, radius: 5, color: "#5affe6" });
+    }
+  });
+  (data.projects || []).forEach((p) => {
+    const id = "project:" + p.name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "project", label: p.name, owner: p.owner, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 7, color: "#ffcf7f" });
+    }
+  });
+  (data.tasks || []).forEach((t, i) => {
+    if (!t.project) return;
+    const id = "task:" + t.text;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "task", label: t.text.slice(0, 20), project: t.project, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 3, color: "#7fffe8" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => wantIds.has(n.id));
+
+  kgEdges = [];
+  kgNodes.forEach(n => {
+    if (n.type === "project" && n.owner) {
+      const ownerNode = kgNodes.find(a => a.id === "agent:" + n.owner);
+      if (ownerNode) kgEdges.push({ source: n.id, target: ownerNode.id });
+    }
+    if (n.type === "task" && n.project) {
+      const projNode = kgNodes.find(p => p.type === "project" && p.label === n.project);
+      if (projNode) kgEdges.push({ source: n.id, target: projNode.id });
+    }
+  });
+}
+function kgStep() {
+  for (let i = 0; i < kgNodes.length; i++) {
+    for (let j = i + 1; j < kgNodes.length; j++) {
+      const a = kgNodes[i], b = kgNodes[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const distSq = Math.max(dx*dx + dy*dy, 25);
+      const force = 350 / distSq;
+      const dist = Math.sqrt(distSq);
+      const fx = dx/dist*force, fy = dy/dist*force;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+  }
+  kgEdges.forEach(e => {
+    const a = kgNodes.find(n => n.id === e.source), b = kgNodes.find(n => n.id === e.target);
+    if (!a || !b) return;
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 0.01;
+    const force = (dist - 40) * 0.02;
+    const fx = dx/dist*force, fy = dy/dist*force;
+    a.vx += fx; a.vy += fy;
+    b.vx -= fx; b.vy -= fy;
+  });
+  kgNodes.forEach(n => {
+    n.vx += -n.x * 0.0008;
+    n.vy += -n.y * 0.0008;
+    n.vx *= 0.85; n.vy *= 0.85;
+    n.x += n.vx; n.y += n.vy;
+  });
+}
+let kgScale = 1, kgOffsetX = 0, kgOffsetY = 0, kgDragging = false, kgLastX = 0, kgLastY = 0;
+function kgRender() {
+  const canvas = document.getElementById("kgCanvas");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width/2 + kgOffsetX, canvas.height/2 + kgOffsetY);
+  ctx.scale(kgScale, kgScale);
+  ctx.strokeStyle = "rgba(90,255,230,0.25)";
+  ctx.lineWidth = 1 / kgScale;
+  kgEdges.forEach(e => {
+    const a = kgNodes.find(n => n.id === e.source), b = kgNodes.find(n => n.id === e.target);
+    if (!a || !b) return;
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  });
+  kgNodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+    ctx.fillStyle = n.color;
+    ctx.fill();
+    if (kgScale > 0.6) {
+      ctx.font = (9 / Math.max(kgScale, 1)) + "px Orbitron";
+      ctx.fillText(n.label, n.x + n.radius + 3, n.y + 3);
+    }
+  });
+  ctx.restore();
+}
+function kgLoop() { kgStep(); kgRender(); requestAnimationFrame(kgLoop); }
+kgLoop();
+async function pollKG() {
+  try {
+    const res = await fetch("knowledge.json?t=" + Date.now());
+    const data = await res.json();
+    kgSyncData(data);
+    kgSyncNotes(data.notes || []);
+    kgSyncGoals(data.goals || [], data.projects || []);
+    renderNotesPanel(data.notes || []);
+  } catch (e) {}
+  try {
+    const wres = await fetch("knowledge-warnings.json?t=" + Date.now());
+    if (wres.ok) {
+      const warnings = await wres.json();
+      let badge = document.getElementById("kgWarningBadge");
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.id = "kgWarningBadge";
+        badge.style.cssText = "position:absolute; top:2px; right:2px; background:#ff6b6b; color:#1a0505; font-size:9px; padding:2px 5px; border-radius:4px; cursor:help;";
+        document.getElementById("knowledgeGraphPanel").style.position = "relative";
+        document.getElementById("knowledgeGraphPanel").appendChild(badge);
+      }
+      badge.textContent = warnings.length + " parse issue" + (warnings.length === 1 ? "" : "s");
+      badge.title = warnings.join("\n");
+    } else {
+      const badge = document.getElementById("kgWarningBadge");
+      if (badge) badge.remove();
+    }
+  } catch (e) {}
+}
+
+function kgSyncGoals(goals, projects) {
+  const wantIds = new Set(kgNodes.filter(n => n.type !== "goal").map(n => n.id));
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+  goals.forEach((g, i) => {
+    const id = "goal:" + g.name;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "goal", label: g.name, x: (Math.random()-0.5)*40, y: (Math.random()-0.5)*40, vx: 0, vy: 0, radius: 9, color: "#ffd27f" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => n.type !== "goal" || wantIds.has(n.id));
+  projects.forEach(p => {
+    if (!p.goal) return;
+    const projNode = kgNodes.find(n => n.type === "project" && n.label === p.name);
+    const goalNode = kgNodes.find(n => n.type === "goal" && n.label.toLowerCase() === p.goal.toLowerCase());
+    if (projNode && goalNode && !kgEdges.find(e => e.source === projNode.id && e.target === goalNode.id)) {
+      kgEdges.push({ source: projNode.id, target: goalNode.id });
+    }
+  });
+}
+
+function kgSyncNotes(notes) {
+  const wantIds = new Set(kgNodes.filter(n => n.type !== "note").map(n => n.id));
+  const existing = {};
+  kgNodes.forEach(n => existing[n.id] = n);
+  notes.forEach(n => {
+    const id = "note:" + n.folder + "/" + n.title;
+    wantIds.add(id);
+    if (!existing[id]) {
+      kgNodes.push({ id, type: "note", label: n.title, folder: n.folder, x: (Math.random()-0.5)*80, y: (Math.random()-0.5)*80, vx: 0, vy: 0, radius: 4, color: "#c9a6ff" });
+    }
+  });
+  kgNodes = kgNodes.filter(n => n.type !== "note" || wantIds.has(n.id));
+  kgNodes.filter(n => n.type === "note" && n.folder === "Projects").forEach(n => {
+    const projNode = kgNodes.find(p => p.type === "project" && p.label.toLowerCase() === n.label.toLowerCase());
+    if (projNode && !kgEdges.find(e => e.source === n.id && e.target === projNode.id)) {
+      kgEdges.push({ source: n.id, target: projNode.id });
+    }
+  });
+}
+function renderNotesPanel(notes) {
+  const list = document.getElementById("noteslist");
+  list.innerHTML = "";
+  if (notes && notes.length > 0) {
+    notes.forEach(n => { const li = document.createElement("li"); li.textContent = n.title; list.appendChild(li); });
+  } else {
+    list.innerHTML = "<li>none</li>";
+  }
+}
+setInterval(pollKG, 5000);
+pollKG();
+const kgCanvasEl = document.getElementById("kgCanvas");
+kgCanvasEl.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  kgScale *= (e.deltaY < 0 ? 1.1 : 0.9);
+  kgScale = Math.max(0.3, Math.min(4, kgScale));
+});
+kgCanvasEl.addEventListener("mousedown", (e) => { kgDragging = true; kgLastX = e.clientX; kgLastY = e.clientY; kgCanvasEl.style.cursor = "grabbing"; });
+window.addEventListener("mouseup", () => { kgDragging = false; kgCanvasEl.style.cursor = "grab"; });
+window.addEventListener("mousemove", (e) => {
+  if (!kgDragging) return;
+  kgOffsetX += e.clientX - kgLastX;
+  kgOffsetY += e.clientY - kgLastY;
+  kgLastX = e.clientX; kgLastY = e.clientY;
+});
+
+async function pollHistory() {
+  try {
+    const res = await fetch("history.json?t=" + Date.now());
+    const hist = await res.json();
+    const list = document.getElementById("activitylist");
+    list.innerHTML = "";
+    if (hist && hist.length > 0) {
+      hist.slice().reverse().forEach(h => {
+        const li = document.createElement("li");
+        li.textContent = "[" + h.time + "] " + h.text;
+        list.appendChild(li);
+      });
+    }
+  } catch (e) {}
+}
+setInterval(pollHistory, 2000);
+pollHistory();
+
+const JARVIS_TOKEN = "bfee9c861c8a6a792a579f613b8bda86a3a6ac9fb5513d78";
+async function sendMessage(text) {
+  if (!text || !text.trim()) return;
+  document.getElementById("label").textContent = "THINKING";
+  try {
+    await fetch("/chat", { method: "POST", headers: {"Content-Type":"application/json", "X-Jarvis-Token": JARVIS_TOKEN}, body: JSON.stringify({message: text}) });
+  } catch (e) {
+    document.getElementById("label").textContent = "ERROR";
+  }
+}
+document.getElementById("sendBtn").addEventListener("click", () => {
+  const input = document.getElementById("msgInput");
+  sendMessage(input.value);
+  input.value = "";
+});
+document.getElementById("msgInput").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("sendBtn").click(); });
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.onresult = (e) => { const t = e.results[0][0].transcript; document.getElementById("msgInput").value = t; sendMessage(t); };
+  document.getElementById("micBtn").addEventListener("click", () => recognition.start());
+} else {
+  document.getElementById("micBtn").style.display = "none";
+}
+
+async function poll() {
+  try {
+    const res = await fetch("status.json?t=" + Date.now());
+    const data = await res.json();
+    const coreEl = document.getElementById("coreContainer");
+    const label = document.getElementById("label");
+    if (data.status === "thinking") {
+      coreEl.style.animationDuration = "0.8s";
+      if (coreParticles) coreParticles.material.color.setHex(0xffcf7f);
+      currentState = "thinking";
+      label.textContent = "THINKING";
+    } else if (data.status === "speaking") {
+      if (coreParticles) coreParticles.material.color.setHex(0xbaffef);
+      if (data.audioToken && data.audioToken !== lastAudioToken && audioReady) {
+        lastAudioToken = data.audioToken;
+        audioEl.src = "latest.mp3?t=" + data.audioToken;
+        audioEl.play().catch(() => {});
+        currentState = "speaking";
+        label.textContent = "RESPONDING";
+      }
+    } else {
+      if (audioEl.paused) {
+        currentState = "idle";
+        if (coreParticles) coreParticles.material.color.setHex(0x5affe6);
+        label.textContent = "READY";
+      }
+    }
+    typewrite(data.lastMessage || "â€”");
+  } catch (e) {}
+  setTimeout(poll, 400);
+}
+const ACCENT_COLORS = { cyan: 0x5affe6, purple: 0xb266ff, gold: 0xffcf7f, red: 0xff5a6e, green: 0x6fff8f };
+const swatchEl = document.getElementById("accentSwatches");
+Object.entries(ACCENT_COLORS).forEach(([name, hex]) => {
+  const sw = document.createElement("div");
+  sw.style.cssText = "width:32px; height:32px; border-radius:50%; cursor:pointer; background:#" + hex.toString(16).padStart(6,"0") + "; border:2px solid transparent;";
+  sw.addEventListener("click", () => {
+    localStorage.setItem("jarvisAccent", hex);
+    document.querySelectorAll("#accentSwatches div").forEach(s => s.style.borderColor = "transparent");
+    sw.style.borderColor = "#fff";
+    if (coreParticles && currentState !== "speaking" && currentState !== "thinking") {
+      coreParticles.material.color.setHex(hex);
+    }
+  });
+  swatchEl.appendChild(sw);
+});
+
+const LABELS = {
+  en: { tasks: "OPEN TASKS", response: "LAST RESPONSE", world: "WORLD", activity: "ACTIVITY" },
+  de: { tasks: "OFFENE AUFGABEN", response: "LETZTE ANTWORT", world: "WELT", activity: "AKTIVITAET" }
+};
+function applyLanguage(lang) {
+  localStorage.setItem("jarvisDashLang", lang);
+  document.querySelectorAll(".lang-btn").forEach(b => b.style.background = b.dataset.lang === lang ? "#1e3a3d" : "#1e1e28");
+  const l = LABELS[lang] || LABELS.en;
+  document.querySelectorAll("#taskList .lbl").forEach(el => el.textContent = l.tasks);
+  document.querySelectorAll("#logText .lbl").forEach(el => el.textContent = l.response);
+  document.querySelectorAll("#globePanel .lbl").forEach(el => el.textContent = l.world);
+  document.querySelectorAll("#activityLog .lbl").forEach(el => el.textContent = l.activity);
+}
+document.querySelectorAll(".lang-btn").forEach(b => b.addEventListener("click", () => applyLanguage(b.dataset.lang)));
+
+document.getElementById("settingsIcon").addEventListener("click", () => {
+  document.getElementById("settingsPanel").style.display = "block";
+});
+document.getElementById("closeSettings").addEventListener("click", () => {
+  document.getElementById("settingsPanel").style.display = "none";
+});
+
+const savedAccent = localStorage.getItem("jarvisAccent");
+if (savedAccent) {
+  setTimeout(() => { if (coreParticles) coreParticles.material.color.setHex(parseInt(savedAccent)); }, 500);
+}
+const savedLang = localStorage.getItem("jarvisDashLang");
+if (savedLang) applyLanguage(savedLang);
+poll();
+</script>
+</body>
+</html>
+
+

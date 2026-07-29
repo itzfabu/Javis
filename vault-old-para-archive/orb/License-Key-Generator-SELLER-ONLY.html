@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>License Key Generator - SELLER ONLY</title>
+<style>body{font-family:monospace;background:#111;color:#5affe6;padding:40px;} input,button{padding:10px;font-size:14px;margin:6px 0;} input{width:300px;}</style>
+</head><body>
+<h2>License Key Generator (keep this private, do not include in the customer zip)</h2>
+<p>Type any customer identifier (e.g. their email or order number) - this generates a valid key.</p>
+<input id="seed" placeholder="customer email or order ID">
+<button onclick="generate()">Generate Key</button>
+<p id="result" style="font-size:18px; margin-top:20px;"></p>
+<script>
+function checksum(str) {
+  let sum = 0;
+  for (let i = 0; i < str.length; i++) sum += str.charCodeAt(i) * (i + 1);
+  return sum % 97;
+}
+function generate() {
+  const seed = document.getElementById("seed").value.trim().toUpperCase();
+  let base = 0;
+  for (let i = 0; i < seed.length; i++) base += seed.charCodeAt(i) * (i + 3);
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let attempt = 0;
+  let body, full;
+  do {
+    let n = base + attempt * 7919;
+    body = "";
+    for (let i = 0; i < 12; i++) {
+      n = (n * 1103515245 + 12345) & 0x7fffffff;
+      body += chars[n % chars.length];
+    }
+    full = "SHUD" + body;
+    attempt++;
+  } while (checksum(full) !== 42 && attempt < 5000);
+  const formatted = "SHUD-" + body.match(/.{1,4}/g).join("-");
+  document.getElementById("result").textContent = formatted;
+}
+</script>
+</body></html>
