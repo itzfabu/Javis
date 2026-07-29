@@ -1,5 +1,5 @@
 ﻿{
-    "audioToken":  1785351885083,
+    "audioToken":  1785352729496,
     "status":  "idle",
     "tasks":  [
                   "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
@@ -14,5 +14,5 @@
                   "âŒ Scope a productization checklist (auth, config isolation, docs) before quoting client work | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service",
                   "âŒ Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service"
               ],
-    "lastMessage":  "OK2"
+    "lastMessage":  "OK1"
 }
