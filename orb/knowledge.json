@@ -7,6 +7,12 @@
                          "goal":  "Get Jarvis into daily use"
                      },
                      {
+                         "status":  "active",
+                         "name":  "Jarvis System",
+                         "owner":  "researcher",
+                         "goal":  "Get Jarvis into daily use (tentative - \"improve the system itself\" doesn\u0027t cleanly fit any existing goal\u0027s wording; flagging rather than silently assuming. Fabio\u0027s call whether this needs its own goal.)"
+                     },
+                     {
                          "status":  "shelved",
                          "name":  "Jarvis-as-a-Service Launch",
                          "owner":  "project-manager",
@@ -33,6 +39,10 @@
                   {
                       "text":  "Write up \"Claude Flowstate\" idea as a note | priority: low",
                       "project":  ""
+                  },
+                  {
+                      "text":  "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income once there\u0027s income to track) | priority: medium | #jarvis-system",
+                      "project":  "jarvis-system"
                   },
                   {
                       "text":  "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
@@ -111,6 +121,10 @@
                   {
                       "folder":  "Ideas",
                       "title":  "Automatisches Wikilinking"
+                  },
+                  {
+                      "folder":  "Ideas",
+                      "title":  "Finance Dashboard for Project Income"
                   },
                   {
                       "folder":  "Ideas",

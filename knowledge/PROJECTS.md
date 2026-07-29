@@ -17,6 +17,12 @@ Tag related tasks in TASKS.md with #project-name to link them here.
 - Owner agent: planner
 - Goal: Get Jarvis into daily use
 
+## Jarvis System
+- Status: active
+- Owner agent: researcher
+- Goal: Get Jarvis into daily use (tentative - "improve the system itself" doesn't cleanly fit any existing goal's wording; flagging rather than silently assuming. Fabio's call whether this needs its own goal.)
+- Notes: The core assistant system itself (orb dashboard, subagents, hooks, knowledge system) as distinct from the products/monetization sub-tracks it's used to build (Jarvis-as-a-Service, Streamer HUD Widget). Full running log: vault/Projects/Jarvis System.md. Added to PROJECTS.md 2026-07-30 to track the "research how to improve Jarvis further" task under #jarvis-system - overlaps with but is broader than vault/Ideas/AI Practitioner Knowledge + Token-Reduction Loops.md (that one is scoped narrowly to token/context efficiency; this covers general improvements incl. new dashboards).
+
 ## Jarvis-as-a-Service Launch
 - Status: shelved
 - Owner agent: project-manager
