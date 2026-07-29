@@ -21,6 +21,6 @@ Link a project to a goal by adding a "Goal: Goal Name" line to that project's en
 ## Monetize the Jarvis System
 - Timeframe: quarterly
 - Status: active
-- Notes: turn this personal AI assistant build into income - either a done-for-you service, a demo-driven offering, or both
+- Notes: income comes from products/research Jarvis helps build, not from selling Jarvis itself. Jarvis is the internal engine used to research, ideate, and build sellable output - Streamer HUD Widget is the current concrete case, not the exclusive focus. See knowledge/PROJECTS.md and vault/Knowledge/Ideas Index.md for the current candidate list.
 
 

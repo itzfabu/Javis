@@ -1,8 +1,8 @@
 ---
 date: 2026-07-29
-updated:
+updated: 2026-07-29
 type: project
-status: active
+status: shelved
 tags:
   - project
 related-people: []
@@ -19,6 +19,8 @@ ai-first: true
 Jarvis-as-a-Service Launch is a personal project with status active as of 2026-07-29 (import date; the source has no updated-date field or inline mention). Imported from the prior vault's `Projects/Jarvis-as-a-Service Launch.md` on 2026-07-29. Aims to turn the Jarvis personal AI assistant system into income via a demo-driven consulting lead magnet.
 
 `Streamer HUD Widget.md`'s own source describes this project as "(paused)" and superseded by a pivot toward the Streamer HUD Widget. This file's own source never uses that language - its own "Current status" line just says scoping/research phase, no pause/pivot mentioned. Flagging the discrepancy rather than resolving it in either direction; which one reflects current reality is Fabio's call, not something to infer from the other file.
+
+Resolved 2026-07-29: Fabio explicitly confirmed this project is permanently shelved, not merely paused - Jarvis itself is not sold as a product/service; it's the internal tool used to research, ideate, and build other sellable products instead (see [[Knowledge/Ideas Index]]). The discrepancy flagged above is now moot: "(paused)" undersold it - "shelved"/deliberately pivoted away is the accurate framing going forward.
 
 ## Overview
 

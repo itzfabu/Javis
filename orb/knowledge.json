@@ -7,7 +7,7 @@
                          "goal":  "Get Jarvis into daily use"
                      },
                      {
-                         "status":  "paused",
+                         "status":  "shelved",
                          "name":  "Jarvis-as-a-Service Launch",
                          "owner":  "project-manager",
                          "goal":  "Monetize the Jarvis System"
@@ -31,34 +31,6 @@
                ],
     "tasks":  [
                   {
-                      "text":  "Validate pricing and positioning against direct competitors on Fiverr/Upwork | priority: high | due: 2026-07-30 | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Build a portfolio/demo site showcasing the orb dashboard | priority: high | due: 2026-08-05 | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Draft the actual gig/listing copy | priority: medium | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Record a 3-5 min demo video of the orb dashboard and agent delegation in action | priority: high | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Decide target buyer: individual assistant-seekers vs. small-business automation clients | priority: high | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Scope a productization checklist (auth, config isolation, docs) before quoting client work | priority: medium | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
-                      "text":  "Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | #jarvis-as-a-service",
-                      "project":  "jarvis-as-a-service"
-                  },
-                  {
                       "text":  "Write up \"Claude Flowstate\" idea as a note | priority: low",
                       "project":  ""
                   },
@@ -79,8 +51,32 @@
                       "project":  "streamer-hud"
                   },
                   {
-                      "text":  "Research the best GitHub repos to integrate into Jarvis to expand/improve it | priority: medium | due: 2026-07-28 | #jarvis-core",
-                      "project":  "jarvis-core"
+                      "text":  "âŒ Validate pricing and positioning against direct competitors on Fiverr/Upwork | priority: high | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Build a portfolio/demo site showcasing the orb dashboard | priority: high | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Draft the actual gig/listing copy | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Record a 3-5 min demo video of the orb dashboard and agent delegation in action | priority: high | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Decide target buyer: individual assistant-seekers vs. small-business automation clients | priority: high | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Scope a productization checklist (auth, config isolation, docs) before quoting client work | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
+                  },
+                  {
+                      "text":  "âŒ Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service",
+                      "project":  "jarvis-as-a-service"
                   }
               ],
     "goals":  [
@@ -110,6 +106,10 @@
                   },
                   {
                       "folder":  "Ideas",
+                      "title":  "AI Practitioner Knowledge + Token-Reduction Loops"
+                  },
+                  {
+                      "folder":  "Ideas",
                       "title":  "Automatisches Wikilinking"
                   },
                   {
@@ -131,6 +131,10 @@
                   {
                       "folder":  "Knowledge",
                       "title":  "CAPABILITIES"
+                  },
+                  {
+                      "folder":  "Knowledge",
+                      "title":  "Ideas Index"
                   },
                   {
                       "folder":  "Knowledge",

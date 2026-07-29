@@ -6,21 +6,6 @@ kanban-plugin: board
 
 ## 📥 Backlog
 
-- [ ] 🟡 **Draft the actual gig/listing copy**
-	[[Jarvis-as-a-Service Launch]]
-
-- [ ] 🔴 **Record a 3-5 min demo video of the orb dashboard and agent delegation in action**
-	[[Jarvis-as-a-Service Launch]]
-
-- [ ] 🔴 **Decide target buyer: individual assistant-seekers vs. small-business automation clients**
-	[[Jarvis-as-a-Service Launch]] [[Jarvis-as-a-Service Pricing Research]]
-
-- [ ] 🟡 **Scope a productization checklist (auth, config isolation, docs) before quoting client work**
-	[[Jarvis-as-a-Service Launch]]
-
-- [ ] 🟡 **Build v1 static demo site (screen-recording hero, no live backend) once the recording exists**
-	[[Jarvis-as-a-Service Launch]]
-
 - [ ] 🟢 **Write up "Claude Flowstate" idea as a note**
 
 - [ ] 🔴 **Package for end customers (clean file + setup guide, no dev/diag mode visible)**
@@ -37,11 +22,7 @@ kanban-plugin: board
 
 ## 🏃 Sprint
 
-- [ ] 🔴 **Validate pricing and positioning against direct competitors on Fiverr/Upwork** · @{2026-07-30}
-	[[Jarvis-as-a-Service Launch]] [[Jarvis-as-a-Service Pricing Research]]
-
-- [ ] 🔴 **Build a portfolio/demo site showcasing the orb dashboard** · @{2026-08-05}
-	[[Jarvis-as-a-Service Launch]]
+- [ ] 🟡 **Research the best GitHub repos to integrate into Jarvis to expand/improve it** · @{2026-07-28}
 
 ## 🔨 In Progress
 
@@ -51,6 +32,27 @@ kanban-plugin: board
 
 - [x] ~~🔴 **Add color/theme customization options to the streamer HUD widget**~~
 	[[Streamer HUD Widget]]
+
+- [ ] ❌ ~~🔴 **Validate pricing and positioning against direct competitors on Fiverr/Upwork**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]] [[Jarvis-as-a-Service Pricing Research]]
+
+- [ ] ❌ ~~🔴 **Build a portfolio/demo site showcasing the orb dashboard**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]]
+
+- [ ] ❌ ~~🟡 **Draft the actual gig/listing copy**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]]
+
+- [ ] ❌ ~~🔴 **Record a 3-5 min demo video of the orb dashboard and agent delegation in action**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]]
+
+- [ ] ❌ ~~🔴 **Decide target buyer: individual assistant-seekers vs. small-business automation clients**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]] [[Jarvis-as-a-Service Pricing Research]]
+
+- [ ] ❌ ~~🟡 **Scope a productization checklist (auth, config isolation, docs) before quoting client work**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]]
+
+- [ ] ❌ ~~🟡 **Build v1 static demo site (screen-recording hero, no live backend) once the recording exists**~~ cancelled 2026-07-29
+	[[Jarvis-as-a-Service Launch]]
 
 
 %% kanban:settings
