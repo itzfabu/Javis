@@ -22,6 +22,9 @@ kanban-plugin: board
 
 ## 🏃 Sprint
 
+- [ ] 🔴 **Scope the technical flow for generate-from-prompt (what Claude Code is prompted with, output file structure, how a prompt becomes a working page)**
+	[[Website Generator]]
+
 - [ ] 🟡 **Research the best GitHub repos to integrate into Jarvis to expand/improve it** · @{2026-07-28}
 
 ## 🔨 In Progress

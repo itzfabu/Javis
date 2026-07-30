@@ -484,6 +484,134 @@ def background_dashboard():
         "generatedAt": datetime.now(timezone.utc).isoformat(),
     })
 
+GENERATED_SITES_DIR = r"C:\Jarvis\generated-sites"
+GENERATION_JOBS = {}
+GENERATION_JOBS_LOCK = threading.Lock()
+
+def slugify(name):
+    s = name.lower().strip()
+    s = re.sub(r"[^a-z0-9]+", "-", s)
+    return s.strip("-") or "site"
+
+def unique_slug(base_slug):
+    candidate = base_slug
+    counter = 2
+    while os.path.isdir(os.path.join(GENERATED_SITES_DIR, candidate)):
+        candidate = f"{base_slug}-{counter}"
+        counter += 1
+    return candidate
+
+def build_generation_prompt(business_name, description, reviews, output_dir):
+    reviews_block = "\n".join(f"- {r}" for r in reviews) if reviews else "(no reviews provided)"
+    return f"""Generate a single-page marketing landing site for this business, as real static files written to this exact folder: {output_dir}\\index.html, {output_dir}\\styles.css, {output_dir}\\script.js
+
+Business name: {business_name}
+What the site should say / who it's for: {description}
+
+Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
+{reviews_block}
+
+Hard requirements (non-negotiable, based on conversion-rate research):
+- Above the fold: a clear, plain-language headline that answers "what's in it for me" within seconds - no clever/cryptic copy. Exactly ONE call-to-action button, visually dominant, with no competing links or navigation distracting from it.
+- Above-the-fold content must be lightweight and render instantly - no video, no heavy animation libraries, no large blocking assets in the initial view.
+- Any motion, scroll effects, or richer visual flourishes belong further down the page (e.g. a subtle scroll-reveal on the services/testimonials sections), never on the critical path to the first impression or the CTA.
+- Include a trust-signals section using the reviews above (as testimonials with attribution if given).
+- If there is any contact/signup form, keep it to the minimum fields possible (e.g. name + email, or name + message) - do not ask for more than necessary.
+- Load speed is a hard requirement: no external JS frameworks or CDN dependencies. Vanilla JS only in script.js. Fonts are the one exception - link Google Fonts via a <link> tag in the <head> rather than bundling font files.
+- Do not reference or create any image files - there is no assets/ content yet. Use CSS (gradients, shapes, color, typography) for visual interest instead of images.
+- Repeat the single CTA at least once more further down the page (e.g. near the footer), but it must remain the same action worded consistently.
+
+Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else."""
+
+def run_generation_job(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type):
+    with GENERATION_JOBS_LOCK:
+        GENERATION_JOBS[job_id]["status"] = "running"
+    prompt = build_generation_prompt(business_name, description, reviews, output_dir)
+    try:
+        result = subprocess.run(
+            ["cmd", "/c", "claude", "-p", prompt, "--permission-mode", "acceptEdits"],
+            cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
+        )
+        expected = ["index.html", "styles.css", "script.js"]
+        missing = [fn for fn in expected if not os.path.exists(os.path.join(output_dir, fn))]
+        if result.returncode != 0 or missing:
+            reason = (result.stderr.strip() or result.stdout.strip() or "unknown error")[:500]
+            if missing:
+                reason += f" | missing files: {missing}"
+            with GENERATION_JOBS_LOCK:
+                GENERATION_JOBS[job_id]["status"] = "error"
+                GENERATION_JOBS[job_id]["error"] = reason
+            return
+
+        meta = {
+            "business_name": business_name,
+            "slug": slug,
+            "prompt_used": description,
+            "reviews_used": reviews,
+            "created_date": datetime.now(timezone.utc).isoformat(),
+            "status": "draft",
+            "client_contact": client_contact or "",
+            "price": price,
+            "license_type": license_type or "",
+        }
+        with open(os.path.join(output_dir, "meta.json"), "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2)
+
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "done"
+            GENERATION_JOBS[job_id]["output_dir"] = output_dir
+    except subprocess.TimeoutExpired:
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "error"
+            GENERATION_JOBS[job_id]["error"] = "generation timed out"
+    except Exception as e:
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "error"
+            GENERATION_JOBS[job_id]["error"] = str(e)
+
+@app.route("/generate-website", methods=["POST"])
+def generate_website():
+    token = request.headers.get("X-Jarvis-Token", "")
+    if token != SECRET_TOKEN:
+        return jsonify({"error": "unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    business_name = (data.get("business_name") or "").strip()
+    description = (data.get("prompt") or "").strip()
+    reviews = data.get("reviews") or []
+    client_contact = data.get("client_contact")
+    price = data.get("price")
+    license_type = data.get("license_type")
+
+    if not business_name or not description:
+        return jsonify({"error": "business_name and prompt are required"}), 400
+
+    os.makedirs(GENERATED_SITES_DIR, exist_ok=True)
+    slug = unique_slug(slugify(business_name))
+    output_dir = os.path.join(GENERATED_SITES_DIR, slug)
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(os.path.join(output_dir, "assets"), exist_ok=True)
+
+    job_id = str(uuid.uuid4())
+    with GENERATION_JOBS_LOCK:
+        GENERATION_JOBS[job_id] = {"status": "queued", "slug": slug, "business_name": business_name}
+
+    threading.Thread(
+        target=run_generation_job,
+        args=(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type),
+        daemon=True,
+    ).start()
+
+    return jsonify({"job_id": job_id, "slug": slug, "status": "queued"})
+
+@app.route("/generate-website/status/<job_id>")
+def generate_website_status(job_id):
+    with GENERATION_JOBS_LOCK:
+        job = GENERATION_JOBS.get(job_id)
+    if not job:
+        return jsonify({"error": "not_found"}), 404
+    return jsonify(job)
+
 def port_in_use(port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         return s.connect_ex(("127.0.0.1", port)) == 0

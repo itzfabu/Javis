@@ -109,6 +109,10 @@
                       "title":  "Streamer HUD Widget"
                   },
                   {
+                      "folder":  "Projects",
+                      "title":  "Website Generator"
+                  },
+                  {
                       "folder":  "Ideas",
                       "title":  "AI Practitioner Knowledge + Token-Reduction Loops"
                   },
@@ -135,6 +139,10 @@
                   {
                       "folder":  "Ideas",
                       "title":  "Streamer HUD Widget - Premium Persona Tier Idea"
+                  },
+                  {
+                      "folder":  "Ideas",
+                      "title":  "Website Generator (Landing Pages + Clone-and-Rebuild)"
                   },
                   {
                       "folder":  "Architecture",
