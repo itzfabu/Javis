@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bergblick Cafe – Spezialitätenkaffee mit Bergblick in Zürich</title>
+<meta name="description" content="Kleines Cafe in Zürich mit Bergblick: Spezialitätenkaffee, frisches Frühstück und hausgemachtes Gebäck. Gemütlich, herzlich, mit Terrasse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hero" id="top">
+  <div class="hero-mountains" aria-hidden="true">
+    <div class="mountain mountain-back"></div>
+    <div class="mountain mountain-mid"></div>
+    <div class="mountain mountain-front"></div>
+    <div class="sun"></div>
+  </div>
+  <div class="hero-content">
+    <span class="brand">Bergblick Cafe</span>
+    <h1>Spezialitätenkaffee, frisches Frühstück und der schönste Bergblick von Zürich.</h1>
+    <p class="subheadline">Ihre ruhige Adresse mitten in der Stadt – gemütlich, herzlich, mit Terrasse und Aussicht.</p>
+    <a href="#reservieren" class="cta-button">Tisch reservieren</a>
+  </div>
+</header>
+
+<main>
+
+  <section class="intro reveal">
+    <p>Mitten in Zürich, nur wenige Schritte von der Hektik der Stadt entfernt, liegt das Bergblick Cafe. Bei uns gibt es sorgfältig gerösteten Spezialitätenkaffee, ein ehrliches Frühstück und Gebäck aus der eigenen Küche – serviert auf einer Terrasse mit freiem Blick auf die Berge. Ein Ort zum Ankommen, Verweilen und Durchatmen.</p>
+  </section>
+
+  <section class="menu reveal">
+    <h2>Was uns besonders macht</h2>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="icon icon-coffee" aria-hidden="true"></div>
+        <h3>Spezialitätenkaffee</h3>
+        <p>Handverlesene Bohnen, sorgfältig zubereitet – vom klassischen Flat White bis zum Filterkaffee.</p>
+      </div>
+      <div class="menu-card">
+        <div class="icon icon-croissant" aria-hidden="true"></div>
+        <h3>Frisches Gebäck</h3>
+        <p>Jeden Morgen frisch gebacken: Croissants, Zopf und wechselnde hausgemachte Kuchen.</p>
+      </div>
+      <div class="menu-card">
+        <div class="icon icon-sun" aria-hidden="true"></div>
+        <h3>Frühstück mit Aussicht</h3>
+        <p>Ob vor einer Wanderung oder am ruhigen Sonntagmorgen – bei uns gibt es Frühstück mit Weitblick.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials reveal">
+    <h2>Das sagen unsere Gäste</h2>
+    <div class="testimonial-grid">
+      <blockquote>
+        <p>„Bester Flat White in Zürich, und die Aussicht von der Terrasse ist unschlagbar.“</p>
+        <cite>– Lena M.</cite>
+      </blockquote>
+      <blockquote>
+        <p>„Gemütlicher kleiner Ort, das Personal kannte meine Bestellung schon beim zweiten Besuch.“</p>
+        <cite>– Marco T.</cite>
+      </blockquote>
+      <blockquote>
+        <p>„Perfekter Frühstücksstopp vor einer Wanderung. Jedes Mal frisches Gebäck.“</p>
+        <cite>– Priya S.</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="reservation reveal" id="reservieren">
+    <h2>Jetzt Tisch reservieren</h2>
+    <p>Hinterlassen Sie kurz Ihren Namen und Ihre E-Mail-Adresse – wir melden uns umgehend, um Ihre Reservierung zu bestätigen.</p>
+    <form id="reservation-form" novalidate>
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" autocomplete="name" required>
+
+      <label for="email">E-Mail</label>
+      <input type="email" id="email" name="email" autocomplete="email" required>
+
+      <button type="submit" class="cta-button">Tisch reservieren</button>
+    </form>
+    <p id="form-success" class="form-success" role="status" hidden>Danke! Wir melden uns in Kürze bei Ihnen, um Ihre Reservierung zu bestätigen.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p class="footer-brand">Bergblick Cafe · Zürich</p>
+  <p class="footer-tagline">Kaffee, Frühstück und Aussicht – jeden Tag.</p>
+  <a href="#reservieren" class="cta-button cta-secondary">Tisch reservieren</a>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

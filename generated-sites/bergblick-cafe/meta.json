@@ -1,0 +1,15 @@
+{
+  "business_name": "Bergblick Cafe",
+  "slug": "bergblick-cafe",
+  "prompt_used": "A small mountain-view cafe in Zurich serving specialty coffee, breakfast, and fresh pastries. Warm, cozy, locally-loved. Target audience: locals and tourists looking for a quiet spot with a view.",
+  "reviews_used": [
+    "Best flat white in Zurich, and the view from the terrace is unbeatable. - Lena M.",
+    "Cozy little spot, staff remembered my order after one visit. - Marco T.",
+    "Perfect breakfast stop before a hike. Fresh pastries every time. - Priya S."
+  ],
+  "created_date": "2026-07-30T15:42:59.157704+00:00",
+  "status": "draft",
+  "client_contact": "test@example.com",
+  "price": 490,
+  "license_type": "one-time"
+}

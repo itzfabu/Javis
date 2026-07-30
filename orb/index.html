@@ -78,6 +78,27 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 .status-captured { background: rgba(143,184,255,0.15); color: #8fb8ff; }
 .status-evaluating { background: rgba(201,166,255,0.15); color: #c9a6ff; }
 .status-building { background: rgba(255,154,92,0.15); color: #ff9a5c; }
+.websites-content { padding: 90px 60px 60px; max-width: 900px; display: flex; flex-direction: column; gap: 24px; }
+.generate-form { background: rgba(10,40,45,0.4); border: 1px solid rgba(90,255,230,0.25); border-radius: 10px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; font-size: 11px; }
+.form-row { display: flex; flex-direction: column; gap: 6px; }
+.form-row label { opacity: 0.6; letter-spacing: 0.5px; font-size: 10px; text-transform: uppercase; }
+.form-input, .form-textarea, .form-select { background: rgba(4,20,26,0.6); border: 1px solid rgba(90,255,230,0.25); border-radius: 6px; padding: 8px 10px; color: #baffef; font-family: Orbitron, sans-serif; font-size: 12px; outline: none; }
+.form-textarea { resize: vertical; min-height: 60px; }
+.price-row { display: flex; align-items: center; gap: 8px; }
+.price-row .form-input { flex: 1; }
+.price-currency { opacity: 0.6; font-size: 11px; }
+.form-submit-btn { align-self: flex-start; background: rgba(90,255,230,0.15); border: 1px solid rgba(90,255,230,0.4); color: #baffef; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-family: Orbitron, sans-serif; letter-spacing: 1px; font-size: 11px; }
+.form-submit-btn:hover { background: rgba(90,255,230,0.25); }
+.form-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.job-status-banner { border-radius: 6px; padding: 10px 14px; font-size: 11px; }
+.job-status-queued, .job-status-running { background: rgba(255,207,127,0.12); border: 1px solid rgba(255,207,127,0.3); color: #ffcf7f; }
+.job-status-done { background: rgba(111,255,143,0.12); border: 1px solid rgba(111,255,143,0.3); color: #6fff8f; }
+.job-status-error { background: rgba(255,90,110,0.12); border: 1px solid rgba(255,90,110,0.3); color: #ff9a9a; }
+.website-preview-link { color: #5affe6; text-decoration: none; font-size: 10px; }
+.website-preview-link:hover { text-decoration: underline; }
+.status-draft { background: rgba(255,255,255,0.1); color: #aaa; }
+.status-delivered { background: rgba(90,255,230,0.15); color: #5affe6; }
+.status-sold { background: rgba(111,255,143,0.15); color: #6fff8f; }
 </style>
 </head>
 <body>
@@ -146,7 +167,44 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
   <div id="backgroundContent" class="background-content"></div>
 </div>
 <div id="view-finance" class="dashboard-view" style="display:none;"><div class="dash-placeholder">FINANCE DASHBOARD - COMING SOON</div></div>
-<div id="view-websites" class="dashboard-view" style="display:none;"><div class="dash-placeholder">WEBSITES DASHBOARD - COMING SOON</div></div>
+<div id="view-websites" class="dashboard-view" style="display:none;">
+  <div class="projects-header"><div class="lbl">WEBSITES</div></div>
+  <div class="websites-content">
+    <form id="generateWebsiteForm" class="generate-form">
+      <div class="form-row">
+        <label>Business name</label>
+        <input type="text" id="gwBusinessName" class="form-input" required>
+      </div>
+      <div class="form-row">
+        <label>Description / prompt</label>
+        <textarea id="gwPrompt" class="form-textarea" required></textarea>
+      </div>
+      <div class="form-row">
+        <label>Reviews (one per line)</label>
+        <textarea id="gwReviews" class="form-textarea"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Client contact</label>
+        <input type="text" id="gwClientContact" class="form-input">
+      </div>
+      <div class="form-row">
+        <label>Price</label>
+        <div class="price-row"><span class="price-currency">CHF</span><input type="number" id="gwPrice" class="form-input" min="0" step="1"></div>
+      </div>
+      <div class="form-row">
+        <label>License type</label>
+        <select id="gwLicenseType" class="form-select">
+          <option value="personal">Personal use</option>
+          <option value="commercial-single">Commercial - single business</option>
+          <option value="commercial-resale">Commercial - resale</option>
+        </select>
+      </div>
+      <button type="submit" class="form-submit-btn" id="gwSubmitBtn">Generate</button>
+    </form>
+    <div id="gwJobStatus"></div>
+    <div id="websitesGrid" class="projects-grid"></div>
+  </div>
+</div>
 <div id="view-projects" class="dashboard-view" style="display:none;">
   <div class="projects-header"><div class="lbl">PROJECTS</div></div>
   <div id="projectsGrid" class="projects-grid"></div>
@@ -653,6 +711,11 @@ function switchDashboard(id) {
   } else {
     clearTimeout(backgroundPollTimer);
   }
+  if (id === "websites") {
+    loadWebsitesDashboard();
+  } else {
+    clearTimeout(websitesPollTimer);
+  }
 }
 document.querySelectorAll(".dash-nav-btn").forEach(btn => {
   btn.addEventListener("click", () => switchDashboard(btn.dataset.dash));
@@ -774,6 +837,103 @@ async function loadBackgroundDashboard() {
     backgroundPollTimer = setTimeout(loadBackgroundDashboard, 15000);
   }
 }
+
+const WEBSITE_STATUS_CLASS = { draft: "status-draft", delivered: "status-delivered", sold: "status-sold" };
+function renderWebsitesGallery(data) {
+  const grid = document.getElementById("websitesGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  (data.sites || []).forEach(s => {
+    const card = document.createElement("div");
+    card.className = "project-card";
+    const statusKey = (s.status || "").toLowerCase();
+    const statusClass = WEBSITE_STATUS_CLASS[statusKey] || "status-unknown";
+    const priceText = (s.price !== null && s.price !== undefined) ? ("CHF " + s.price) : "-";
+    card.innerHTML =
+      "<h3>" + escapeHtml(s.business_name) + " <span class=\"status-badge " + statusClass + "\">" + escapeHtml(s.status || "unknown") + "</span></h3>" +
+      "<div class=\"project-meta\">" + priceText + " &middot; " + escapeHtml((s.created_date || "").slice(0, 10)) + "</div>" +
+      "<a class=\"website-preview-link\" href=\"/sites/" + encodeURIComponent(s.slug) + "/index.html\" target=\"_blank\">View live preview &rarr;</a>";
+    grid.appendChild(card);
+  });
+}
+let websitesPollTimer = null;
+async function loadWebsitesDashboard() {
+  try {
+    const res = await fetch("/generated-sites.json?t=" + Date.now());
+    const data = await res.json();
+    renderWebsitesGallery(data);
+  } catch (e) {}
+  clearTimeout(websitesPollTimer);
+  if (document.getElementById("view-websites").style.display !== "none") {
+    websitesPollTimer = setTimeout(loadWebsitesDashboard, 15000);
+  }
+}
+
+let gwJobPollTimer = null;
+function renderJobStatus(job) {
+  const el = document.getElementById("gwJobStatus");
+  if (!job) { el.innerHTML = ""; return; }
+  const cls = "job-status-" + (job.status || "queued");
+  let text = "Status: " + (job.status || "unknown");
+  if (job.status === "error" && job.error) text += " - " + job.error;
+  if (job.status === "done") text = "Done - site generated.";
+  el.innerHTML = "<div class=\"job-status-banner " + cls + "\">" + escapeHtml(text) + "</div>";
+}
+function pollGenerationJob(jobId) {
+  clearTimeout(gwJobPollTimer);
+  const check = async () => {
+    try {
+      const res = await fetch("/generate-website/status/" + jobId + "?t=" + Date.now());
+      const job = await res.json();
+      renderJobStatus(job);
+      if (job.status === "done" || job.status === "error") {
+        document.getElementById("gwSubmitBtn").disabled = false;
+        if (job.status === "done") loadWebsitesDashboard();
+        return;
+      }
+    } catch (e) {}
+    gwJobPollTimer = setTimeout(check, 3000);
+  };
+  check();
+}
+document.getElementById("generateWebsiteForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const submitBtn = document.getElementById("gwSubmitBtn");
+  const businessName = document.getElementById("gwBusinessName").value.trim();
+  const prompt = document.getElementById("gwPrompt").value.trim();
+  const reviews = document.getElementById("gwReviews").value.split("\n").map(s => s.trim()).filter(Boolean);
+  const clientContact = document.getElementById("gwClientContact").value.trim();
+  const priceRaw = document.getElementById("gwPrice").value;
+  const price = priceRaw !== "" ? Number(priceRaw) : null;
+  const licenseType = document.getElementById("gwLicenseType").value;
+  if (!businessName || !prompt) return;
+  submitBtn.disabled = true;
+  renderJobStatus({ status: "queued" });
+  try {
+    const res = await fetch("/generate-website", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Jarvis-Token": JARVIS_TOKEN },
+      body: JSON.stringify({
+        business_name: businessName,
+        prompt: prompt,
+        reviews: reviews,
+        client_contact: clientContact,
+        price: price,
+        license_type: licenseType,
+      }),
+    });
+    const data = await res.json();
+    if (data.job_id) {
+      pollGenerationJob(data.job_id);
+    } else {
+      renderJobStatus({ status: "error", error: data.error || "unknown error" });
+      submitBtn.disabled = false;
+    }
+  } catch (err) {
+    renderJobStatus({ status: "error", error: String(err) });
+    submitBtn.disabled = false;
+  }
+});
 
 const savedDashboard = localStorage.getItem("jarvisDashboard") || "main";
 switchDashboard(savedDashboard);

@@ -57,7 +57,15 @@ def write_status(status, message, tasks, token, source="claude"):
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
         json.dump({"status": status, "lastMessage": message, "tasks": tasks, "audioToken": token, "source": source}, f)
 
+def sanitize_for_cmd_prompt(text):
+    """Collapse every newline (not just blank-line gaps) into a single space.
+    cmd.exe re-parses the whole command line when invoked via `cmd /c`, and any
+    newline inside the quoted -p prompt argument truncates everything after it
+    - this avoids that truncation."""
+    return re.sub(r"\s*\n\s*", " ", text).strip()
+
 def run_claude(message):
+    message = sanitize_for_cmd_prompt(message)
     state = get_session_state()
     fresh = state["turns"] == 0
     if fresh:
@@ -484,6 +492,39 @@ def background_dashboard():
         "generatedAt": datetime.now(timezone.utc).isoformat(),
     })
 
+@app.route("/generated-sites.json")
+def generated_sites_dashboard():
+    sites = []
+    if os.path.isdir(GENERATED_SITES_DIR):
+        for fn in sorted(os.listdir(GENERATED_SITES_DIR)):
+            meta_path = os.path.join(GENERATED_SITES_DIR, fn, "meta.json")
+            if not os.path.isfile(meta_path):
+                continue
+            try:
+                with open(meta_path, encoding="utf-8") as f:
+                    meta = json.load(f)
+            except Exception:
+                continue
+            sites.append({
+                "business_name": meta.get("business_name", fn),
+                "slug": meta.get("slug", fn),
+                "status": meta.get("status", "draft"),
+                "price": meta.get("price"),
+                "created_date": meta.get("created_date", ""),
+            })
+    return jsonify({"sites": sites, "generatedAt": datetime.now(timezone.utc).isoformat()})
+
+SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+@app.route("/sites/<slug>/<path:filename>")
+def serve_generated_site(slug, filename):
+    if not SLUG_RE.match(slug):
+        return jsonify({"error": "not_found"}), 404
+    site_dir = os.path.join(GENERATED_SITES_DIR, slug)
+    if not os.path.isdir(site_dir):
+        return jsonify({"error": "not_found"}), 404
+    return send_from_directory(site_dir, filename)
+
 GENERATED_SITES_DIR = r"C:\Jarvis\generated-sites"
 GENERATION_JOBS = {}
 GENERATION_JOBS_LOCK = threading.Lock()
@@ -521,16 +562,18 @@ Hard requirements (non-negotiable, based on conversion-rate research):
 - Do not reference or create any image files - there is no assets/ content yet. Use CSS (gradients, shapes, color, typography) for visual interest instead of images.
 - Repeat the single CTA at least once more further down the page (e.g. near the footer), but it must remain the same action worded consistently.
 
-Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else."""
+Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else.
+
+You have full, pre-authorized permission to create these files immediately. Do not ask for confirmation or pause to check; proceed directly with the Write calls."""
 
 def run_generation_job(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type):
     with GENERATION_JOBS_LOCK:
         GENERATION_JOBS[job_id]["status"] = "running"
-    prompt = build_generation_prompt(business_name, description, reviews, output_dir)
+    prompt = sanitize_for_cmd_prompt(build_generation_prompt(business_name, description, reviews, output_dir))
     try:
         result = subprocess.run(
-            ["cmd", "/c", "claude", "-p", prompt, "--permission-mode", "acceptEdits"],
-            cwd=r"C:\Jarvis", capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
+            ["cmd", "/c", "claude", "-p", prompt, "--permission-mode", "bypassPermissions", "--tools", "Write", "--add-dir", output_dir],
+            cwd=os.environ.get("TEMP", "."), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
         )
         expected = ["index.html", "styles.css", "script.js"]
         missing = [fn for fn in expected if not os.path.exists(os.path.join(output_dir, fn))]
