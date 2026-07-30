@@ -43,7 +43,7 @@ Personal AI assistant system (`C:\Jarvis`), covering the core Claude Code-based 
 ### Kern-System - fertig
 - orb/app.py: Flask-Backend, Chat-Endpoint, Claude-CLI-Shellout, TTS (edge-tts), Task-Integration, OpenAI-Fallback
 - orb/index.html: Orb-Dashboard, Partikel-Sphere, Knowledge-Graph-Visualisierung, audio-reaktiv
-- 8 Subagents (.claude/agents/*.md), alle mit Knowledge/Vault-Awareness nachgeruestet (verifiziert: alle 8 referenzieren PROJECTS.md/vault)
+- 8 Subagents (.claude/agents/*.md), alle mit Knowledge/Vault-Awareness nachgeruestet - Frontmatter-Referenz auf PROJECTS.md/vault war zwar vorhanden, aber "verifiziert" war irrefuehrend: bis 2026-07-30 waren alle 8 Dateien wegen UTF-8-BOM + CRLF vor dem YAML-Frontmatter-Delimiter faktisch gar nicht geladen (Agent-Tool zeigte nur die 6 eingebauten Agenten, keinen der 8 eigenen). Behoben und live neu verifiziert (alle 8 erscheinen jetzt in der "Available agent types"-Liste). Siehe [[Debugging/2026-07-30 - Subagents Not Loading (BOM + CRLF)]].
 - Knowledge-System: knowledge/PROJECTS.md, GOALS.md, TASKS.md + sync-knowledge.ps1
 - Hooks (alle 7 verifiziert vorhanden): sync-knowledge, watch-knowledge, fetch-context, git-backup, guard-connectors, set-thinking, speak-response
 - Obsidian-Vault mit PARA-Struktur eingerichtet (Anmerkung: diese Zeile beschreibt den alten Vault, nicht diesen)

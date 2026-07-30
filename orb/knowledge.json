@@ -2,12 +2,6 @@
     "projects":  [
                      {
                          "status":  "active",
-                         "name":  "Some Real Project",
-                         "owner":  "planner",
-                         "goal":  "Get Jarvis into daily use"
-                     },
-                     {
-                         "status":  "active",
                          "name":  "Jarvis System",
                          "owner":  "researcher",
                          "goal":  "Get Jarvis into daily use (tentative - \"improve the system itself\" doesn\u0027t cleanly fit any existing goal\u0027s wording; flagging rather than silently assuming. Fabio\u0027s call whether this needs its own goal.)"

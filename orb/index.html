@@ -39,6 +39,45 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 #micBtn, #sendBtn { background: none; border: none; color: #5affe6; cursor: pointer; }
 #micBtn { font-size: 22px; }
 #sendBtn { font-size: 20px; }
+.dashboard-view { position: absolute; inset: 0; z-index: 3; overflow-y: auto; }
+.dash-nav-btn { cursor: pointer; opacity: 0.55; transition: opacity 0.15s; }
+.dash-nav-btn:hover, .dash-nav-btn.active { opacity: 1; }
+.dash-placeholder { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 12px; letter-spacing: 3px; opacity: 0.35; }
+.projects-header { padding: 90px 60px 20px; }
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; padding: 0 60px 60px; max-width: 1300px; }
+.project-card { background: rgba(10,40,45,0.4); border: 1px solid rgba(90,255,230,0.25); border-radius: 10px; padding: 16px 18px; font-size: 11px; }
+.project-card h3 { font-size: 13px; letter-spacing: 1px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 500; }
+.status-badge { font-size: 9px; padding: 3px 8px; border-radius: 10px; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+.status-active { background: rgba(111,255,143,0.15); color: #6fff8f; }
+.status-shelved, .status-paused { background: rgba(255,255,255,0.12); color: #aaa; }
+.status-planning { background: rgba(255,207,127,0.15); color: #ffcf7f; }
+.status-done { background: rgba(90,255,230,0.15); color: #5affe6; }
+.status-unknown { background: rgba(255,255,255,0.08); color: #888; }
+.project-meta { opacity: 0.55; margin-bottom: 10px; letter-spacing: 0.5px; font-size: 10px; }
+.project-goal, .project-notes { line-height: 1.5; opacity: 0.85; margin-bottom: 10px; }
+.board-counts { display: flex; gap: 10px; opacity: 0.7; margin-bottom: 10px; font-size: 10px; }
+.open-items summary { cursor: pointer; opacity: 0.7; font-size: 10px; }
+.open-items ul { margin: 6px 0 0 16px; opacity: 0.7; font-size: 10px; line-height: 1.6; }
+.no-vault-note { font-size: 10px; color: #ff9a7f; opacity: 0.8; }
+.background-content { padding: 90px 60px 60px; max-width: 1300px; display: flex; flex-direction: column; gap: 28px; }
+.bg-section-title { font-size: 12px; letter-spacing: 2px; opacity: 0.55; margin-bottom: 10px; }
+.bg-task-list, .bg-idea-list, .bg-goal-list { display: flex; flex-direction: column; gap: 8px; }
+.bg-task-row { display: flex; align-items: center; gap: 10px; font-size: 11px; background: rgba(10,40,45,0.3); border: 1px solid rgba(90,255,230,0.15); border-radius: 6px; padding: 8px 12px; }
+.bg-task-row.cancelled { opacity: 0.5; text-decoration: line-through; }
+.bg-task-row.done { opacity: 0.7; }
+.priority-badge { font-size: 8px; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.priority-high { background: rgba(255,90,110,0.18); color: #ff9a9a; }
+.priority-medium { background: rgba(255,207,127,0.18); color: #ffcf7f; }
+.priority-low { background: rgba(255,255,255,0.1); color: #aaa; }
+.bg-goal-card { background: rgba(10,40,45,0.4); border: 1px solid rgba(90,255,230,0.25); border-radius: 10px; padding: 12px 16px; font-size: 11px; }
+.bg-idea-row { background: rgba(10,40,45,0.3); border: 1px solid rgba(90,255,230,0.15); border-radius: 6px; padding: 10px 14px; font-size: 11px; }
+.bg-warning-banner { background: rgba(255,90,110,0.12); border: 1px solid rgba(255,90,110,0.3); color: #ff9a9a; border-radius: 6px; padding: 8px 12px; font-size: 10px; margin-bottom: 10px; }
+.bg-columns { display: flex; gap: 16px; flex-wrap: wrap; }
+.bg-column { flex: 1; min-width: 180px; }
+.bg-column-title { font-size: 9px; opacity: 0.5; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+.status-captured { background: rgba(143,184,255,0.15); color: #8fb8ff; }
+.status-evaluating { background: rgba(201,166,255,0.15); color: #c9a6ff; }
+.status-building { background: rgba(255,154,92,0.15); color: #ff9a5c; }
 </style>
 </head>
 <body>
@@ -76,9 +115,18 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
     </div>
   </div>
 </div>
+<div id="dashNav" style="position:absolute; top:34px; right:78px; z-index:5; display:flex; gap:14px; align-items:center;">
+  <div class="dash-nav-btn active" data-dash="main" title="Main"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+  <div class="dash-nav-btn" data-dash="background" title="Background"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div>
+  <div class="dash-nav-btn" data-dash="finance" title="Finance"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+  <div class="dash-nav-btn" data-dash="websites" title="Websites"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+  <div class="dash-nav-btn" data-dash="projects" title="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div>
+  <div class="dash-nav-btn" data-dash="system-health" title="System Health"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7fffe8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+</div>
 <div class="scanlines"></div>
 <div class="vignette"></div>
 
+<div id="view-main" class="dashboard-view">
 <div id="knowledgeGraphPanel">
   <div class="lbl">KNOWLEDGE</div>
   <canvas id="kgCanvas" width="240" height="180"></canvas>
@@ -91,6 +139,19 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 <div id="globePanel"><div class="lbl">WORLD</div><div id="globeContainer"></div><div class="platform"></div></div>
 
 <div class="stage" id="stage"><div id="coreContainer"></div><div id="label">STANDBY</div></div>
+</div>
+
+<div id="view-background" class="dashboard-view" style="display:none;">
+  <div class="projects-header"><div class="lbl">BACKGROUND</div></div>
+  <div id="backgroundContent" class="background-content"></div>
+</div>
+<div id="view-finance" class="dashboard-view" style="display:none;"><div class="dash-placeholder">FINANCE DASHBOARD - COMING SOON</div></div>
+<div id="view-websites" class="dashboard-view" style="display:none;"><div class="dash-placeholder">WEBSITES DASHBOARD - COMING SOON</div></div>
+<div id="view-projects" class="dashboard-view" style="display:none;">
+  <div class="projects-header"><div class="lbl">PROJECTS</div></div>
+  <div id="projectsGrid" class="projects-grid"></div>
+</div>
+<div id="view-system-health" class="dashboard-view" style="display:none;"><div class="dash-placeholder">SYSTEM HEALTH DASHBOARD - COMING SOON</div></div>
 
 <div id="chatInput">
   <input id="msgInput" type="text" placeholder="talk to jarvis...">
@@ -572,6 +633,150 @@ if (savedAccent) {
 const savedLang = localStorage.getItem("jarvisDashLang");
 if (savedLang) applyLanguage(savedLang);
 poll();
+
+const DASHBOARDS = ["main", "background", "finance", "websites", "projects", "system-health"];
+let projectsPollTimer = null;
+function switchDashboard(id) {
+  DASHBOARDS.forEach(d => {
+    const el = document.getElementById("view-" + d);
+    if (el) el.style.display = d === id ? "block" : "none";
+  });
+  document.querySelectorAll(".dash-nav-btn").forEach(b => b.classList.toggle("active", b.dataset.dash === id));
+  localStorage.setItem("jarvisDashboard", id);
+  if (id === "projects") {
+    loadProjectsDashboard();
+  } else {
+    clearTimeout(projectsPollTimer);
+  }
+  if (id === "background") {
+    loadBackgroundDashboard();
+  } else {
+    clearTimeout(backgroundPollTimer);
+  }
+}
+document.querySelectorAll(".dash-nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchDashboard(btn.dataset.dash));
+});
+
+const STATUS_CLASS = { active: "status-active", shelved: "status-shelved", paused: "status-paused", planning: "status-planning", done: "status-done" };
+const IDEA_STATUS_CLASS = { captured: "status-captured", evaluating: "status-evaluating", building: "status-building", shelved: "status-shelved" };
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function renderProjectsDashboard(data) {
+  const grid = document.getElementById("projectsGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  (data.projects || []).forEach(p => {
+    const card = document.createElement("div");
+    card.className = "project-card";
+    const statusKey = (p.status || "").toLowerCase();
+    const statusClass = STATUS_CLASS[statusKey] || "status-unknown";
+    const board = p.board || { backlog: 0, sprint: 0, inProgress: 0, done: 0, cancelled: 0 };
+    const vault = p.vault || { found: false };
+    let openItemsHtml = "";
+    if (vault.found && vault.openItems && vault.openItems.length) {
+      openItemsHtml = "<details class=\"open-items\"><summary>" + vault.openItems.length + " open item" + (vault.openItems.length === 1 ? "" : "s") + "</summary><ul>" + vault.openItems.map(i => "<li>" + escapeHtml(i) + "</li>").join("") + "</ul></details>";
+    } else if (!vault.found) {
+      openItemsHtml = "<div class=\"no-vault-note\">no vault note found</div>";
+    }
+    card.innerHTML =
+      "<h3>" + escapeHtml(p.name) + " <span class=\"status-badge " + statusClass + "\">" + escapeHtml(p.status || "unknown") + "</span></h3>" +
+      "<div class=\"project-meta\">owner: " + escapeHtml(p.owner || "-") + (vault.found ? (" &middot; updated " + escapeHtml(vault.updated || "-")) : "") + "</div>" +
+      (p.goal ? ("<div class=\"project-goal\">Goal: " + escapeHtml(p.goal) + "</div>") : "") +
+      (p.notes ? ("<div class=\"project-notes\">" + escapeHtml(p.notes) + "</div>") : "") +
+      "<div class=\"board-counts\">Backlog " + board.backlog + " &middot; Sprint " + board.sprint + " &middot; In Progress " + board.inProgress + " &middot; Done " + board.done + " &middot; Cancelled " + board.cancelled + "</div>" +
+      openItemsHtml;
+    grid.appendChild(card);
+  });
+}
+async function loadProjectsDashboard() {
+  try {
+    const res = await fetch("/projects-dashboard.json?t=" + Date.now());
+    const data = await res.json();
+    renderProjectsDashboard(data);
+  } catch (e) {}
+  clearTimeout(projectsPollTimer);
+  if (document.getElementById("view-projects").style.display !== "none") {
+    projectsPollTimer = setTimeout(loadProjectsDashboard, 15000);
+  }
+}
+let backgroundPollTimer = null;
+function bgTaskRow(task, cls) {
+  const prio = (task.priority || "").toLowerCase();
+  const prioClass = prio === "high" ? "priority-high" : prio === "low" ? "priority-low" : "priority-medium";
+  const projTags = (task.projects || []).map(p => "#" + p).join(" ");
+  return "<div class=\"bg-task-row " + cls + "\">" +
+    (task.priority ? ("<span class=\"priority-badge " + prioClass + "\">" + escapeHtml(task.priority) + "</span>") : "") +
+    "<span>" + escapeHtml(task.text) + "</span>" +
+    (task.due ? ("<span style=\"opacity:0.5;\">due " + escapeHtml(task.due) + "</span>") : "") +
+    (task.cancelledDate ? ("<span style=\"opacity:0.5;\">cancelled " + escapeHtml(task.cancelledDate) + "</span>") : "") +
+    (projTags ? ("<span style=\"opacity:0.5; margin-left:auto;\">" + escapeHtml(projTags) + "</span>") : "") +
+    "</div>";
+}
+function bgGoalCard(g) {
+  const statusClass = STATUS_CLASS[(g.status || "").toLowerCase()] || "status-unknown";
+  const linked = (g.linkedProjects && g.linkedProjects.length) ? escapeHtml(g.linkedProjects.join(", ")) : "none";
+  return "<div class=\"bg-goal-card\"><strong>" + escapeHtml(g.name) + "</strong> &middot; " + escapeHtml(g.timeframe || "") +
+    " &middot; <span class=\"status-badge " + statusClass + "\">" + escapeHtml(g.status || "unknown") + "</span>" +
+    "<div style=\"margin-top:6px; opacity:0.6;\">linked: " + linked + "</div></div>";
+}
+function bgIdeaRow(i) {
+  const statusClass = IDEA_STATUS_CLASS[(i.status || "").toLowerCase()] || "status-unknown";
+  return "<div class=\"bg-idea-row\"><strong>" + escapeHtml(i.title) + "</strong> " +
+    "<span class=\"status-badge " + statusClass + "\">" + escapeHtml(i.status || "unknown") + "</span>" +
+    "<div style=\"margin-top:4px; opacity:0.7;\">" + escapeHtml(i.summary || "") + "</div>" +
+    "<div style=\"margin-top:4px; opacity:0.4; font-size:9px;\">updated " + escapeHtml(i.updated || "-") + "</div></div>";
+}
+function bgBoardColumn(label, items) {
+  const body = items.length
+    ? items.map(it => "<div class=\"bg-task-row" + (it.cancelled ? " cancelled" : "") + "\">" + escapeHtml(it.title) + "</div>").join("")
+    : "<div style=\"opacity:0.4; font-size:10px;\">none</div>";
+  return "<div class=\"bg-column\"><div class=\"bg-column-title\">" + label + " (" + items.length + ")</div>" + body + "</div>";
+}
+function renderBackgroundDashboard(data) {
+  const el = document.getElementById("backgroundContent");
+  if (!el) return;
+  const t = data.tasks || { active: [], done: [], cancelled: [], warnings: [] };
+  const goals = data.goals || [];
+  const ideas = data.ideas || [];
+  const unowned = data.unownedBoardItems || { backlog: [], sprint: [], inProgress: [], done: [] };
+
+  const warningsHtml = (t.warnings && t.warnings.length)
+    ? t.warnings.map(w => "<div class=\"bg-warning-banner\">" + escapeHtml(w) + "</div>").join("")
+    : "";
+
+  el.innerHTML =
+    warningsHtml +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">ACTIVE TASKS (" + t.active.length + ")</div><div class=\"bg-task-list\">" +
+      t.active.map(x => bgTaskRow(x, "")).join("") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">DONE (" + t.done.length + ")</div><div class=\"bg-task-list\">" +
+      t.done.map(x => bgTaskRow(x, "done")).join("") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">CANCELLED (" + t.cancelled.length + ")</div><div class=\"bg-task-list\">" +
+      t.cancelled.map(x => bgTaskRow(x, "cancelled")).join("") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">GOALS</div><div class=\"bg-goal-list\">" +
+      goals.map(bgGoalCard).join("") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">IDEAS (" + ideas.length + ")</div><div class=\"bg-idea-list\">" +
+      ideas.map(bgIdeaRow).join("") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">UNOWNED BOARD ITEMS</div><div class=\"bg-columns\">" +
+      bgBoardColumn("Backlog", unowned.backlog) + bgBoardColumn("Sprint", unowned.sprint) +
+      bgBoardColumn("In Progress", unowned.inProgress) + bgBoardColumn("Done", unowned.done) +
+    "</div></div>";
+}
+async function loadBackgroundDashboard() {
+  try {
+    const res = await fetch("/background-dashboard.json?t=" + Date.now());
+    const data = await res.json();
+    renderBackgroundDashboard(data);
+  } catch (e) {}
+  clearTimeout(backgroundPollTimer);
+  if (document.getElementById("view-background").style.display !== "none") {
+    backgroundPollTimer = setTimeout(loadBackgroundDashboard, 15000);
+  }
+}
+
+const savedDashboard = localStorage.getItem("jarvisDashboard") || "main";
+switchDashboard(savedDashboard);
 </script>
 </body>
 </html>

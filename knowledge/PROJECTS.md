@@ -12,11 +12,6 @@ Tag related tasks in TASKS.md with #project-name to link them here.
 
 ---
 
-## Some Real Project
-- Status: active
-- Owner agent: planner
-- Goal: Get Jarvis into daily use
-
 ## Jarvis System
 - Status: active
 - Owner agent: researcher

@@ -21,10 +21,23 @@ Fabio, both about the orb dashboard (localhost:8420):
 2. The existing NOTES panel (`orb/index.html` `#notesPanel`) should drop entries once they've been
    filed/actioned, not just accumulate forever.
 
+## Status (updated 2026-07-30)
+
+Split status, not all-or-nothing: point 1 (multi-page split) is now substantially built - the orb
+dashboard (`orb/index.html`) has a nav shell with a 6-way switcher (main/background/finance/
+websites/projects/system-health), each its own view container, and the Projects dashboard is fully
+wired to real data (`knowledge/PROJECTS.md` + vault Project notes + `Boards/Engineering.md`) via a
+new `/projects-dashboard.json` endpoint. Point 2 (notes panel dropping filed items) has not been
+touched - still open, still describes current behavior accurately. `status: captured` above stays
+as-is per [[Knowledge/Ideas Index]]'s defined lifecycle (captured/evaluating/building/shelved) -
+this hasn't been promoted to its own Project note tracked on [[Boards/Engineering]], so "building"
+doesn't fit either; the split is noted here in prose instead of inventing a new status value.
+
 ## The idea
 
-**1. Multiple dashboard pages, like a website.** Instead of one single orb view, structure it as
-several pages/sections:
+**1. Multiple dashboard pages, like a website.** ✅ Done 2026-07-30 (nav shell + Projects page live;
+Background/Finance/Websites/System Health still placeholders). Instead of one single orb view,
+structure it as several pages/sections:
 - Main - the current orb view (Jarvis + overall status at a glance)
 - Jarvis/Claude info - system-level info about Jarvis and Claude itself (capabilities, usage,
   session/token state)

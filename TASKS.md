@@ -4,7 +4,7 @@ Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #projec
 
 ## Active
 
-\- \[ ] Write up "Claude Flowstate" idea as a note | priority: low
+- [ ] Write up "Claude Flowstate" idea as a note | priority: low
 
 - [ ] Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income once there's income to track) | priority: medium | #jarvis-system
   - Input ready for this one: vault/Ideas/Multi-Page Orb Dashboard.md (multi-page dashboard concept + notes-panel cleanup) and vault/Ideas/Finance Dashboard for Project Income.md - start here tomorrow morning.
