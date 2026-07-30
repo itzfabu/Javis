@@ -1,4 +1,4 @@
-﻿---
+---
 name: project-manager
 description: Koordiniert komplexe, mehrteilige Aufgaben und delegiert gezielt an die Spezial-Agenten (researcher, coder, debugger, business-analyst, writer, planner). Nutzen bei größeren Vorhaben, die mehrere Fachgebiete berühren, z.B. "prüfe diese Business-Idee komplett" oder "baue mir X von der Recherche bis zur Umsetzung".
 tools: Read, Write, Task

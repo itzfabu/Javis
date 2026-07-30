@@ -1,4 +1,4 @@
-﻿---
+---
 name: debugger
 description: Findet und behebt Fehler systematisch statt durch Raten. Nutzen bei "das geht nicht", "Fehler beheben", "warum funktioniert X nicht".
 tools: Read, Bash, Edit, Grep

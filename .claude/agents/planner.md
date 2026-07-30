@@ -1,4 +1,4 @@
-﻿---
+---
 name: planner
 description: Organisiert Termine, priorisiert Aufgaben, plant Abläufe. Nutzen bei "was sollte ich zuerst tun", "plane meine Woche", "priorisiere diese Aufgaben".
 tools: Read, Write, Edit

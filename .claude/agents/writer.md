@@ -1,4 +1,4 @@
-﻿---
+---
 name: writer
 description: Formuliert und überarbeitet Texte professionell – E-Mails, Nachrichten, Dokumente. Nutzen bei "schreib mir...", "formuliere das professioneller", "überarbeite diesen Text".
 tools: Read, Write, Edit

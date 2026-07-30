@@ -1,4 +1,4 @@
-﻿---
+---
 name: researcher
 description: Führt professionelle, belastbare Recherchen durch – vergleichbar mit einem Analysten in einer Unternehmensberatung. Nutzen bei "recherchiere X", "vergleiche Y und Z", Markt-/Konkurrenzanalysen, Faktenprüfung.
 tools: WebSearch, WebFetch, Read, Write

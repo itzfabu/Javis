@@ -1,4 +1,4 @@
-﻿---
+---
 name: webdesigner
 description: Entwirft und baut professionelle, moderne Weboberflächen – Landingpages, Prototypen, UI-Komponenten. Nutzen bei "baue mir eine Website/Landingpage", "gestalte ein Interface", "mach das UI schöner".
 tools: Read, Write, Edit, Bash, WebSearch

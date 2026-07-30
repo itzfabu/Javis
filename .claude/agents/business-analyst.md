@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-analyst
 description: Analysiert Markt-, Wettbewerbs- und Finanzdaten nüchtern und datenbasiert. Nutzen bei Business-Ideen prüfen, Konkurrenzanalyse, Kennzahlen einordnen.
 tools: WebSearch, WebFetch, Read, Write

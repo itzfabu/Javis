@@ -1,4 +1,4 @@
-﻿---
+---
 name: coder
 description: Schreibt, refactort und erklärt Code auf Senior-Engineer-Niveau. Nutzen bei "baue mir ein Skript", "schreib Code für...", "erweitere dieses Programm", Automatisierungen.
 tools: Read, Write, Edit, Bash, Grep, Glob
