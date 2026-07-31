@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter & Verse Books — Your Neighborhood Bookstore</title>
+<meta name="description" content="Chapter & Verse Books is a cozy independent bookstore with hand-picked staff recommendations and weekly reading events. Come find your next favorite book.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="wordmark">Chapter &amp; Verse Books</p>
+      <h1>A cozy neighborhood bookstore where every visit turns up a new favorite.</h1>
+      <p class="hero-sub">Hand-picked staff recommendations, a friendly shop to get lost in, and a weekly reading night that fills up fast. Come see why the regulars keep coming back.</p>
+      <a href="#signup" class="cta-button">Save My Seat for Story Night</a>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="about" id="about">
+      <div class="section-inner">
+        <h2>Books chosen by people, not algorithms</h2>
+        <p>Tucked into a quiet corner of the neighborhood, Chapter &amp; Verse Books is the kind of shop where the floorboards creak, the coffee is always on, and someone behind the counter has actually read every book on the shelf. We stock what we love, and we love talking about it.</p>
+      </div>
+    </section>
+
+    <section class="picks" id="picks">
+      <div class="section-inner">
+        <h2>This week's staff picks</h2>
+        <p class="section-lead">Every shelf tag here was handwritten by someone on our team. No algorithms, just readers recommending books to readers.</p>
+        <table class="picks-table">
+          <thead>
+            <tr>
+              <th>Book</th>
+              <th>Picked by</th>
+              <th>Why we love it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>The Quiet Hour</td>
+              <td>Marisol, Fiction Lead</td>
+              <td>A slow-burn family drama that rewards patience with a gutting final chapter.</td>
+            </tr>
+            <tr>
+              <td>Field Notes from Elsewhere</td>
+              <td>Devon, Nonfiction</td>
+              <td>Travel writing with a wry, observant voice — perfect for a rainy afternoon.</td>
+            </tr>
+            <tr>
+              <td>The Cartographer's Daughter</td>
+              <td>Priya, Owner</td>
+              <td>Historical fiction that made three of us cry at the register.</td>
+            </tr>
+            <tr>
+              <td>Static and Starlight</td>
+              <td>Owen, Sci-Fi &amp; Fantasy</td>
+              <td>A debut that feels like it was written for people who miss discovering new worlds.</td>
+            </tr>
+            <tr>
+              <td>Small Mercies</td>
+              <td>Marisol, Fiction Lead</td>
+              <td>Short stories you can finish on a lunch break but think about for days.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="events" id="events">
+      <div class="section-inner">
+        <h2>Weekly reading events</h2>
+        <p class="section-lead">Pull up a chair. Every event is free, casual, and open to anyone who loves a good book.</p>
+        <div class="events-grid">
+          <div class="event-card">
+            <span class="event-day">Monday</span>
+            <h3>Poetry &amp; Coffee</h3>
+            <p>A relaxed evening of reading favorite poems aloud, new and old. Bring one to share or just listen.</p>
+          </div>
+          <div class="event-card">
+            <span class="event-day">Wednesday</span>
+            <h3>Story Night Book Club</h3>
+            <p>Our flagship weekly gathering — one book, one hour, honest conversation and second helpings of tea.</p>
+          </div>
+          <div class="event-card">
+            <span class="event-day">Saturday</span>
+            <h3>Morning Storytime</h3>
+            <p>A gentle read-aloud hour for little ones, followed by a browse through our children's corner.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonial" id="testimonial">
+      <div class="section-inner">
+        <blockquote>
+          <p>&ldquo;Honestly the best staff picks table you'll find anywhere in town.&rdquo;</p>
+          <footer>— Test Reviewer</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="signup" id="signup">
+      <div class="section-inner">
+        <h2>Reserve your seat at Story Night</h2>
+        <p class="section-lead">Seats are limited to keep the conversation cozy. Leave your email and we'll hold one for you.</p>
+        <form id="signup-form" novalidate>
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          <button type="submit" class="cta-button">Save My Seat for Story Night</button>
+          <p class="form-note" id="form-note" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Chapter &amp; Verse Books · Open daily, tucked into the neighborhood you already love.</p>
+  </footer>
+
+<script src="script.js"></script>
+</body>
+</html>

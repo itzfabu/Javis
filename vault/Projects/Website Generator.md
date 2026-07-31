@@ -41,6 +41,43 @@ legal-guardrail judgment already flagged in the Ideas note.
   via the same approach used to build both the Projects and Background dashboards.
 - **MVP scope:** generate-from-prompt only. Clone-and-rebuild deferred.
 
+### Clone-and-Rebuild Scoping (deferred feature — not yet built)
+
+Scoping this now so the eventual build has a clear technical and legal shape, even though MVP
+scope above defers actual implementation.
+
+**Reference-site capture method:** fetch the live page's structure and content, then feed a
+*summary* of that content into the generation prompt — never pass literal scraped HTML through to
+the generator. The output is reconstructed as fresh code from that summary, not a copy-with-
+substitutions of the original markup. This is both a technical choice (keeps the pipeline
+consistent with generate-from-prompt's real-code-not-templated approach) and a legal one
+(reconstructing from a description, rather than literally copying source HTML/CSS, is the same
+distinction the Ideas note's clone-tool research draws between legitimate reference-based redesign
+and direct copying).
+Fetching and summarizing a reference site also opens a prompt-injection surface — the site's own
+text is attacker-controlled if the site is hostile or compromised — but this is an accepted,
+already-mitigated tradeoff, not an unexamined gap: the generation subprocess is scoped to
+`--tools Write` only (no Bash, Read, or network access), so even a successful injection is capped
+at writing content inside the job's own output folder, the same blast-radius boundary already
+established for the unsanitized business_name/prompt/reviews fields.
+
+**Legal guardrail as an actual form field:** the generation form gets a required question — "Is
+this the business's own current website?" — with a yes/no answer. If no, a second required field,
+"What business is this for?", captures who the output is actually going to. This operationalizes
+the legal-guardrail judgment already established in the Ideas note (rebuilding a business's own
+site is safe; using another site as a structural/design reference for a *different* client is
+normal industry practice; cloning a company's site to hand a lookalike to their direct competitor
+is the line not to cross) as a real, answered field on every clone-and-rebuild job, not just a
+principle documented in a note nobody checks at generation time.
+
+**`meta.json` additions for clone-and-rebuild jobs:** two new fields, alongside the existing
+schema in Output Structure —
+- `reference_url` — the site that was used as a reference
+- `legal_basis` — `own-site` or `reference-with-rebrand`, recorded from the form answer above
+
+These make the legal basis for each clone-and-rebuild job auditable after the fact, not just
+asserted once at generation time.
+
 ## Output Structure
 
 Each generated site lives in its own self-contained folder under
@@ -98,6 +135,79 @@ that actually converts.
 **Resolution principle:** fast, clear value prop and one obvious CTA above the fold, with
 minimal blocking assets. Motion/scroll/video content lives further down the page, not on the
 critical path to the first impression or the CTA.
+
+## Visual Richness (3D)
+
+**Library:** Three.js, self-hosted locally (vendored into the project, not loaded from a CDN).
+This follows directly from the portability decision in Overview — a CDN dependency would break
+the "genuinely portable static files" differentiator the moment that CDN is unreachable,
+deprecated, or blocked in a region. Self-hosting removes that single point of failure entirely.
+
+**Library version:** r128 (UMD/classic `<script>` build), confirmed as the working baseline —
+tested end-to-end with PBR materials, HDRI image-based lighting, and a 3-pass `EffectComposer`
+chain (bloom + custom color-grade) at a clean, sustained 60fps. Upgrading to the current stable
+release (0.185.1, ES-modules-only — Three.js dropped the classic UMD build and flat `examples/js/`
+addons entirely in recent versions) was attempted and abandoned for now: it resolved the
+`thickness`/`specularIntensity` material-property gap described below, but introduced a severe,
+unresolved performance collapse (60fps → effectively 0fps) and a *worse* overexposure result (the
+podium, not just the glass, blown out to solid white), neither of which was root-caused. That
+regression is deferred to a dedicated future investigation rather than pursued further inline —
+r128 stays the working default until then.
+
+**Scope:** exactly one hero-section 3D object per site — never a full 3D environment. This follows
+the "one confident centerpiece" principle from current research: the standout sites "pick one hard
+idea and execute it cleanly... a single object rendered with real weight," and "a single well-lit
+hero object plus a reveal-on-interaction is enough to reposition a corporate site as premium" —
+without needing a whole explorable world. Two current Awwwards-recognized examples (Oryzo, Site of
+the Month April 2026; Hubtown, Site of the Day June 2026) both use exactly one object this way.
+
+**Position relative to Conversion Requirements:** the 3D object sits below/outside the above-the-fold
+critical path — the same resolution principle already established for motion/scroll/video content.
+This isn't optional polish: a single 3D hero scene alone can cost 800kB–2MB of JS runtime before
+anything is visible, which collapses Core Web Vitals/Lighthouse scores if it sits on the critical
+path. It renders as a below-the-fold reveal or secondary section, never blocking first paint or the
+CTA.
+
+**Explicit exception flag:** this is a deliberate, scoped exception to the "vanilla JS only, no
+external frameworks" rule in Conversion Requirements — not a silent violation of it. Three.js is
+added specifically and only for this one hero-object use case; it is not a general license to add
+other libraries or frameworks elsewhere in a generated site.
+
+**Known defect / next step:** on r128, `MeshPhysicalMaterial`'s `thickness` and `specularIntensity`
+properties aren't recognized (added to Three.js after r128), and the glass curtain-wall band renders
+as a blown-out solid white block instead of transparent glass — confirmed via console warnings and
+direct visual testing, not yet fixed. The next concrete task is a **bounded, r128-compatible glass
+material fix**: a tinted/frosted glass approximation built only from properties r128's
+`MeshPhysicalMaterial` actually supports (`transmission`, `roughness`, `ior`, `color`, `opacity`,
+reduced `envMapIntensity`/bloom threshold on that surface) — not a version upgrade, and scoped
+separately from the deferred ES-modules question above.
+
+**Hero-object category palette:** structurally validated across two categories — a building
+(architecture massing study) and a product (bottled beverage). The procedural-geometry approach,
+PBR material loading, the r128-safe glass recipe, HDRI image-based lighting, the `EffectComposer`
+chain, and the lazy-load pattern all generalized correctly to the second category, not just the
+first. Two known, separate, bounded lighting/material defects remain open and tracked on the
+Engineering board rather than resolved: the glass-material fix above, and a newly found
+label/diffuse-surface overexposure on bright, high-roughness materials facing the key light
+near-perpendicular — likely a key-light-intensity or bloom-threshold tuning issue, not the same
+root cause as the glass defect. The palette is not being called confirmed-clean until both land.
+
+**Asset resolution:** 1K HDRI + PBR textures are confirmed as the standard for both tiers,
+Premium included — a 4K comparison test (same scene, same geometry, single-variable swap) was
+run and rejected. The 4K asset set was +116MB / 15.3x the size of the 1K set (124.16MB vs.
+8.09MB) for a real-world load cost of roughly 18-90 extra seconds depending on connection speed,
+against **no perceptible visual improvement** at actual hero-object render scale — confirmed by
+direct side-by-side comparison of identical texture regions, not just a size-on-paper assumption.
+The cause is ordinary GPU texture mipmapping: a web hero-object canvas never approaches 4K worth
+of on-screen pixel coverage per surface, so the extra resolution is discarded before it's ever
+visible. 2K wasn't separately tested — the mipmapping explanation already covers that middle
+ground, since the same downsampling logic applies at any resolution above what the canvas can
+actually display.
+
+## Sources (Visual Richness)
+- [Best Three.js Websites 2026: 8 Sites + Techniques | Utsubo](https://www.utsubo.com/blog/best-threejs-websites-2026) — "one confident centerpiece" principle, Awwwards examples (Oryzo, Hubtown)
+- [Web Design Trends 2026: What Actually Held Up After Six Months | Studio Meyer](https://studiomeyer.io/en/blog/webdesign-trends-2026-reality-check) — performance cost of 3D hero elements, "brand is the experience" scoping
+- [Self-hosting third-party resources: the good, the bad and the ugly | Web Performance Calendar](https://calendar.perfplanet.com/2019/self-hosting-third-party-resources-the-good-the-bad-and-the-ugly/) — self-hosting vs CDN reliability reasoning
 
 ## Links
 

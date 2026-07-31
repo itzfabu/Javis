@@ -1,0 +1,15 @@
+{
+  "business_name": "Chapter & Verse Books",
+  "slug": "chapter-verse-books",
+  "prompt_used": "A made-up small independent bookstore, cozy neighborhood shop, staff recommendations, weekly reading events. Using a well-structured public demo bookstore site purely as a layout/structure reference, not the real business.",
+  "reviews_used": [
+    "Best staff picks table in town. - Test Reviewer"
+  ],
+  "created_date": "2026-07-31T11:44:14.772485+00:00",
+  "status": "draft",
+  "client_contact": "test@example.com",
+  "price": 350,
+  "license_type": "personal",
+  "reference_url": "https://books.toscrape.com/",
+  "legal_basis": "reference-with-rebrand"
+}

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Architecture Studio — Mixed-Use & Residential Design</title>
+<meta name="description" content="Meridian Architecture Studio designs mixed-use and infill residential buildings, reconciling zoning, daylight, and budget into a single defensible form.">
+<style>
+  :root{
+    --bg:#f7f4ee;
+    --bg-alt:#efe9dd;
+    --ink:#17140f;
+    --ink-soft:#4c473c;
+    --ink-faint:#8c8577;
+    --accent:#9c7c4e;
+    --accent-dark:#7a5e3a;
+    --dark:#0c0b09;
+    --dark-soft:#18160f;
+    --line:rgba(23,20,15,0.12);
+    --line-dark:rgba(247,244,238,0.14);
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--accent); color:#fff; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 2rem; }
+
+  /* ---------- Nav ---------- */
+  header.site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(247,244,238,0.82);
+    backdrop-filter:blur(10px) saturate(140%);
+    -webkit-backdrop-filter:blur(10px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:0 2rem;
+    height:76px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{ display:flex; flex-direction:column; line-height:1; }
+  .logo-mark{ font-family:var(--serif); font-size:1.28rem; letter-spacing:0.06em; font-weight:400; }
+  .logo-sub{ font-size:0.58rem; letter-spacing:0.24em; color:var(--ink-faint); margin-top:0.32rem; }
+  nav.links{ display:flex; align-items:center; gap:2.4rem; }
+  nav.links a.nav-link{
+    font-size:0.86rem; letter-spacing:0.01em; color:var(--ink-soft);
+    position:relative; padding-bottom:4px;
+  }
+  nav.links a.nav-link::after{
+    content:""; position:absolute; left:0; right:100%; bottom:0; height:1px; background:var(--ink);
+    transition:right .3s cubic-bezier(.2,.7,.2,1);
+  }
+  nav.links a.nav-link:hover::after{ right:0; }
+  .nav-cta{
+    font-size:0.82rem; padding:0.62rem 1.25rem; border:1px solid var(--ink);
+    letter-spacing:0.02em; transition:background .3s ease, color .3s ease;
+  }
+  .nav-cta:hover{ background:var(--ink); color:var(--bg); }
+  .nav-toggle{ display:none; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:8rem 0 5rem;
+    position:relative;
+  }
+  .hero-inner{ max-width:820px; }
+  .eyebrow{
+    font-size:0.72rem; letter-spacing:0.22em; color:var(--accent-dark);
+    font-weight:600; margin-bottom:1.6rem; display:inline-block;
+  }
+  h1.headline{
+    font-family:var(--serif); font-weight:400;
+    font-size:clamp(2.9rem, 6.4vw, 5.4rem);
+    line-height:1.03; letter-spacing:-0.02em;
+    color:var(--ink); max-width:11ch;
+  }
+  h1.headline em{ font-style:italic; color:var(--accent-dark); }
+  .subhead{
+    margin-top:2rem; font-size:clamp(1.05rem, 1.4vw, 1.22rem);
+    line-height:1.6; color:var(--ink-soft); max-width:52ch;
+    font-weight:400;
+  }
+  .hero-actions{
+    margin-top:2.8rem; display:flex; align-items:center; gap:2rem; flex-wrap:wrap;
+  }
+
+  .btn-primary{
+    position:relative; overflow:hidden;
+    display:inline-block; background:var(--ink); color:var(--bg);
+    font-size:0.92rem; letter-spacing:0.02em; padding:1.05rem 2.15rem;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 1px 2px rgba(0,0,0,0.08);
+  }
+  .btn-primary::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.16) 45%, transparent 60%);
+    transform:translateX(-120%);
+    transition:transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 32px -8px rgba(23,20,15,0.32);
+  }
+  .btn-primary:hover::before{ transform:translateX(120%); }
+  .btn-primary:active{ transform:translateY(-1px); }
+
+  .link-arrow{
+    font-size:0.9rem; color:var(--ink-soft); display:inline-flex; align-items:center; gap:0.5rem;
+  }
+  .link-arrow span.arrow{ transition:transform .3s ease; }
+  .link-arrow:hover span.arrow{ transform:translateY(3px); }
+
+  .hero-meta{
+    margin-top:5.5rem; display:flex; gap:3.2rem; flex-wrap:wrap;
+    padding-top:2rem; border-top:1px solid var(--line);
+    max-width:820px;
+  }
+  .hero-meta div{ display:flex; flex-direction:column; gap:0.3rem; }
+  .hero-meta .num{ font-family:var(--serif); font-size:1.5rem; }
+  .hero-meta .lbl{ font-size:0.74rem; color:var(--ink-faint); letter-spacing:0.03em; }
+
+  /* ---------- Section shared ---------- */
+  section{ padding:7.5rem 0; }
+  .section-head{ max-width:640px; margin-bottom:4rem; }
+  .section-head .eyebrow{ margin-bottom:1.1rem; }
+  .section-head h2{
+    font-family:var(--serif); font-weight:400; font-size:clamp(2rem, 3.4vw, 2.9rem);
+    letter-spacing:-0.01em; line-height:1.12;
+  }
+  .section-head p{ margin-top:1.3rem; color:var(--ink-soft); font-size:1.02rem; line-height:1.65; }
+
+  .alt-bg{ background:var(--bg-alt); }
+
+  /* ---------- Approach / stats ---------- */
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:2.5rem;
+    border-top:1px solid var(--line); padding-top:3rem;
+  }
+  .stat .num{ font-family:var(--serif); font-size:clamp(2rem,3vw,2.7rem); color:var(--ink); }
+  .stat .lbl{ margin-top:0.6rem; font-size:0.85rem; color:var(--ink-soft); line-height:1.4; }
+
+  /* ---------- Work grid ---------- */
+  .work-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+  .work-card{ display:block; }
+  .work-image{
+    aspect-ratio:4/5; border-radius:2px; margin-bottom:1.3rem;
+    position:relative; overflow:hidden;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .work-card:hover .work-image{ transform:translateY(-6px); }
+  .work-image::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.28) 100%);
+  }
+  .work-1{ background:linear-gradient(150deg,#c9beac 0%,#8d7c62 55%,#4c4436 100%); }
+  .work-2{ background:linear-gradient(150deg,#b8c4c2 0%,#5f7a78 55%,#2c3c3b 100%); }
+  .work-3{ background:linear-gradient(150deg,#cbb9a4 0%,#93705a 55%,#402c22 100%); }
+  .work-title{ font-family:var(--serif); font-size:1.28rem; }
+  .work-meta{ font-size:0.82rem; color:var(--accent-dark); margin-top:0.4rem; letter-spacing:0.01em; }
+  .work-desc{ font-size:0.92rem; color:var(--ink-soft); margin-top:0.6rem; line-height:1.55; }
+
+  /* ---------- Studio / philosophy ---------- */
+  .studio-grid{ display:grid; grid-template-columns:0.7fr 1.3fr; gap:4rem; align-items:start; }
+  .studio-label{ font-family:var(--serif); font-size:1.6rem; }
+  blockquote{
+    font-family:var(--serif); font-size:clamp(1.3rem,2vw,1.7rem);
+    line-height:1.45; color:var(--ink); font-style:italic;
+    border-left:2px solid var(--accent); padding-left:1.8rem; margin:2rem 0;
+  }
+  blockquote cite{ display:block; font-style:normal; font-size:0.82rem; color:var(--ink-faint); margin-top:1rem; letter-spacing:0.02em; }
+  .studio-copy p{ color:var(--ink-soft); line-height:1.7; font-size:1.02rem; margin-bottom:1.2rem; }
+
+  /* ---------- 3D section ---------- */
+  .massing-section{
+    background:var(--dark); color:#efe9dd; padding:8rem 0;
+  }
+  .massing-section .eyebrow{ color:#c8a76e; }
+  .massing-section .section-head h2{ color:#f7f4ee; }
+  .massing-section .section-head p{ color:#b8b2a3; }
+
+  .threed-stage{
+    position:relative; width:100%; aspect-ratio:16/9; max-height:640px;
+    background:radial-gradient(120% 140% at 50% 20%, #26221a 0%, #0c0b09 70%);
+    border:1px solid var(--line-dark); border-radius:3px; overflow:hidden;
+  }
+  .threed-stage canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .threed-placeholder{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:0.9rem;
+  }
+  .threed-placeholder .dot{
+    width:6px; height:6px; border-radius:50%; background:#c8a76e;
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:0.25; transform:scale(0.85); } 50%{ opacity:1; transform:scale(1); } }
+  .threed-placeholder span{ font-size:0.82rem; letter-spacing:0.05em; color:#8c8577; }
+
+  .fps-readout{
+    position:absolute; right:12px; bottom:10px; z-index:5;
+    font-family:'SFMono-Regular', Consolas, 'Courier New', monospace;
+    font-size:0.68rem; letter-spacing:0.03em; color:rgba(239,233,221,0.55);
+    background:rgba(12,11,9,0.55); border:1px solid rgba(239,233,221,0.12);
+    padding:0.28rem 0.55rem; border-radius:2px; pointer-events:none;
+  }
+
+  .massing-caption{
+    margin-top:1.4rem; font-size:0.8rem; color:#7d7768; letter-spacing:0.01em;
+    display:flex; flex-wrap:wrap; gap:0.4rem 1.6rem;
+  }
+
+  /* ---------- Closing CTA ---------- */
+  .closing-cta{
+    background:var(--bg-alt); text-align:center; padding:8rem 0;
+  }
+  .closing-cta h2{
+    font-family:var(--serif); font-weight:400; font-size:clamp(2.1rem,3.6vw,3.1rem);
+    max-width:16ch; margin:0 auto; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .closing-cta p{ color:var(--ink-soft); max-width:44ch; margin:1.4rem auto 2.6rem; line-height:1.6; }
+
+  /* ---------- Footer ---------- */
+  footer{ background:var(--dark); color:#b8b2a3; padding:4.5rem 0 2.5rem; }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:3rem; padding-bottom:3rem; border-bottom:1px solid var(--line-dark); }
+  .footer-brand{ font-family:var(--serif); font-size:1.3rem; color:#f7f4ee; }
+  .footer-tag{ margin-top:0.9rem; font-size:0.88rem; line-height:1.6; max-width:32ch; color:#8c8577; }
+  .footer-col h4{ font-size:0.72rem; letter-spacing:0.16em; color:#8c8577; margin-bottom:1.1rem; }
+  .footer-col a, .footer-col p{ display:block; font-size:0.88rem; margin-bottom:0.65rem; color:#c9c3b4; }
+  .footer-col a:hover{ color:#f7f4ee; }
+  .footer-bottom{
+    padding-top:1.8rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+    font-size:0.76rem; color:#6f6a5c;
+  }
+
+  @media (max-width: 900px){
+    nav.links{ display:none; }
+    .stats-grid{ grid-template-columns:repeat(2,1fr); }
+    .work-grid{ grid-template-columns:1fr; }
+    .studio-grid{ grid-template-columns:1fr; }
+    .footer-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="logo-mark">Meridian</span>
+      <span class="logo-sub">ARCHITECTURE STUDIO</span>
+    </a>
+    <nav class="links">
+      <a class="nav-link" href="#approach">Approach</a>
+      <a class="nav-link" href="#work">Selected Work</a>
+      <a class="nav-link" href="#studio">Studio</a>
+      <a class="nav-link" href="#massing">Massing Study</a>
+      <a class="nav-cta" href="#contact">Start a Brief</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <span class="eyebrow">MERIDIAN ARCHITECTURE STUDIO — INFILL &amp; MID-RISE, EST. 2009</span>
+      <h1 class="headline">Density, designed with <em>restraint.</em></h1>
+      <p class="subhead">We design mixed-use and residential buildings for sites where the zoning envelope, the daylight requirements, and the budget rarely agree — and find the one form that satisfies all three. 41 projects delivered across three continents; none redesigned after entitlement.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#contact">Request a Feasibility Study</a>
+        <a class="link-arrow" href="#work">See Selected Work <span class="arrow">↓</span></a>
+      </div>
+      <div class="hero-meta">
+        <div><span class="num">41</span><span class="lbl">Projects delivered</span></div>
+        <div><span class="num">3</span><span class="lbl">Continents</span></div>
+        <div><span class="num">6.2M</span><span class="lbl">Sq ft designed to date</span></div>
+        <div><span class="num">0</span><span class="lbl">Redesigns post-entitlement</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="approach">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">APPROACH</span>
+        <h2>Three constraints, one form.</h2>
+        <p>Most feasibility failures aren't design failures — they're sequencing failures. We test zoning, daylight, and cost as one problem from the first sketch, so the massing that survives design development is the same one we showed the client in week two.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat"><div class="num">14</div><div class="lbl">Average weeks from brief to entitlement-ready massing</div></div>
+        <div class="stat"><div class="num">92%</div><div class="lbl">Of schemes approved without a resubmission</div></div>
+        <div class="stat"><div class="num">12</div><div class="lbl">Cities with a Meridian building on the ground</div></div>
+        <div class="stat"><div class="num">1</div><div class="lbl">Studio — no franchise offices, no hand-offs</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="alt-bg">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">SELECTED WORK</span>
+        <h2>A short list, on purpose.</h2>
+        <p>We take on roughly six projects a year. Every one below went from brief to permitted massing without a scheme change.</p>
+      </div>
+      <div class="work-grid">
+        <a class="work-card" href="#contact">
+          <div class="work-image work-1"></div>
+          <div class="work-title">Alder &amp; Ninth</div>
+          <div class="work-meta">Portland, OR — 84 units, Type III over podium</div>
+          <p class="work-desc">Infill housing on a corner lot with a 45-foot height limit and a mandated ground-floor retail frontage.</p>
+        </a>
+        <a class="work-card" href="#contact">
+          <div class="work-image work-2"></div>
+          <div class="work-title">Kestrel Point</div>
+          <div class="work-meta">Vancouver, BC — Mixed-use tower, 22 storeys</div>
+          <p class="work-desc">A slender tower on a view-corridor-restricted site, resolved with a stepped podium and rotated floor plates.</p>
+        </a>
+        <a class="work-card" href="#contact">
+          <div class="work-image work-3"></div>
+          <div class="work-title">The Founders Building</div>
+          <div class="work-meta">Austin, TX — Adaptive reuse + vertical addition</div>
+          <p class="work-desc">A 1948 warehouse shell carrying five new residential storeys without a single new column at grade.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="studio">
+    <div class="wrap studio-grid">
+      <div class="studio-label">Studio</div>
+      <div class="studio-copy">
+        <p>Meridian is nineteen architects, three structural collaborators, and one shared conviction: the best massing study is the one that doesn't need to be redrawn after the zoning board sees it. We work directly with developers and their lenders from the first site walk, not after the entitlement is at risk.</p>
+        <blockquote>
+          Every unbuilt option we walk a client through is a form we're not attached to. That's the job.
+          <cite>— Elena Marsh, Founding Principal</cite>
+        </blockquote>
+        <p>Founded in 2009, the studio has stayed deliberately small. We turn down more briefs than we accept, and we've never opened a second office.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="massing" class="massing-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">LIVE STRUCTURAL STUDY</span>
+        <h2>How a massing study actually gets built.</h2>
+        <p>This is a real-time render of a procedural volumetric model — the same primitive-built massing logic we use internally before a single rendering hour is spent. Concrete podium, metal tower with fin shading, and a physically based glass curtain wall, lit by a studio HDRI.</p>
+      </div>
+      <div class="threed-stage" id="threedStage">
+        <div class="threed-placeholder" id="threedPlaceholder">
+          <span class="dot"></span>
+          <span>Preparing live structural study — loads on scroll</span>
+        </div>
+        <div class="fps-readout" id="fpsReadout">-- fps</div>
+      </div>
+      <div class="massing-caption">
+        <span>Podium — cast concrete, PBR</span>
+        <span>Tower &amp; fins — brushed metal, PBR</span>
+        <span>Glazing — physically based transmission</span>
+        <span>Lighting — studio HDRI, image-based</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing-cta" id="contact">
+    <div class="wrap">
+      <h2>Have a site that doesn't pencil yet?</h2>
+      <p>Send us the parcel, the zoning code, and the number you need to hit. We'll tell you honestly whether there's a form in there — usually within two weeks.</p>
+      <a class="btn-primary" href="mailto:studio@meridian-architecture.example?subject=Feasibility%20Study%20Request">Request a Feasibility Study</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Meridian</div>
+        <p class="footer-tag">Architecture and real estate design for mixed-use and residential sites, since 2009.</p>
+      </div>
+      <div class="footer-col">
+        <h4>STUDIO</h4>
+        <a href="#approach">Approach</a>
+        <a href="#work">Selected Work</a>
+        <a href="#studio">Studio</a>
+        <a href="#massing">Massing Study</a>
+      </div>
+      <div class="footer-col">
+        <h4>CONTACT</h4>
+        <p>studio@meridian-architecture.example</p>
+        <p>+1 (503) 555-0148</p>
+        <p>412 Alder Street, Portland, OR</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Meridian Architecture Studio. All rights reserved.</span>
+      <span>A fictional studio, for demonstration purposes.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="three.min.js"></script>
+<script src="assets/js/RGBELoader.js"></script>
+<script src="assets/js/CopyShader.js"></script>
+<script src="assets/js/LuminosityHighPassShader.js"></script>
+<script src="assets/js/EffectComposer.js"></script>
+<script src="assets/js/RenderPass.js"></script>
+<script src="assets/js/ShaderPass.js"></script>
+<script src="assets/js/UnrealBloomPass.js"></script>
+
+<script>
+(function(){
+
+  /* ---------------- Three.js massing study (lazy-init) ---------------- */
+
+  var threeDReady = false;
+  var scene, camera, renderer, composer, buildingGroup, clock;
+  var bloomPass, gradePass;
+  var stage, placeholder, fpsLabel;
+
+  var frameCount = 0;
+  var fpsLastUpdate = 0;
+
+  function loadTextures(onDone){
+    var loader = new THREE.TextureLoader();
+    var manifest = {
+      concrete: {
+        diff:  'assets/textures/concrete/diff.jpg',
+        nor:   'assets/textures/concrete/nor.jpg',
+        rough: 'assets/textures/concrete/rough.jpg',
+        ao:    'assets/textures/concrete/ao.jpg'
+      },
+      metal: {
+        diff:  'assets/textures/metal/diff.jpg',
+        nor:   'assets/textures/metal/nor.jpg',
+        rough: 'assets/textures/metal/rough.jpg',
+        metal: 'assets/textures/metal/metal.jpg',
+        ao:    'assets/textures/metal/ao.jpg'
+      }
+    };
+    var result = { concrete:{}, metal:{} };
+    var pending = 0, resolved = false;
+
+    Object.keys(manifest).forEach(function(group){
+      var repeatVal = group === 'concrete' ? 3 : 2;
+      Object.keys(manifest[group]).forEach(function(key){
+        pending++;
+        loader.load(manifest[group][key], function(tex){
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.wrapT = THREE.RepeatWrapping;
+          tex.repeat.set(repeatVal, repeatVal);
+          if (key === 'diff'){
+            if ('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
+            else if ('encoding' in tex) tex.encoding = THREE.sRGBEncoding;
+          }
+          result[group][key] = tex;
+          pending--;
+          if (pending === 0 && !resolved){
+            resolved = true;
+            onDone(result);
+          }
+        });
+      });
+    });
+  }
+
+  function createBuilding(tex){
+    var group = new THREE.Group();
+
+    /* ---- Podium (concrete, BoxGeometry) ---- */
+    var podiumGeo = new THREE.BoxGeometry(7, 1.1, 5);
+    addUv2(podiumGeo);
+    var podiumMat = new THREE.MeshStandardMaterial({
+      map: tex.concrete.diff,
+      normalMap: tex.concrete.nor,
+      roughnessMap: tex.concrete.rough,
+      aoMap: tex.concrete.ao,
+      roughness: 1
+    });
+    var podium = new THREE.Mesh(podiumGeo, podiumMat);
+    podium.position.y = 0.55;
+    group.add(podium);
+
+    /* ---- Tower (metal, ExtrudeGeometry — chamfered rectangle) ---- */
+    var w = 3.4, d = 2.4, chamfer = 0.55, towerHeight = 9.5;
+    var shape = new THREE.Shape();
+    shape.moveTo(-w/2 + chamfer, -d/2);
+    shape.lineTo(w/2, -d/2);
+    shape.lineTo(w/2, d/2 - chamfer);
+    shape.lineTo(w/2 - chamfer, d/2);
+    shape.lineTo(-w/2, d/2);
+    shape.lineTo(-w/2, -d/2 + chamfer);
+    shape.closePath();
+
+    var towerGeo = new THREE.ExtrudeGeometry(shape, { depth: towerHeight, bevelEnabled: false, curveSegments: 1 });
+    towerGeo.rotateX(-Math.PI / 2);
+    addUv2(towerGeo);
+
+    var metalMat = new THREE.MeshStandardMaterial({
+      map: tex.metal.diff,
+      normalMap: tex.metal.nor,
+      roughnessMap: tex.metal.rough,
+      metalnessMap: tex.metal.metal,
+      aoMap: tex.metal.ao,
+      metalness: 1,
+      roughness: 0.55
+    });
+    var tower = new THREE.Mesh(towerGeo, metalMat);
+    tower.position.y = 1.1;
+    group.add(tower);
+
+    /* ---- Glass curtain-wall band (MeshPhysicalMaterial, no texture) ---- */
+    var glassGeo = new THREE.BoxGeometry(w + 0.05, towerHeight * 0.4, d + 0.05);
+    var glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0xdfeaec,
+      metalness: 0,
+      roughness: 0.06,
+      transmission: 1.0,
+      ior: 1.5,
+      thickness: 0.6,
+      specularIntensity: 1,
+      envMapIntensity: 1.25,
+      clearcoat: 0.15
+    });
+    var glass = new THREE.Mesh(glassGeo, glassMat);
+    glass.position.y = 1.1 + towerHeight * 0.42;
+    group.add(glass);
+
+    /* ---- Vertical shading fins (metal, BoxGeometry array) ---- */
+    var finGeo = new THREE.BoxGeometry(0.09, towerHeight * 0.82, 0.32);
+    var finCount = 7;
+    for (var i = 0; i < finCount; i++){
+      var fin = new THREE.Mesh(finGeo, metalMat);
+      var t = i / (finCount - 1);
+      fin.position.set(-w/2 + t * w, 1.1 + towerHeight * 0.48, d/2 + 0.18);
+      group.add(fin);
+    }
+
+    /* ---- Mechanical penthouse block (metal, BoxGeometry) ---- */
+    var penthouseGeo = new THREE.BoxGeometry(w * 0.55, 0.9, d * 0.6);
+    var penthouse = new THREE.Mesh(penthouseGeo, metalMat);
+    penthouse.position.y = 1.1 + towerHeight + 0.45;
+    group.add(penthouse);
+
+    group.position.y = -1.5;
+    return group;
+  }
+
+  function addUv2(geo){
+    if (geo.attributes.uv){
+      geo.setAttribute('uv2', new THREE.BufferAttribute(geo.attributes.uv.array, 2));
+    }
+  }
+
+  function initThreeD(){
+    if (threeDReady) return;
+    threeDReady = true;
+
+    stage = document.getElementById('threedStage');
+    placeholder = document.getElementById('threedPlaceholder');
+    fpsLabel = document.getElementById('fpsReadout');
+
+    var width = stage.clientWidth;
+    var height = stage.clientHeight;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0c0b09);
+
+    camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+    camera.position.set(0, 6.8, 15.5);
+    camera.lookAt(0, 4.2, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height);
+    if ('outputColorSpace' in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+    else renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    stage.appendChild(renderer.domElement);
+
+    /* crisp specular highlight — HDRI remains primary light source */
+    var keyLight = new THREE.DirectionalLight(0xfff2df, 1.2);
+    keyLight.position.set(6, 11, 6);
+    scene.add(keyLight);
+
+    clock = new THREE.Clock();
+
+    /* ---- Post-processing ---- */
+    composer = new THREE.EffectComposer(renderer);
+    composer.addPass(new THREE.RenderPass(scene, camera));
+
+    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.32, 0.4, 0.86);
+    composer.addPass(bloomPass);
+
+    var gradeShaderDef = {
+      uniforms: {
+        tDiffuse: { value: null },
+        uVignette: { value: 0.32 },
+        uContrast: { value: 1.05 }
+      },
+      vertexShader: [
+        'varying vec2 vUv;',
+        'void main(){',
+        '  vUv = uv;',
+        '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'uniform sampler2D tDiffuse;',
+        'uniform float uVignette;',
+        'uniform float uContrast;',
+        'varying vec2 vUv;',
+        'void main(){',
+        '  vec4 color = texture2D(tDiffuse, vUv);',
+        '  color.rgb = (color.rgb - 0.5) * uContrast + 0.5;',
+        '  vec2 centered = vUv - 0.5;',
+        '  float vig = 1.0 - dot(centered, centered) * uVignette;',
+        '  color.rgb *= vig;',
+        '  gl_FragColor = color;',
+        '}'
+      ].join('\n')
+    };
+    gradePass = new THREE.ShaderPass(gradeShaderDef);
+    gradePass.renderToScreen = true;
+    composer.addPass(gradePass);
+
+    /* ---- HDRI image-based lighting ---- */
+    var pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    var rgbeLoader = new THREE.RGBELoader();
+    if (typeof rgbeLoader.setDataType === 'function'){
+      rgbeLoader.setDataType(typeof THREE.HalfFloatType !== 'undefined' ? THREE.HalfFloatType : THREE.UnsignedByteType);
+    }
+    rgbeLoader.load('assets/hdri/studio_small_03_1k.hdr', function(hdrTex){
+      var envMap = pmremGenerator.fromEquirectangular(hdrTex).texture;
+      scene.environment = envMap;
+      hdrTex.dispose();
+      pmremGenerator.dispose();
+    });
+
+    /* ---- Building geometry + PBR materials ---- */
+    loadTextures(function(tex){
+      buildingGroup = createBuilding(tex);
+      scene.add(buildingGroup);
+    });
+
+    window.addEventListener('resize', onResize);
+    fpsLastUpdate = performance.now();
+    requestAnimationFrame(animate);
+  }
+
+  function onResize(){
+    if (!renderer || !stage) return;
+    var width = stage.clientWidth;
+    var height = stage.clientHeight;
+    if (width === 0 || height === 0) return;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+    composer.setSize(width, height);
+    if (bloomPass){
+      if (typeof bloomPass.setSize === 'function') bloomPass.setSize(width, height);
+      else if (bloomPass.resolution) bloomPass.resolution.set(width, height);
+    }
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var delta = clock.getDelta();
+
+    if (buildingGroup) buildingGroup.rotation.y += delta * 0.12;
+
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
+
+    frameCount++;
+    var now = performance.now();
+    if (now - fpsLastUpdate >= 1000){
+      var fps = Math.round((frameCount * 1000) / (now - fpsLastUpdate));
+      if (fpsLabel) fpsLabel.textContent = fps + ' fps';
+      frameCount = 0;
+      fpsLastUpdate = now;
+    }
+  }
+
+  var massingSection = document.getElementById('massing');
+  if ('IntersectionObserver' in window && massingSection){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          initThreeD();
+          observer.unobserve(massingSection);
+        }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(massingSection);
+  } else {
+    initThreeD();
+  }
+
+})();
+</script>
+
+</body>
+</html>

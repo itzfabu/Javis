@@ -1,0 +1,13 @@
+{
+  "business_name": "Second Chapter Books",
+  "slug": "second-chapter-books",
+  "prompt_used": "A made-up secondhand/new bookshop, cozy corner shop feel, using a public demo bookstore site purely as layout reference for testing.",
+  "reviews_used": [],
+  "created_date": "2026-07-31T12:05:17.062606+00:00",
+  "status": "draft",
+  "client_contact": "",
+  "price": null,
+  "license_type": "personal",
+  "reference_url": "https://books.toscrape.com/",
+  "legal_basis": "reference-with-rebrand"
+}

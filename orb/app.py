@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, send_from_directory
-import subprocess, os, time, json, socket, threading, uuid, re
+import subprocess, os, time, json, socket, threading, uuid, re, ipaddress
 from datetime import datetime, timezone
+from urllib.parse import urlparse
+import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
@@ -511,6 +514,7 @@ def generated_sites_dashboard():
                 "status": meta.get("status", "draft"),
                 "price": meta.get("price"),
                 "created_date": meta.get("created_date", ""),
+                "reference_url": meta.get("reference_url"),
             })
     return jsonify({"sites": sites, "generatedAt": datetime.now(timezone.utc).isoformat()})
 
@@ -566,11 +570,112 @@ Write exactly those three files to the exact absolute paths given above. Do not 
 
 You have full, pre-authorized permission to create these files immediately. Do not ask for confirmation or pause to check; proceed directly with the Write calls."""
 
-def run_generation_job(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type):
+def validate_reference_url(url):
+    """Validate a reference_url is safe to fetch: http/https only, and does not resolve to a
+    private/loopback/link-local/reserved address (SSRF protection). Raises ValueError with a
+    clear message if invalid. Called before any fetch happens."""
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError(f"reference_url must be http or https, got: {parsed.scheme or '(none)'}")
+    if not parsed.hostname:
+        raise ValueError("reference_url has no hostname")
+    try:
+        addrinfo = socket.getaddrinfo(parsed.hostname, None)
+    except socket.gaierror as e:
+        raise ValueError(f"reference_url hostname could not be resolved: {e}")
+    for family, _, _, _, sockaddr in addrinfo:
+        ip = ipaddress.ip_address(sockaddr[0])
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
+            raise ValueError(f"reference_url resolves to a non-public address ({sockaddr[0]}) - not allowed")
+    return True
+
+def fetch_reference_summary(url):
+    """Fetch a reference site and return a clean, structured TEXT SUMMARY - never the raw HTML.
+    This is what gets fed into the generation prompt: title, meta description, heading text,
+    nav labels, and a capped excerpt of visible body text, all stripped of markup. The generator
+    reconstructs fresh code from this description; it never sees or copies the original markup."""
+    resp = requests.get(
+        url, timeout=10,
+        headers={"User-Agent": "Mozilla/5.0 (compatible; JarvisWebsiteGenerator/1.0)"}
+    )
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    title = soup.title.get_text(strip=True) if soup.title else ""
+    meta_tag = soup.find("meta", attrs={"name": "description"})
+    meta_description = (meta_tag.get("content") or "").strip() if meta_tag else ""
+
+    headings = [h.get_text(" ", strip=True) for h in soup.find_all(["h1", "h2", "h3"])]
+    headings = [h for h in headings if h][:20]
+
+    nav_labels = []
+    for nav in soup.find_all("nav"):
+        nav_labels.extend(a.get_text(strip=True) for a in nav.find_all("a"))
+    nav_labels = [n for n in nav_labels if n][:15]
+
+    for tag in soup(["script", "style", "nav", "header", "footer", "noscript"]):
+        tag.decompose()
+    body_text = re.sub(r"\s+", " ", soup.get_text(" ", strip=True)).strip()[:2000]
+
+    return {
+        "title": title,
+        "meta_description": meta_description,
+        "headings": headings,
+        "nav_labels": nav_labels,
+        "body_text_excerpt": body_text,
+    }
+
+def build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir):
+    reviews_block = "\n".join(f"- {r}" for r in reviews) if reviews else "(no reviews provided)"
+    headings_block = "\n".join(f"- {h}" for h in reference_summary["headings"]) or "(none found)"
+    nav_block = ", ".join(reference_summary["nav_labels"]) or "(none found)"
+    return f"""Generate a single-page marketing landing site for this business, as real static files written to this exact folder: {output_dir}\\index.html, {output_dir}\\styles.css, {output_dir}\\script.js
+
+Business name: {business_name}
+What the site should say / who it's for: {description}
+
+You are given a SUMMARY of a reference site's structure and content below - not its actual code or markup. Use it only as structural/design inspiration (what sections it has, what it emphasizes, its general shape) - reconstruct everything as entirely fresh HTML/CSS/JS for the business named above. Do not reuse any exact sentence from the summary verbatim; rewrite everything in your own words for this business.
+
+Reference site title: {reference_summary["title"]}
+Reference site meta description: {reference_summary["meta_description"]}
+Reference site section headings:
+{headings_block}
+Reference site nav labels: {nav_block}
+Reference site body text excerpt (for tone/topic reference only, do not copy): {reference_summary["body_text_excerpt"]}
+
+Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
+{reviews_block}
+
+Hard requirements (non-negotiable, based on conversion-rate research):
+- Above the fold: a clear, plain-language headline that answers "what's in it for me" within seconds - no clever/cryptic copy. Exactly ONE call-to-action button, visually dominant, with no competing links or navigation distracting from it.
+- Above-the-fold content must be lightweight and render instantly - no video, no heavy animation libraries, no large blocking assets in the initial view.
+- Any motion, scroll effects, or richer visual flourishes belong further down the page, never on the critical path to the first impression or the CTA.
+- Include a trust-signals section using the reviews above (as testimonials with attribution if given).
+- If there is any contact/signup form, keep it to the minimum fields possible - do not ask for more than necessary.
+- Load speed is a hard requirement: no external JS frameworks or CDN dependencies. Vanilla JS only in script.js. Fonts are the one exception - link Google Fonts via a <link> tag in the <head> rather than bundling font files.
+- Do not reference or create any image files - there is no assets/ content yet. Use CSS for visual interest instead of images.
+- Repeat the single CTA at least once more further down the page, worded consistently.
+
+Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else.
+
+You have full, pre-authorized permission to create these files immediately. Do not ask for confirmation or pause to check; proceed directly with the Write calls."""
+
+def run_generation_job(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type, reference_url=None, is_own_site=None):
     with GENERATION_JOBS_LOCK:
         GENERATION_JOBS[job_id]["status"] = "running"
-    prompt = sanitize_for_cmd_prompt(build_generation_prompt(business_name, description, reviews, output_dir))
     try:
+        if reference_url:
+            try:
+                reference_summary = fetch_reference_summary(reference_url)
+            except Exception as e:
+                with GENERATION_JOBS_LOCK:
+                    GENERATION_JOBS[job_id]["status"] = "error"
+                    GENERATION_JOBS[job_id]["error"] = f"could not fetch reference_url: {e}"
+                return
+            prompt = sanitize_for_cmd_prompt(build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir))
+        else:
+            prompt = sanitize_for_cmd_prompt(build_generation_prompt(business_name, description, reviews, output_dir))
+
         result = subprocess.run(
             ["cmd", "/c", "claude", "-p", prompt, "--permission-mode", "bypassPermissions", "--tools", "Write", "--add-dir", output_dir],
             cwd=os.environ.get("TEMP", "."), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
@@ -596,6 +701,8 @@ def run_generation_job(job_id, business_name, description, reviews, slug, output
             "client_contact": client_contact or "",
             "price": price,
             "license_type": license_type or "",
+            "reference_url": reference_url,
+            "legal_basis": ("own-site" if is_own_site else "reference-with-rebrand") if reference_url else None,
         }
         with open(os.path.join(output_dir, "meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
@@ -625,9 +732,21 @@ def generate_website():
     client_contact = data.get("client_contact")
     price = data.get("price")
     license_type = data.get("license_type")
+    reference_url = (data.get("reference_url") or "").strip() or None
+    is_own_site = data.get("is_own_site")
 
     if not business_name or not description:
         return jsonify({"error": "business_name and prompt are required"}), 400
+
+    if reference_url:
+        try:
+            validate_reference_url(reference_url)
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+        if is_own_site is None:
+            return jsonify({"error": "is_own_site (true/false) is required when reference_url is given"}), 400
+        if not is_own_site and not business_name:
+            return jsonify({"error": "business_name is required to confirm who a reference-based site is being built for"}), 400
 
     os.makedirs(GENERATED_SITES_DIR, exist_ok=True)
     slug = unique_slug(slugify(business_name))
@@ -641,7 +760,7 @@ def generate_website():
 
     threading.Thread(
         target=run_generation_job,
-        args=(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type),
+        args=(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type, reference_url, is_own_site),
         daemon=True,
     ).start()
 

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Architecture Studio — Architecture &amp; Real Estate Design</title>
+<style>
+  :root {
+    --ink: #16181d;
+    --paper: #f7f5f1;
+    --accent: #b5793a;
+    --line: #dedad2;
+    --muted: #5c5f66;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  /* ---------- Nav ---------- */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 6vw;
+    background: rgba(247,245,241,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .brand span { color: var(--accent); }
+  nav.links a {
+    color: var(--ink);
+    text-decoration: none;
+    margin-left: 32px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  nav.links a:hover { color: var(--accent); }
+
+  /* ---------- Hero (above the fold) ---------- */
+  .hero {
+    min-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6vh 6vw;
+    max-width: 900px;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: clamp(2.1rem, 5vw, 3.6rem);
+    line-height: 1.12;
+    margin: 0 0 22px;
+    font-weight: 700;
+  }
+  .hero p.sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 0 36px;
+  }
+  .cta-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 16px 34px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.02rem;
+    border: 2px solid var(--ink);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: transparent; color: var(--ink); }
+  .cta-note { font-size: 0.9rem; color: var(--muted); }
+
+  .stat-strip {
+    display: flex;
+    gap: 48px;
+    padding: 34px 6vw;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .stat-strip div { min-width: 140px; }
+  .stat-strip .num { font-size: 1.7rem; font-weight: 700; color: var(--accent); }
+  .stat-strip .label { font-size: 0.88rem; color: var(--muted); }
+
+  /* ---------- Services (still lightweight, above/near fold) ---------- */
+  .services {
+    padding: 70px 6vw;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .services h2 {
+    font-size: 1.9rem;
+    margin: 0 0 12px;
+  }
+  .services .lead { color: var(--muted); max-width: 560px; margin-bottom: 40px; }
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 26px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 26px;
+    background: #fff;
+  }
+  .card h3 { margin: 0 0 10px; font-size: 1.1rem; }
+  .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  /* ---------- 3D Section (below fold) ---------- */
+  .showcase {
+    position: relative;
+    padding: 90px 6vw 100px;
+    background: #101216;
+    color: #eee;
+    overflow: hidden;
+  }
+  .showcase-head {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+  .showcase-head .eyebrow { color: #d9a35c; }
+  .showcase-head h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0 0 14px;
+  }
+  .showcase-head p { color: #a9adb6; }
+
+  #canvas-wrap {
+    position: relative;
+    max-width: 980px;
+    height: 62vh;
+    min-height: 420px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #2a2d33;
+    background: radial-gradient(circle at 50% 40%, #1c1f26, #0c0d10 75%);
+  }
+  #canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+
+  .canvas-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: #6b6f79;
+    font-size: 0.95rem;
+  }
+  .spinner {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 3px solid #33363d;
+    border-top-color: #d9a35c;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Footer / final CTA ---------- */
+  .final-cta {
+    padding: 80px 6vw;
+    text-align: center;
+  }
+  .final-cta h2 { font-size: 2rem; margin: 0 0 16px; }
+  .final-cta p { color: var(--muted); margin: 0 0 30px; }
+
+  footer {
+    padding: 30px 6vw;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    nav.links { display: none; }
+    .stat-strip { gap: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="brand">MERIDIAN <span>ARCHITECTURE</span></div>
+  <nav class="links">
+    <a href="#services">Services</a>
+    <a href="#showcase">Design Process</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- ===== ABOVE THE FOLD: plain text + CTA, no 3D, loads instantly ===== -->
+<section class="hero">
+  <div class="eyebrow">Architecture &amp; Real Estate Design Studio</div>
+  <h1>We design buildings and guide real estate projects from first sketch to final walkthrough.</h1>
+  <p class="sub">
+    Meridian Architecture Studio plans, designs, and oversees residential and commercial
+    buildings — from initial concept and permitting drawings through construction support —
+    so property owners and developers get a building that works, on time and on budget.
+  </p>
+  <div class="cta-row">
+    <a href="#contact" class="btn-primary">Book a Free Consultation</a>
+    <span class="cta-note">30-minute call · No obligation</span>
+  </div>
+</section>
+
+<div class="stat-strip">
+  <div><div class="num">180+</div><div class="label">Buildings designed</div></div>
+  <div><div class="num">22</div><div class="label">Years in practice</div></div>
+  <div><div class="num">40+</div><div class="label">Developer partners</div></div>
+  <div><div class="num">100%</div><div class="label">In-house design team</div></div>
+</div>
+
+<section class="services" id="services">
+  <h2>What we do</h2>
+  <p class="lead">From a single-family home to a mixed-use development, we handle the full design lifecycle of your property.</p>
+  <div class="grid3">
+    <div class="card">
+      <h3>Architectural Design</h3>
+      <p>Concept design, schematic drawings, and construction documents tailored to your site and budget.</p>
+    </div>
+    <div class="card">
+      <h3>Real Estate Advisory</h3>
+      <p>Feasibility studies and site analysis to help you understand a property's potential before you build.</p>
+    </div>
+    <div class="card">
+      <h3>Construction Oversight</h3>
+      <p>On-site coordination with contractors to keep your project aligned with the approved design.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BELOW THE FOLD: 3D hero object, lazy-loaded ===== -->
+<section class="showcase" id="showcase">
+  <div class="showcase-head">
+    <div class="eyebrow">Our Design Language</div>
+    <h2>One building, distilled to its essentials.</h2>
+    <p>A simple procedural model of the massing principles we use in every project: a grounded base, a rising tower, and a clean rooftop volume.</p>
+  </div>
+  <div id="canvas-wrap">
+    <div class="canvas-placeholder" id="canvas-placeholder">
+      <div class="spinner"></div>
+      <span>Loading 3D model…</span>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="contact">
+  <h2>Ready to talk about your project?</h2>
+  <p>Tell us about your site and we'll get back to you within one business day.</p>
+  <a href="mailto:hello@meridian-architecture.studio" class="btn-primary">Book a Free Consultation</a>
+</section>
+
+<footer>
+  <div>© 2026 Meridian Architecture Studio</div>
+  <div>hello@meridian-architecture.studio</div>
+</footer>
+
+<script src="three.min.js"></script>
+<script>
+(function () {
+  var wrap = document.getElementById('canvas-wrap');
+  var placeholder = document.getElementById('canvas-placeholder');
+  var initialized = false;
+
+  function initScene() {
+    if (initialized) return;
+    initialized = true;
+
+    var width = wrap.clientWidth;
+    var height = wrap.clientHeight;
+
+    var scene = new THREE.Scene();
+
+    var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(9, 7, 11);
+    camera.lookAt(0, 3, 0);
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height);
+    wrap.appendChild(renderer.domElement);
+    if (placeholder) placeholder.style.display = 'none';
+
+    // ---- Lighting ----
+    var ambient = new THREE.AmbientLight(0x8892a6, 0.6);
+    scene.add(ambient);
+
+    var keyLight = new THREE.DirectionalLight(0xffe9c7, 1.1);
+    keyLight.position.set(8, 12, 6);
+    scene.add(keyLight);
+
+    var fillLight = new THREE.DirectionalLight(0x5a7fb0, 0.5);
+    fillLight.position.set(-8, 4, -6);
+    scene.add(fillLight);
+
+    // ---- Building group (procedural, primitives only) ----
+    var building = new THREE.Group();
+
+    var baseMat = new THREE.MeshStandardMaterial({ color: 0x2c2f36, roughness: 0.8, metalness: 0.1 });
+    var towerMat = new THREE.MeshStandardMaterial({ color: 0xcbd0d8, roughness: 0.4, metalness: 0.2 });
+    var accentMat = new THREE.MeshStandardMaterial({ color: 0xb5793a, roughness: 0.5, metalness: 0.3 });
+    var glassMat = new THREE.MeshStandardMaterial({ color: 0x7fa8c9, roughness: 0.15, metalness: 0.6, transparent: true, opacity: 0.75 });
+
+    // Ground base / podium
+    var base = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 5), baseMat);
+    base.position.y = 0.5;
+    building.add(base);
+
+    // Main tower
+    var tower = new THREE.Mesh(new THREE.BoxGeometry(3.6, 6.5, 3.2), towerMat);
+    tower.position.y = 1 + 6.5 / 2;
+    building.add(tower);
+
+    // Secondary setback tower
+    var towerB = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3.2, 2.2), towerMat);
+    towerB.position.set(1.6, 1 + 6.5 + 3.2 / 2, -0.2);
+    building.add(towerB);
+
+    // Glass curtain-wall strip on main tower
+    var glass = new THREE.Mesh(new THREE.BoxGeometry(3.62, 5.6, 0.05), glassMat);
+    glass.position.set(0, 1 + 6.5 / 2, 3.2 / 2 + 0.03);
+    building.add(glass);
+
+    // Rooftop volume via ExtrudeGeometry (simple pentagon "roof house" shape)
+    var roofShape = new THREE.Shape();
+    roofShape.moveTo(-1.3, 0);
+    roofShape.lineTo(1.3, 0);
+    roofShape.lineTo(1.3, 1.1);
+    roofShape.lineTo(0, 2.0);
+    roofShape.lineTo(-1.3, 1.1);
+    roofShape.closePath();
+
+    var extrudeSettings = { depth: 1.8, bevelEnabled: false };
+    var roofGeo = new THREE.ExtrudeGeometry(roofShape, extrudeSettings);
+    roofGeo.rotateY(Math.PI / 2);
+    roofGeo.translate(1.6 + 1.1, 1 + 6.5 + 3.2, -0.2);
+    var roof = new THREE.Mesh(roofGeo, accentMat);
+    building.add(roof);
+
+    // Small rooftop mechanical block on the main tower
+    var mech = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.6, 1.1), baseMat);
+    mech.position.set(-1.0, 1 + 6.5 + 0.3, 0.6);
+    building.add(mech);
+
+    // Thin accent fins on tower corners
+    var finGeo = new THREE.BoxGeometry(0.15, 6.5, 0.15);
+    [[-1.85, -1.65], [1.85, -1.65], [-1.85, 1.65], [1.85, 1.65]].forEach(function (p) {
+      var fin = new THREE.Mesh(finGeo, accentMat);
+      fin.position.set(p[0], 1 + 6.5 / 2, p[1]);
+      building.add(fin);
+    });
+
+    building.position.y = -3.5;
+    scene.add(building);
+
+    // Simple ground plane for grounding shadow-like contrast
+    var ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(20, 20),
+      new THREE.MeshStandardMaterial({ color: 0x14161a, roughness: 1 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -3.5;
+    scene.add(ground);
+
+    // ---- Animation loop: slow auto-rotation ----
+    function animate() {
+      requestAnimationFrame(animate);
+      building.rotation.y += 0.0035;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ---- Resize handling ----
+    window.addEventListener('resize', function () {
+      var w = wrap.clientWidth;
+      var h = wrap.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+  }
+
+  // Lazy-init once the showcase section scrolls into view, so the
+  // above-the-fold page never pays the cost of loading/running Three.js.
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          initScene();
+          observer.disconnect();
+        }
+      });
+    }, { rootMargin: '150px' });
+    observer.observe(wrap);
+  } else {
+    window.addEventListener('load', initScene);
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amber &amp; Sage — Small-Batch Botanical Tonic</title>
+<meta name="description" content="Amber & Sage is a small-batch botanical tonic water, bottled in Zurich. One bottle, four botanicals, no shortcuts.">
+<style>
+  :root{
+    --bg:#f6f2ea;
+    --bg-alt:#efe6d6;
+    --ink:#241c13;
+    --ink-soft:#5a4d3c;
+    --ink-faint:#96876f;
+    --accent:#a9622c;
+    --accent-dark:#7c4720;
+    --dark:#120d08;
+    --line:rgba(36,28,19,0.12);
+    --line-dark:rgba(246,242,234,0.14);
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:0 2rem; }
+
+  header.site-nav{ position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(246,242,234,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ max-width:1100px; margin:0 auto; padding:0 2rem; height:72px; display:flex; align-items:center; justify-content:space-between; }
+  .logo{ font-family:var(--serif); font-size:1.2rem; letter-spacing:0.04em; }
+  .logo span{ color:var(--accent); font-style:italic; }
+  .nav-cta{ font-size:0.82rem; padding:0.55rem 1.15rem; border:1px solid var(--ink); transition:background .3s,color .3s; }
+  .nav-cta:hover{ background:var(--ink); color:var(--bg); }
+
+  .hero{ min-height:92svh; display:flex; flex-direction:column; justify-content:center; padding:8rem 0 4rem; }
+  .hero-inner{ max-width:680px; }
+  .eyebrow{ font-size:0.72rem; letter-spacing:0.2em; color:var(--accent-dark); font-weight:600; margin-bottom:1.4rem; display:inline-block; }
+  h1{ font-family:var(--serif); font-weight:400; font-size:clamp(2.4rem,5.6vw,4rem); line-height:1.08; letter-spacing:-0.01em; }
+  h1 em{ font-style:italic; color:var(--accent-dark); }
+  .subhead{ margin-top:1.6rem; font-size:1.08rem; line-height:1.6; color:var(--ink-soft); max-width:46ch; }
+  .hero-actions{ margin-top:2.4rem; }
+  .btn-primary{ display:inline-block; background:var(--ink); color:var(--bg); font-size:0.92rem; padding:1rem 2rem; border:2px solid var(--ink); transition:background .3s,color .3s; }
+  .btn-primary:hover{ background:transparent; color:var(--ink); }
+
+  section{ padding:6rem 0; }
+  .section-head{ max-width:600px; margin-bottom:3rem; }
+  .section-head h2{ font-family:var(--serif); font-weight:400; font-size:clamp(1.8rem,3.2vw,2.5rem); }
+  .section-head p{ margin-top:1rem; color:var(--ink-soft); line-height:1.6; }
+  .alt-bg{ background:var(--bg-alt); }
+
+  .ingredients{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.6rem; }
+  .ingredient{ border:1px solid var(--line); padding:1.4rem; border-radius:2px; }
+  .ingredient h3{ font-family:var(--serif); font-size:1.05rem; margin-bottom:0.4rem; }
+  .ingredient p{ font-size:0.86rem; color:var(--ink-soft); line-height:1.5; }
+
+  .product-section{ background:var(--dark); color:#f0e9dc; }
+  .product-section .eyebrow{ color:#d9a35c; }
+  .product-section .section-head h2{ color:#f6f2ea; }
+  .product-section .section-head p{ color:#b8ac97; }
+  .product-stage{ position:relative; width:100%; aspect-ratio:16/9; max-height:620px; background:radial-gradient(120% 140% at 50% 20%, #241c13 0%, #0c0906 70%); border:1px solid var(--line-dark); border-radius:3px; overflow:hidden; }
+  .product-stage canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .product-placeholder{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.9rem; }
+  .product-placeholder .dot{ width:6px; height:6px; border-radius:50%; background:#d9a35c; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:0.25; transform:scale(0.85); } 50%{ opacity:1; transform:scale(1); } }
+  .product-placeholder span{ font-size:0.82rem; color:#8c8171; }
+  .fps-readout{ position:absolute; right:12px; bottom:10px; z-index:5; font-family:Consolas,'Courier New',monospace; font-size:0.68rem; color:rgba(240,233,220,0.55); background:rgba(12,9,6,0.55); border:1px solid rgba(240,233,220,0.12); padding:0.28rem 0.55rem; border-radius:2px; }
+  .product-caption{ margin-top:1.2rem; font-size:0.8rem; color:#8c8171; display:flex; flex-wrap:wrap; gap:0.4rem 1.6rem; }
+
+  .closing-cta{ background:var(--bg-alt); text-align:center; }
+  .closing-cta h2{ font-family:var(--serif); font-weight:400; font-size:clamp(1.9rem,3.4vw,2.7rem); max-width:16ch; margin:0 auto; }
+  .closing-cta p{ color:var(--ink-soft); max-width:42ch; margin:1.2rem auto 2.2rem; }
+  footer{ background:var(--dark); color:#b8ac97; padding:3rem 0; text-align:center; font-size:0.8rem; }
+
+  @media (max-width:800px){ .ingredients{ grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <span class="logo">Amber <span>&amp;</span> Sage</span>
+    <a href="#buy" class="nav-cta">Shop the Tonic</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <span class="eyebrow">SMALL-BATCH BOTANICAL TONIC &mdash; BOTTLED IN ZURICH</span>
+      <h1>One bottle, four botanicals, <em>no shortcuts.</em></h1>
+      <p class="subhead">Amber & Sage is a slow-brewed tonic water made in batches of 200 bottles at a time &mdash; gentian root, sage, orange peel, and a whisper of juniper, carbonated to order.</p>
+      <div class="hero-actions">
+        <a href="#buy" class="btn-primary">Order a Case</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="ingredients">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">WHAT'S IN THE BOTTLE</span>
+        <h2>Four ingredients. Nothing hiding behind them.</h2>
+      </div>
+      <div class="ingredients">
+        <div class="ingredient"><h3>Gentian root</h3><p>The backbone bitterness, sourced from a single grower in the Jura.</p></div>
+        <div class="ingredient"><h3>Sage</h3><p>Fresh-cut, steeped cold for 18 hours before it ever meets heat.</p></div>
+        <div class="ingredient"><h3>Orange peel</h3><p>Dried in-house, never candied, never syrup.</p></div>
+        <div class="ingredient"><h3>Juniper</h3><p>Just enough to round the finish &mdash; you won't taste it, you'll miss it if it's gone.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="product" class="product-section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">THE BOTTLE, RENDERED LIVE</span>
+        <h2>Same bottle, rendered instead of photographed.</h2>
+        <p>A procedural render of the actual bottle &mdash; tinted glass body, botanical tonic inside, cork-topped cap. No product photography, no external model file.</p>
+      </div>
+      <div class="product-stage" id="productStage">
+        <div class="product-placeholder" id="productPlaceholder">
+          <div class="dot"></div>
+          <span>Preparing live product render &mdash; loads on scroll</span>
+        </div>
+        <div class="fps-readout" id="fpsReadout">-- fps</div>
+      </div>
+      <div class="product-caption">
+        <span>Bottle &mdash; tinted glass, physically based transmission</span>
+        <span>Tonic &mdash; procedural liquid fill</span>
+        <span>Cap &mdash; brushed metal, PBR</span>
+        <span>Lighting &mdash; studio HDRI, image-based</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing-cta" id="buy">
+    <div class="wrap">
+      <h2>200 bottles a batch. This one sells out fast.</h2>
+      <p>Leave your email and we'll tell you the moment the next batch ships.</p>
+      <a href="mailto:hello@amberandsage.example" class="btn-primary">Get Notified</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Amber &amp; Sage &middot; A fictional brand, for demonstration purposes.</div>
+</footer>
+
+<script src="three.min.js"></script>
+<script src="assets/js/RGBELoader.js"></script>
+<script src="assets/js/CopyShader.js"></script>
+<script src="assets/js/LuminosityHighPassShader.js"></script>
+<script src="assets/js/EffectComposer.js"></script>
+<script src="assets/js/RenderPass.js"></script>
+<script src="assets/js/ShaderPass.js"></script>
+<script src="assets/js/UnrealBloomPass.js"></script>
+
+<script>
+(function(){
+
+  var threeDReady = false;
+  var scene, camera, renderer, composer, bottleGroup, clock;
+  var bloomPass;
+  var stage, placeholder, fpsLabel;
+  var frameCount = 0, fpsLastUpdate = 0;
+
+  function loadCapTextures(onDone){
+    var loader = new THREE.TextureLoader();
+    var manifest = {
+      diff:  'assets/textures/metal/diff.jpg',
+      nor:   'assets/textures/metal/nor.jpg',
+      rough: 'assets/textures/metal/rough.jpg',
+      metal: 'assets/textures/metal/metal.jpg',
+      ao:    'assets/textures/metal/ao.jpg'
+    };
+    var result = {};
+    var pending = 0, resolved = false;
+    Object.keys(manifest).forEach(function(key){
+      pending++;
+      loader.load(manifest[key], function(tex){
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(2, 1);
+        if (key === 'diff' && 'colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
+        result[key] = tex;
+        pending--;
+        if (pending === 0 && !resolved){ resolved = true; onDone(result); }
+      });
+    });
+  }
+
+  function addUv2(geo){
+    if (geo.attributes.uv){
+      geo.setAttribute('uv2', new THREE.BufferAttribute(geo.attributes.uv.array, 2));
+    }
+  }
+
+  function createBottle(capTex){
+    var group = new THREE.Group();
+
+    /* ---- Bottle body: tinted glass, r128-safe recipe (transmission/roughness/ior/color/opacity
+       only - no thickness or specularIntensity, same fix proven earlier tonight) ---- */
+    var bodyGeo = new THREE.CylinderGeometry(1.05, 1.15, 4.2, 32);
+    var glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0x6b3d1a,
+      metalness: 0,
+      roughness: 0.18,
+      transmission: 0.72,
+      ior: 1.45,
+      transparent: true,
+      opacity: 0.85
+    });
+    var body = new THREE.Mesh(bodyGeo, glassMat);
+    body.position.y = 2.1;
+    group.add(body);
+
+    /* Shoulder taper into the neck */
+    var shoulderGeo = new THREE.CylinderGeometry(0.4, 1.05, 0.9, 32);
+    var shoulder = new THREE.Mesh(shoulderGeo, glassMat);
+    shoulder.position.y = 4.65;
+    group.add(shoulder);
+
+    /* Neck */
+    var neckGeo = new THREE.CylinderGeometry(0.4, 0.4, 1.3, 24);
+    var neck = new THREE.Mesh(neckGeo, glassMat);
+    neck.position.y = 5.75;
+    group.add(neck);
+
+    /* ---- Tonic liquid, procedural fill inside the body (colored MeshStandardMaterial, not
+       glass - real liquid isn't a photo-texture material any more than the glass shell needs
+       one) ---- */
+    var liquidGeo = new THREE.CylinderGeometry(0.92, 1.0, 3.1, 32);
+    var liquidMat = new THREE.MeshStandardMaterial({
+      color: 0xb8781f,
+      roughness: 0.35,
+      metalness: 0
+    });
+    var liquid = new THREE.Mesh(liquidGeo, liquidMat);
+    liquid.position.y = 1.75;
+    group.add(liquid);
+
+    /* ---- Label band: solid-color MeshStandardMaterial. No PBR paper/label texture set was
+       available locally, so this is deliberately untextured rather than forcing a mismatched
+       texture - flagged in the writeup, not silently faked. ---- */
+    var labelGeo = new THREE.CylinderGeometry(1.16, 1.16, 1.5, 32, 1, true);
+    var labelMat = new THREE.MeshStandardMaterial({
+      color: 0xf2ecdd,
+      roughness: 0.85,
+      metalness: 0,
+      side: THREE.DoubleSide
+    });
+    var label = new THREE.Mesh(labelGeo, labelMat);
+    label.position.y = 2.0;
+    group.add(label);
+
+    /* ---- Cap: brushed metal, PBR (reusing the same metal texture set as the building test) ---- */
+    var capGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.9, 24);
+    addUv2(capGeo);
+    var capMat = new THREE.MeshStandardMaterial({
+      map: capTex.diff,
+      normalMap: capTex.nor,
+      roughnessMap: capTex.rough,
+      metalnessMap: capTex.metal,
+      aoMap: capTex.ao,
+      metalness: 1,
+      roughness: 0.45
+    });
+    var cap = new THREE.Mesh(capGeo, capMat);
+    cap.position.y = 6.85;
+    group.add(cap);
+
+    group.position.y = -3.5;
+    return group;
+  }
+
+  function initThreeD(){
+    if (threeDReady) return;
+    threeDReady = true;
+
+    stage = document.getElementById('productStage');
+    placeholder = document.getElementById('productPlaceholder');
+    fpsLabel = document.getElementById('fpsReadout');
+
+    var width = stage.clientWidth;
+    var height = stage.clientHeight;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0c0906);
+
+    camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    camera.position.set(0, 3.4, 9.5);
+    camera.lookAt(0, 1.6, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height);
+    if ('outputColorSpace' in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+    else renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    stage.appendChild(renderer.domElement);
+    if (placeholder) placeholder.style.display = 'none';
+
+    var keyLight = new THREE.DirectionalLight(0xffe9c7, 1.1);
+    keyLight.position.set(5, 9, 6);
+    scene.add(keyLight);
+
+    clock = new THREE.Clock();
+
+    composer = new THREE.EffectComposer(renderer);
+    composer.addPass(new THREE.RenderPass(scene, camera));
+
+    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.3, 0.4, 0.87);
+    composer.addPass(bloomPass);
+
+    var gradeShaderDef = {
+      uniforms: { tDiffuse: { value: null }, uVignette: { value: 0.3 }, uContrast: { value: 1.05 } },
+      vertexShader: [
+        'varying vec2 vUv;',
+        'void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }'
+      ].join('\n'),
+      fragmentShader: [
+        'uniform sampler2D tDiffuse; uniform float uVignette; uniform float uContrast; varying vec2 vUv;',
+        'void main(){',
+        '  vec4 color = texture2D(tDiffuse, vUv);',
+        '  color.rgb = (color.rgb - 0.5) * uContrast + 0.5;',
+        '  vec2 centered = vUv - 0.5;',
+        '  float vig = 1.0 - dot(centered, centered) * uVignette;',
+        '  color.rgb *= vig;',
+        '  gl_FragColor = color;',
+        '}'
+      ].join('\n')
+    };
+    var gradePass = new THREE.ShaderPass(gradeShaderDef);
+    gradePass.renderToScreen = true;
+    composer.addPass(gradePass);
+
+    var pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    var rgbeLoader = new THREE.RGBELoader();
+    if (typeof rgbeLoader.setDataType === 'function'){
+      rgbeLoader.setDataType(typeof THREE.HalfFloatType !== 'undefined' ? THREE.HalfFloatType : THREE.UnsignedByteType);
+    }
+    rgbeLoader.load('assets/hdri/studio_small_03_1k.hdr', function(hdrTex){
+      var envMap = pmremGenerator.fromEquirectangular(hdrTex).texture;
+      scene.environment = envMap;
+      hdrTex.dispose();
+      pmremGenerator.dispose();
+    });
+
+    loadCapTextures(function(capTex){
+      bottleGroup = createBottle(capTex);
+      scene.add(bottleGroup);
+    });
+
+    window.addEventListener('resize', onResize);
+    fpsLastUpdate = performance.now();
+    requestAnimationFrame(animate);
+  }
+
+  function onResize(){
+    if (!renderer || !stage) return;
+    var width = stage.clientWidth, height = stage.clientHeight;
+    if (width === 0 || height === 0) return;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+    composer.setSize(width, height);
+    if (bloomPass){
+      if (typeof bloomPass.setSize === 'function') bloomPass.setSize(width, height);
+      else if (bloomPass.resolution) bloomPass.resolution.set(width, height);
+    }
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var delta = clock.getDelta();
+    if (bottleGroup) bottleGroup.rotation.y += delta * 0.15;
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    frameCount++;
+    var now = performance.now();
+    if (now - fpsLastUpdate >= 1000){
+      var fps = Math.round((frameCount * 1000) / (now - fpsLastUpdate));
+      if (fpsLabel) fpsLabel.textContent = fps + ' fps';
+      frameCount = 0; fpsLastUpdate = now;
+    }
+  }
+
+  var productSection = document.getElementById('product');
+  if ('IntersectionObserver' in window && productSection){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){ initThreeD(); observer.unobserve(productSection); }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(productSection);
+  } else {
+    initThreeD();
+  }
+
+})();
+</script>
+
+</body>
+</html>

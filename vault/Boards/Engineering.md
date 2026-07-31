@@ -6,6 +6,12 @@ kanban-plugin: board
 
 ## 📥 Backlog
 
+- [ ] 🟡 **Fix r128 glass-material overexposure — build a tinted/frosted MeshPhysicalMaterial approximation using only transmission/roughness/ior/color/opacity (properties r128 actually supports), avoiding the thickness/specularIntensity properties that cause the current blown-out white band**
+	[[Website Generator]]
+
+- [ ] 🟡 **Fix label/diffuse-surface overexposure on bright, high-roughness materials near-perpendicular to the key light — likely a key-light-intensity or bloom-luminance-threshold tuning issue, distinct from the already-fixed glass transmission defect**
+	[[Website Generator]]
+
 - [ ] 🟢 **Write up "Claude Flowstate" idea as a note**
 
 - [ ] 🔴 **Package for end customers (clean file + setup guide, no dev/diag mode visible)**
