@@ -6,12 +6,6 @@ kanban-plugin: board
 
 ## 📥 Backlog
 
-- [ ] 🟡 **Fix r128 glass-material overexposure — build a tinted/frosted MeshPhysicalMaterial approximation using only transmission/roughness/ior/color/opacity (properties r128 actually supports), avoiding the thickness/specularIntensity properties that cause the current blown-out white band**
-	[[Website Generator]]
-
-- [ ] 🟡 **Fix label/diffuse-surface overexposure on bright, high-roughness materials near-perpendicular to the key light — likely a key-light-intensity or bloom-luminance-threshold tuning issue, distinct from the already-fixed glass transmission defect**
-	[[Website Generator]]
-
 - [ ] 🟡 **Constrain build_generation_prompt to treat client_contact as literal, non-negotiable contact info — found fabricating a plausible-looking phone number and email instead of using the provided client_contact during the Demmel & Partner stdin-fix test**
 	[[Website Generator]]
 
@@ -41,6 +35,14 @@ kanban-plugin: board
 
 
 ## ✅ Done
+
+- [x] ~~🟡 **Fix r128 glass-material overexposure — tinted/frosted MeshPhysicalMaterial approximation using only transmission/roughness/ior/color/opacity, avoiding thickness/specularIntensity**~~ done 2026-08-01
+	Verified by rendering both test sites (meridian-premium-test-v2, product-hero-test) live in-browser: the flat-white-block transmission bug was already gone from a prior session, but a residual specular-highlight bloom clip remained on the glass at certain angles. Fixed by reducing key light intensity (1.1-1.2 → 0.9-0.95) and raising bloom threshold (0.86-0.87 → 0.93) in both files. Re-verified across multiple auto-rotation angles: no flat-white block, no bloom-clipped hotspot streak.
+	[[Website Generator]]
+
+- [x] ~~🟡 **Fix label/diffuse-surface overexposure on bright, high-roughness materials near-perpendicular to the key light**~~ done 2026-08-01
+	Initial guess (label material) was wrong — confirmed by raycasting the actual hotspot pixel in-browser (product-hero-test): the real source is the tonic liquid's flat top cap (`liquidMat`), whose normal faces straight up, catching both the overhead key light and the brightest (zenith) part of the HDRI at once. At roughness 0.35 the specular response was tight enough that the near-white reflected environment color overrode the material's own amber albedo. Fixed by adding `envMapIntensity: 0.35` and raising roughness to 0.5 on that material specifically (not a global light change). Re-verified: visible amber-tinted shading gradient now, no flat clipped-white disc.
+	[[Website Generator]]
 
 - [x] ~~🔴 **Add color/theme customization options to the streamer HUD widget**~~
 	[[Streamer HUD Widget]]

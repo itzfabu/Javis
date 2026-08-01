@@ -229,12 +229,22 @@
 
     /* ---- Tonic liquid, procedural fill inside the body (colored MeshStandardMaterial, not
        glass - real liquid isn't a photo-texture material any more than the glass shell needs
-       one) ---- */
+       one).
+       This mesh's flat top cap (normal facing straight up, confirmed via raycast at the on-screen
+       hotspot) is the actual source of the "diffuse-surface overexposure" tracked on the
+       Engineering board — not the label, which was the wrong initial guess. An up-facing flat
+       surface sits at nearly the highest-irradiance angle to both the overhead key light and the
+       brightest (zenith) part of the HDRI simultaneously; at roughness 0.35 the specular response
+       is tight enough that the reflected environment color (near-white, not this material's own
+       amber albedo) dominates the pixel. envMapIntensity down to 0.35 tones down that IBL
+       reflection specifically; roughness up to 0.5 spreads the specular response over a wider,
+       lower-peak area instead of a small bright spot. ---- */
     var liquidGeo = new THREE.CylinderGeometry(0.92, 1.0, 3.1, 32);
     var liquidMat = new THREE.MeshStandardMaterial({
       color: 0xb8781f,
-      roughness: 0.35,
-      metalness: 0
+      roughness: 0.5,
+      metalness: 0,
+      envMapIntensity: 0.35
     });
     var liquid = new THREE.Mesh(liquidGeo, liquidMat);
     liquid.position.y = 1.75;
@@ -302,7 +312,11 @@
     stage.appendChild(renderer.domElement);
     if (placeholder) placeholder.style.display = 'none';
 
-    var keyLight = new THREE.DirectionalLight(0xffe9c7, 1.1);
+    /* Intensity dropped from 1.1 and bloom threshold raised from 0.87: at the old values the
+       label band (high-roughness diffuse, MeshStandardMaterial) and the glass body's specular
+       highlight both clipped to solid white under ACES + bloom — same root cause as the building
+       test's glass-curtain-wall fix, applied here too. */
+    var keyLight = new THREE.DirectionalLight(0xffe9c7, 0.9);
     keyLight.position.set(5, 9, 6);
     scene.add(keyLight);
 
@@ -311,7 +325,7 @@
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(new THREE.RenderPass(scene, camera));
 
-    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.3, 0.4, 0.87);
+    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.3, 0.4, 0.93);
     composer.addPass(bloomPass);
 
     var gradeShaderDef = {

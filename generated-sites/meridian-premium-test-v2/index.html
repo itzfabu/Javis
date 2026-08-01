@@ -595,8 +595,12 @@
     renderer.toneMappingExposure = 1.05;
     stage.appendChild(renderer.domElement);
 
-    /* crisp specular highlight — HDRI remains primary light source */
-    var keyLight = new THREE.DirectionalLight(0xfff2df, 1.2);
+    /* crisp specular highlight — HDRI remains primary light source.
+       Intensity dropped from 1.2 and bloom threshold raised from 0.86: at the old values, the
+       glass curtain-wall's specular highlight and the high-roughness diffuse surfaces both
+       clipped to solid white under ACES + bloom at near-perpendicular viewing angles (tracked as
+       two separate Engineering board items; same root cause, one fix). */
+    var keyLight = new THREE.DirectionalLight(0xfff2df, 0.95);
     keyLight.position.set(6, 11, 6);
     scene.add(keyLight);
 
@@ -606,7 +610,7 @@
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(new THREE.RenderPass(scene, camera));
 
-    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.32, 0.4, 0.86);
+    bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(width, height), 0.32, 0.4, 0.93);
     composer.addPass(bloomPass);
 
     var gradeShaderDef = {

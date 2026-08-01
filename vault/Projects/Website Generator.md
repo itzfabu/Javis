@@ -180,24 +180,32 @@ external frameworks" rule in Conversion Requirements — not a silent violation 
 added specifically and only for this one hero-object use case; it is not a general license to add
 other libraries or frameworks elsewhere in a generated site.
 
-**Known defect / next step:** on r128, `MeshPhysicalMaterial`'s `thickness` and `specularIntensity`
-properties aren't recognized (added to Three.js after r128), and the glass curtain-wall band renders
-as a blown-out solid white block instead of transparent glass — confirmed via console warnings and
-direct visual testing, not yet fixed. The next concrete task is a **bounded, r128-compatible glass
-material fix**: a tinted/frosted glass approximation built only from properties r128's
-`MeshPhysicalMaterial` actually supports (`transmission`, `roughness`, `ior`, `color`, `opacity`,
-reduced `envMapIntensity`/bloom threshold on that surface) — not a version upgrade, and scoped
-separately from the deferred ES-modules question above.
+**Glass-material overexposure — fixed 2026-08-01.** On r128, `MeshPhysicalMaterial`'s `thickness` and
+`specularIntensity` properties aren't recognized (added to Three.js after r128); the original defect
+was the glass curtain-wall band rendering as a blown-out solid white block instead of transparent
+glass. The property-level fix (using only `transmission`/`roughness`/`ior`/`color`/`opacity`, no
+`thickness`/`specularIntensity`) was already in place going into this pass, but live re-testing found
+a *residual* specular-highlight bloom clip on the glass at certain viewing angles — a smaller,
+related symptom of the same underlying cause (key light + bloom tuned too hot for a low-roughness
+transmission material under ACES tone mapping). Fixed by reducing key light intensity (1.1-1.2 → 0.9-0.95)
+and raising `UnrealBloomPass` threshold (0.86-0.87 → 0.93) in both test files. Re-verified across
+multiple rotation angles in-browser: no flat-white block, no bloom-clipped hotspot.
 
 **Hero-object category palette:** structurally validated across two categories — a building
 (architecture massing study) and a product (bottled beverage). The procedural-geometry approach,
 PBR material loading, the r128-safe glass recipe, HDRI image-based lighting, the `EffectComposer`
 chain, and the lazy-load pattern all generalized correctly to the second category, not just the
-first. Two known, separate, bounded lighting/material defects remain open and tracked on the
-Engineering board rather than resolved: the glass-material fix above, and a newly found
-label/diffuse-surface overexposure on bright, high-roughness materials facing the key light
-near-perpendicular — likely a key-light-intensity or bloom-threshold tuning issue, not the same
-root cause as the glass defect. The palette is not being called confirmed-clean until both land.
+first. Both known lighting/material defects are now fixed (glass overexposure and diffuse-surface
+overexposure, both 2026-08-01 — see Engineering board Done for specifics). The palette is
+confirmed-clean as of this pass.
+
+**Lesson for future material/lighting debugging:** don't diagnose a visual defect from the
+screenshot alone — raycast the actual on-screen hotspot pixel against the live scene
+(`raycaster.intersectObjects`) to confirm which mesh/material is actually responsible before
+touching code. The first attempt at the diffuse-surface fix guessed "label material" from visual
+proximity and was wrong (the label edit had zero visible effect); the real source, confirmed by
+raycast, was the liquid's flat top cap — a different mesh entirely, requiring a different fix
+(`envMapIntensity` + roughness on that material, not a color change to the label).
 
 **Asset resolution:** 1K HDRI + PBR textures are confirmed as the standard for both tiers,
 Premium included — a 4K comparison test (same scene, same geometry, single-variable swap) was
