@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify, send_from_directory
 import subprocess, os, time, json, socket, threading, uuid, re, ipaddress
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+from urllib.robotparser import RobotFileParser
 import requests
 from bs4 import BeautifulSoup
+
+REFERENCE_FETCH_USER_AGENT = "Mozilla/5.0 (compatible; JarvisWebsiteGenerator/1.0)"
 
 app = Flask(__name__, static_folder=".", static_url_path="")
 TASKS_PATH = r"C:\Jarvis\TASKS.md"
@@ -546,12 +549,20 @@ def unique_slug(base_slug):
         counter += 1
     return candidate
 
-def build_generation_prompt(business_name, description, reviews, output_dir):
+def build_generation_prompt(business_name, description, reviews, output_dir, client_contact=None):
     reviews_block = "\n".join(f"- {r}" for r in reviews) if reviews else "(no reviews provided)"
+    contact_block = (
+        f"Use this exact contact information verbatim in the contact section: {client_contact}. "
+        f"Do not invent, alter, or supply any alternative phone number, email, or address."
+        if client_contact else
+        "No contact information was provided - use only a generic contact form (name/email/message), do not invent a phone number, email, or address."
+    )
     return f"""Generate a single-page marketing landing site for this business, as real static files written to this exact folder: {output_dir}\\index.html, {output_dir}\\styles.css, {output_dir}\\script.js
 
 Business name: {business_name}
 What the site should say / who it's for: {description}
+
+Contact information: {contact_block}
 
 Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
 {reviews_block}
@@ -571,9 +582,10 @@ Write exactly those three files to the exact absolute paths given above. Do not 
 You have full, pre-authorized permission to create these files immediately. Do not ask for confirmation or pause to check; proceed directly with the Write calls."""
 
 def validate_reference_url(url):
-    """Validate a reference_url is safe to fetch: http/https only, and does not resolve to a
-    private/loopback/link-local/reserved address (SSRF protection). Raises ValueError with a
-    clear message if invalid. Called before any fetch happens."""
+    """Validate a reference_url is safe and permitted to fetch: http/https only, does not resolve
+    to a private/loopback/link-local/reserved address (SSRF protection), and is not disallowed by
+    the site's robots.txt for our user agent. Raises ValueError with a clear message if invalid.
+    Called before any fetch happens."""
     parsed = urlparse(url)
     if parsed.scheme not in ("http", "https"):
         raise ValueError(f"reference_url must be http or https, got: {parsed.scheme or '(none)'}")
@@ -587,6 +599,27 @@ def validate_reference_url(url):
         ip = ipaddress.ip_address(sockaddr[0])
         if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
             raise ValueError(f"reference_url resolves to a non-public address ({sockaddr[0]}) - not allowed")
+    check_robots_txt_allowed(url)
+    return True
+
+def check_robots_txt_allowed(url):
+    """Check the target site's robots.txt and raise ValueError if it disallows automated access
+    to this URL for our user agent. This is a deliberate compliance decision, not an accident of
+    requests not checking robots.txt by default - the clone-and-rebuild feature fetches other
+    people's sites, so it respects their stated crawling policy the same way a well-behaved
+    crawler would."""
+    parsed = urlparse(url)
+    robots_url = f"{parsed.scheme}://{parsed.netloc}/robots.txt"
+    rp = RobotFileParser()
+    rp.set_url(robots_url)
+    try:
+        rp.read()
+    except Exception:
+        # robots.txt itself is unreachable/malformed - fail open, same as a standard crawler
+        # would when it can't find a robots.txt to be bound by.
+        return True
+    if not rp.can_fetch(REFERENCE_FETCH_USER_AGENT, url):
+        raise ValueError(f"reference_url is disallowed by {robots_url} for automated access - not allowed")
     return True
 
 def fetch_reference_summary(url):
@@ -596,9 +629,10 @@ def fetch_reference_summary(url):
     reconstructs fresh code from this description; it never sees or copies the original markup."""
     resp = requests.get(
         url, timeout=10,
-        headers={"User-Agent": "Mozilla/5.0 (compatible; JarvisWebsiteGenerator/1.0)"}
+        headers={"User-Agent": REFERENCE_FETCH_USER_AGENT}
     )
     resp.raise_for_status()
+    resp.encoding = resp.apparent_encoding
     soup = BeautifulSoup(resp.text, "html.parser")
 
     title = soup.title.get_text(strip=True) if soup.title else ""
@@ -625,10 +659,16 @@ def fetch_reference_summary(url):
         "body_text_excerpt": body_text,
     }
 
-def build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir):
+def build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir, client_contact=None):
     reviews_block = "\n".join(f"- {r}" for r in reviews) if reviews else "(no reviews provided)"
     headings_block = "\n".join(f"- {h}" for h in reference_summary["headings"]) or "(none found)"
     nav_block = ", ".join(reference_summary["nav_labels"]) or "(none found)"
+    contact_block = (
+        f"Use this exact contact information verbatim in the contact section: {client_contact}. "
+        f"Do not invent, alter, or supply any alternative phone number, email, or address."
+        if client_contact else
+        "No contact information was provided - use only a generic contact form (name/email/message), do not invent a phone number, email, or address, even if the reference site excerpt above contains one."
+    )
     return f"""Generate a single-page marketing landing site for this business, as real static files written to this exact folder: {output_dir}\\index.html, {output_dir}\\styles.css, {output_dir}\\script.js
 
 Business name: {business_name}
@@ -642,6 +682,8 @@ Reference site section headings:
 {headings_block}
 Reference site nav labels: {nav_block}
 Reference site body text excerpt (for tone/topic reference only, do not copy): {reference_summary["body_text_excerpt"]}
+
+Contact information: {contact_block}
 
 Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
 {reviews_block}
@@ -672,13 +714,13 @@ def run_generation_job(job_id, business_name, description, reviews, slug, output
                     GENERATION_JOBS[job_id]["status"] = "error"
                     GENERATION_JOBS[job_id]["error"] = f"could not fetch reference_url: {e}"
                 return
-            prompt = sanitize_for_cmd_prompt(build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir))
+            prompt = sanitize_for_cmd_prompt(build_clone_generation_prompt(business_name, description, reviews, reference_summary, output_dir, client_contact))
         else:
-            prompt = sanitize_for_cmd_prompt(build_generation_prompt(business_name, description, reviews, output_dir))
+            prompt = sanitize_for_cmd_prompt(build_generation_prompt(business_name, description, reviews, output_dir, client_contact))
 
         result = subprocess.run(
-            ["cmd", "/c", "claude", "-p", prompt, "--permission-mode", "bypassPermissions", "--tools", "Write", "--add-dir", output_dir],
-            cwd=os.environ.get("TEMP", "."), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
+            ["cmd", "/c", "claude", "-p", "--permission-mode", "bypassPermissions", "--tools", "Write", "--add-dir", output_dir],
+            input=prompt, cwd=os.environ.get("TEMP", "."), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=600
         )
         expected = ["index.html", "styles.css", "script.js"]
         missing = [fn for fn in expected if not os.path.exists(os.path.join(output_dir, fn))]

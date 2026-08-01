@@ -12,6 +12,9 @@ kanban-plugin: board
 - [ ] 🟡 **Fix label/diffuse-surface overexposure on bright, high-roughness materials near-perpendicular to the key light — likely a key-light-intensity or bloom-luminance-threshold tuning issue, distinct from the already-fixed glass transmission defect**
 	[[Website Generator]]
 
+- [ ] 🟡 **Constrain build_generation_prompt to treat client_contact as literal, non-negotiable contact info — found fabricating a plausible-looking phone number and email instead of using the provided client_contact during the Demmel & Partner stdin-fix test**
+	[[Website Generator]]
+
 - [ ] 🟢 **Write up "Claude Flowstate" idea as a note**
 
 - [ ] 🔴 **Package for end customers (clean file + setup guide, no dev/diag mode visible)**

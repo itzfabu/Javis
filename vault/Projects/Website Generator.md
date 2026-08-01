@@ -61,6 +61,13 @@ already-mitigated tradeoff, not an unexamined gap: the generation subprocess is 
 at writing content inside the job's own output folder, the same blast-radius boundary already
 established for the unsanitized business_name/prompt/reviews fields.
 
+**robots.txt compliance:** `validate_reference_url` checks the target site's `robots.txt` (via
+`check_robots_txt_allowed`, Python's `urllib.robotparser`) and rejects the request with a clear
+error if automated access is disallowed for our user agent. This is a deliberate compliance
+decision, not an accident of tooling — `requests` does not consult `robots.txt` on its own, so the
+check has to be explicit. A missing or unreachable `robots.txt` fails open (treated as allowed),
+matching standard crawler behavior when a site publishes no policy at all.
+
 **Legal guardrail as an actual form field:** the generation form gets a required question — "Is
 this the business's own current website?" — with a yes/no answer. If no, a second required field,
 "What business is this for?", captures who the output is actually going to. This operationalizes

@@ -1,0 +1,15 @@
+{
+  "business_name": "Demmel & Partner Baumanagement",
+  "slug": "demmel-partner-baumanagement-2",
+  "prompt_used": "Demmel & Partner Baumanagement AG ist ein Bauleitungsbuero im Raum Zuerich, gegruendet 1994, mit ueber 28 Jahren Erfahrung im Bauwesen. 15 Mitarbeiter, taetig in der ganzen deutschsprachigen Schweiz. Portfolio: Schul- und Universitaetsbauten, Spitalbauten, Industriebauten, Gewerbe, Infrastruktur- und Wohnungsbauten, historische Bauprojekte. Rebuild the business's own current website with clearer structure and a stronger single call-to-action, using the reference site only for structural/design inspiration - not copied content.",
+  "reviews_used": [
+    "Sehr professionelle Bauleitung, klare Kommunikation und immer erreichbar wenn es Probleme auf der Baustelle gab."
+  ],
+  "created_date": "2026-08-01T18:55:55.556640+00:00",
+  "status": "draft",
+  "client_contact": "+41 44 999 88 77, kontakt@demmel-partner-test.ch",
+  "price": null,
+  "license_type": "client-delivery",
+  "reference_url": "https://demmelpartner-baumanagement.ch",
+  "legal_basis": "own-site"
+}
