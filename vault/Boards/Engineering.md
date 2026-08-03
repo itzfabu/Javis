@@ -23,6 +23,9 @@ kanban-plugin: board
 - [ ] 🟢 **Write basic licensing terms**
 	[[Streamer HUD Widget]]
 
+- [ ] 🟡 **Verify generated sites render correctly at mobile viewport — oversized hero type, sticky-pinned sections, and staggered card reveals at ~390px width. Rendered verification is not achievable from inside a Claude Code session (no device-emulation tooling; window resize doesn't change the reported viewport), so this needs a manual check in Chrome DevTools device toolbar or on a real phone.**
+	[[Website Generator]]
+
 ## 🏃 Sprint
 
 - [ ] 🔴 **Scope the technical flow for generate-from-prompt (what Claude Code is prompted with, output file structure, how a prompt becomes a working page)**

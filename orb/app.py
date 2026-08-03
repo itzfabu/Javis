@@ -567,15 +567,41 @@ Contact information: {contact_block}
 Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
 {reviews_block}
 
-Hard requirements (non-negotiable, based on conversion-rate research):
+Hard requirements (non-negotiable, based on conversion-rate and UI-craft research). Conversion is
+the floor - motion and typography choices below must never compromise it:
+
+Conversion:
 - Above the fold: a clear, plain-language headline that answers "what's in it for me" within seconds - no clever/cryptic copy. Exactly ONE call-to-action button, visually dominant, with no competing links or navigation distracting from it.
 - Above-the-fold content must be lightweight and render instantly - no video, no heavy animation libraries, no large blocking assets in the initial view.
-- Any motion, scroll effects, or richer visual flourishes belong further down the page (e.g. a subtle scroll-reveal on the services/testimonials sections), never on the critical path to the first impression or the CTA.
 - Include a trust-signals section using the reviews above (as testimonials with attribution if given).
 - If there is any contact/signup form, keep it to the minimum fields possible (e.g. name + email, or name + message) - do not ask for more than necessary.
 - Load speed is a hard requirement: no external JS frameworks or CDN dependencies. Vanilla JS only in script.js. Fonts are the one exception - link Google Fonts via a <link> tag in the <head> rather than bundling font files.
 - Do not reference or create any image files - there is no assets/ content yet. Use CSS (gradients, shapes, color, typography) for visual interest instead of images.
 - Repeat the single CTA at least once more further down the page (e.g. near the footer), but it must remain the same action worded consistently.
+
+Motion (below the fold only - never on the critical path to first paint or the CTA; stay vanilla, no animation libraries):
+- Any motion, scroll effects, or richer visual flourishes belong further down the page (e.g. a subtle scroll-reveal on the services/testimonials sections), never on the critical path to the first impression or the CTA.
+- No animation libraries (no GSAP, no third-party animation JS). Use native CSS scroll-driven animations (animation-timeline: view() / scroll()) for reveals and parallax, and position: sticky for pinning.
+- Use scroll pinning (position: sticky) on at least one section where attention should hold - e.g. a services, process, or story section - not just passive scroll-reveal everywhere.
+- Write every scroll-driven animation as progressive enhancement: the element's default, unconditional state must be fully visible and correctly positioned. Only add the animation inside an @supports (animation-timeline: view()) block. Never use opacity: 0 or an off-screen transform as the base state - Firefox stable still ships scroll-driven animations behind a flag (~82.6% global support), so a base-hidden element would leave Firefox users looking at blank sections.
+- Nest all scroll/parallax/cursor motion inside @media (prefers-reduced-motion: no-preference) so the reduced-motion path is the default-safe one, not a bolted-on override.
+- Define one shared easing curve as a CSS custom property (e.g. --ease) and reuse it for every transition/animation site-wide - do not hardcode separate easing values per component.
+- Stagger entrance animations for grouped elements (e.g. cards, list items) so they arrive in sequence, not all at once.
+- If depth is wanted, use 2.5D layering (flat elements moving at different scroll speeds/scales via the same scroll-driven approach) - do not attempt real 3D or WebGL.
+- Treat the cursor as a designed, responsive element on non-touch devices (e.g. it reacts near interactive elements), not the unstyled default.
+- Treat the footer as a final, deliberately designed beat, not a bare afterthought.
+- Repeat one recurring visual motif (a shape, line, or pattern) across multiple sections to tie the page together.
+- Add small, precise timing polish to interactive micro-moments (hovers, button presses, transitions) using the shared --ease curve - avoid anything that feels mechanical or default-browser.
+
+Typography:
+- Prefer a variable Google Font where a suitable one exists (single file carrying the full weight range - fewer requests, and enables CSS weight/width animation) over multiple static-weight files.
+- Use a serif + grotesque (sans-serif) typeface pairing - one for display/headline use, one for body/UI text.
+- Match typeface character to the business type: soft serifs for food and beverage, wellness, boutique hospitality, lifestyle editorial, and real estate/interior design businesses, where the brand should read warm, human, and premium at once.
+- Use oversized type as a genuine hero-layout element in at least one section - type itself as the dominant visual, not just a caption over an image.
+
+Responsive:
+- The site must be correct at mobile viewport widths, not just desktop - layout, type scale, and spacing must adapt, not just shrink.
+- Every animation above (scroll, stagger, parallax, cursor) must remain stable across breakpoints - no broken or overlapping elements as the viewport narrows.
 
 Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else.
 
@@ -688,15 +714,41 @@ Contact information: {contact_block}
 Customer reviews to use as trust signals (paraphrase or quote naturally, do not fabricate additional ones):
 {reviews_block}
 
-Hard requirements (non-negotiable, based on conversion-rate research):
+Hard requirements (non-negotiable, based on conversion-rate and UI-craft research). Conversion is
+the floor - motion and typography choices below must never compromise it:
+
+Conversion:
 - Above the fold: a clear, plain-language headline that answers "what's in it for me" within seconds - no clever/cryptic copy. Exactly ONE call-to-action button, visually dominant, with no competing links or navigation distracting from it.
 - Above-the-fold content must be lightweight and render instantly - no video, no heavy animation libraries, no large blocking assets in the initial view.
-- Any motion, scroll effects, or richer visual flourishes belong further down the page, never on the critical path to the first impression or the CTA.
 - Include a trust-signals section using the reviews above (as testimonials with attribution if given).
 - If there is any contact/signup form, keep it to the minimum fields possible - do not ask for more than necessary.
 - Load speed is a hard requirement: no external JS frameworks or CDN dependencies. Vanilla JS only in script.js. Fonts are the one exception - link Google Fonts via a <link> tag in the <head> rather than bundling font files.
 - Do not reference or create any image files - there is no assets/ content yet. Use CSS for visual interest instead of images.
 - Repeat the single CTA at least once more further down the page, worded consistently.
+
+Motion (below the fold only - never on the critical path to first paint or the CTA; stay vanilla, no animation libraries):
+- Any motion, scroll effects, or richer visual flourishes belong further down the page, never on the critical path to the first impression or the CTA.
+- No animation libraries (no GSAP, no third-party animation JS). Use native CSS scroll-driven animations (animation-timeline: view() / scroll()) for reveals and parallax, and position: sticky for pinning.
+- Use scroll pinning (position: sticky) on at least one section where attention should hold - e.g. a services, process, or story section - not just passive scroll-reveal everywhere.
+- Write every scroll-driven animation as progressive enhancement: the element's default, unconditional state must be fully visible and correctly positioned. Only add the animation inside an @supports (animation-timeline: view()) block. Never use opacity: 0 or an off-screen transform as the base state - Firefox stable still ships scroll-driven animations behind a flag (~82.6% global support), so a base-hidden element would leave Firefox users looking at blank sections.
+- Nest all scroll/parallax/cursor motion inside @media (prefers-reduced-motion: no-preference) so the reduced-motion path is the default-safe one, not a bolted-on override.
+- Define one shared easing curve as a CSS custom property (e.g. --ease) and reuse it for every transition/animation site-wide - do not hardcode separate easing values per component.
+- Stagger entrance animations for grouped elements (e.g. cards, list items) so they arrive in sequence, not all at once.
+- If depth is wanted, use 2.5D layering (flat elements moving at different scroll speeds/scales via the same scroll-driven approach) - do not attempt real 3D or WebGL.
+- Treat the cursor as a designed, responsive element on non-touch devices (e.g. it reacts near interactive elements), not the unstyled default.
+- Treat the footer as a final, deliberately designed beat, not a bare afterthought.
+- Repeat one recurring visual motif (a shape, line, or pattern) across multiple sections to tie the page together.
+- Add small, precise timing polish to interactive micro-moments (hovers, button presses, transitions) using the shared --ease curve - avoid anything that feels mechanical or default-browser.
+
+Typography:
+- Prefer a variable Google Font where a suitable one exists (single file carrying the full weight range - fewer requests, and enables CSS weight/width animation) over multiple static-weight files.
+- Use a serif + grotesque (sans-serif) typeface pairing - one for display/headline use, one for body/UI text.
+- Match typeface character to the business type: soft serifs for food and beverage, wellness, boutique hospitality, lifestyle editorial, and real estate/interior design businesses, where the brand should read warm, human, and premium at once.
+- Use oversized type as a genuine hero-layout element in at least one section - type itself as the dominant visual, not just a caption over an image.
+
+Responsive:
+- The site must be correct at mobile viewport widths, not just desktop - layout, type scale, and spacing must adapt, not just shrink.
+- Every animation above (scroll, stagger, parallax, cursor) must remain stable across breakpoints - no broken or overlapping elements as the viewport narrows.
 
 Write exactly those three files to the exact absolute paths given above. Do not create any other files or folders, and do not write anywhere else.
 

@@ -1,0 +1,547 @@
+/* ---------- Reset & base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  margin: 0 0 0.5em;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+p { margin: 0 0 1em; }
+a { color: inherit; }
+
+/* ---------- Design tokens ---------- */
+:root {
+  --burgundy-900: #260d12;
+  --burgundy-800: #3a141b;
+  --wine: #7c2331;
+  --gold: #c9a15a;
+  --gold-light: #e3c88a;
+  --cream: #f7efe4;
+  --cream-dark: #efe1cd;
+  --ink: #26191a;
+  --ink-soft: #5a4a48;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --wrap: min(72rem, 100% - 3rem);
+}
+
+.wrap {
+  width: var(--wrap);
+  margin-inline: auto;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: relative;
+  padding: 1.5rem 0 0;
+  z-index: 2;
+}
+.brand {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+/* ---------- Recurring ring motif ---------- */
+.ring-motif {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+.ring-motif::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  opacity: 0.6;
+}
+.ring-motif--hero {
+  width: min(46rem, 90vw);
+  height: min(46rem, 90vw);
+  top: -12rem;
+  right: -14rem;
+}
+.ring-motif--story {
+  width: 20rem;
+  height: 20rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+}
+.ring-motif--testi {
+  width: 30rem;
+  height: 30rem;
+  bottom: -10rem;
+  left: -8rem;
+  border-color: var(--gold-light);
+}
+.ring-motif--footer {
+  width: 24rem;
+  height: 24rem;
+  top: -6rem;
+  right: -6rem;
+  border-color: var(--gold-light);
+}
+
+/* ---------- Hero (above the fold: lightweight, no motion) ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(120% 140% at 15% 0%, var(--burgundy-800), var(--burgundy-900) 70%);
+  color: var(--cream);
+  padding: 4.5rem 0 5.5rem;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 42rem;
+}
+.eyebrow {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold-light);
+  margin-bottom: 1.25rem;
+}
+.hero-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'opsz' 144;
+  font-weight: 560;
+  font-size: clamp(2.75rem, 8vw + 1rem, 6.5rem);
+  color: var(--cream);
+  margin-bottom: 1.25rem;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.hero-sub {
+  font-size: clamp(1rem, 1.4vw + 0.7rem, 1.2rem);
+  color: rgba(247, 239, 228, 0.85);
+  max-width: 34rem;
+  margin-bottom: 2.25rem;
+}
+
+/* ---------- The one CTA ---------- */
+.cta-button {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--burgundy-900);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  padding: 1rem 2.25rem;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), background 0.35s var(--ease);
+}
+.cta-button:hover {
+  transform: translateY(-3px);
+  background: var(--gold-light);
+  box-shadow: 0 16px 34px -12px rgba(0, 0, 0, 0.55);
+}
+.cta-button:active {
+  transform: translateY(-1px) scale(0.98);
+  transition-duration: 0.12s;
+}
+.cta-button--ghost {
+  background: transparent;
+  color: var(--gold-light);
+  border: 1px solid var(--gold);
+  box-shadow: none;
+}
+.cta-button--ghost:hover {
+  background: rgba(201, 161, 90, 0.12);
+  color: var(--gold-light);
+}
+
+/* ---------- Story ---------- */
+.story {
+  position: relative;
+  padding: 6rem 0;
+  background: var(--cream);
+  overflow: hidden;
+}
+.story-grid {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+}
+.story-copy h2 {
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.6rem);
+  color: var(--ink);
+}
+.story-copy p {
+  color: var(--ink-soft);
+  max-width: 38rem;
+  font-size: 1.05rem;
+}
+
+/* ---------- Offerings ---------- */
+.offerings {
+  padding: 6rem 0;
+  background: var(--cream-dark);
+}
+.offerings h2 {
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.6rem);
+  margin-bottom: 2.5rem;
+  max-width: 30rem;
+}
+.card-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+.card {
+  background: var(--cream);
+  border-radius: 1rem;
+  padding: 2rem 1.75rem;
+  border: 1px solid rgba(38, 25, 26, 0.08);
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -24px rgba(38, 25, 26, 0.35);
+}
+.card-mark {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--wine);
+  margin-bottom: 1.25rem;
+}
+.card h3 {
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+.card p {
+  color: var(--ink-soft);
+  margin-bottom: 0;
+  font-size: 0.98rem;
+}
+
+/* ---------- Testimonials ---------- */
+.testimonials {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(120% 120% at 85% 100%, var(--burgundy-800), var(--burgundy-900) 70%);
+  color: var(--cream);
+  padding: 6rem 0;
+}
+.testimonials h2 {
+  color: var(--cream);
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.6rem);
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+.testi-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+.testi {
+  margin: 0;
+  padding: 1.75rem;
+  background: rgba(247, 239, 228, 0.06);
+  border: 1px solid rgba(201, 161, 90, 0.35);
+  border-radius: 1rem;
+}
+.testi p {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.testi cite {
+  font-style: normal;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-light);
+}
+
+/* ---------- Reserve / contact form ---------- */
+.reserve {
+  padding: 6rem 0;
+  background: var(--cream);
+}
+.reserve-inner {
+  max-width: 32rem;
+}
+.reserve h2 {
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.6rem);
+}
+.reserve > .wrap > p,
+.reserve-inner > p {
+  color: var(--ink-soft);
+  margin-bottom: 2rem;
+}
+.field {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.field input,
+.field textarea {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(38, 25, 26, 0.2);
+  background: var(--cream-dark);
+  color: var(--ink);
+  resize: vertical;
+  transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--wine);
+  box-shadow: 0 0 0 3px rgba(124, 35, 49, 0.15);
+}
+.submit-button {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  background: var(--wine);
+  color: var(--cream);
+  border: none;
+  padding: 1rem 2.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.35s var(--ease), background 0.35s var(--ease);
+}
+.submit-button:hover {
+  background: var(--burgundy-800);
+  transform: translateY(-2px);
+}
+.submit-button:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.12s;
+}
+.form-note {
+  margin: 1rem 0 0;
+  font-size: 0.92rem;
+  color: var(--wine);
+  min-height: 1.2em;
+}
+
+/* ---------- Footer: final, deliberate beat ---------- */
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background: var(--burgundy-900);
+  color: var(--cream);
+  padding: 5rem 0 3rem;
+  text-align: center;
+}
+.footer-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.footer-brand {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+.footer-tag {
+  color: var(--gold-light);
+  margin: 0 0 1.75rem;
+}
+.footer-fine {
+  margin: 2rem 0 0;
+  font-size: 0.82rem;
+  color: rgba(247, 239, 228, 0.55);
+}
+
+/* ---------- Scroll-driven reveal (progressive enhancement) ---------- */
+/* Base state: fully visible, correctly positioned — safe default for all browsers */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+    /* stagger grouped elements so they arrive in sequence */
+    .card-grid .card:nth-child(1) { animation-range: entry 0% cover 22%; }
+    .card-grid .card:nth-child(2) { animation-range: entry 6% cover 30%; }
+    .card-grid .card:nth-child(3) { animation-range: entry 12% cover 38%; }
+
+    .testi-grid .testi:nth-child(1) { animation-range: entry 0% cover 22%; }
+    .testi-grid .testi:nth-child(2) { animation-range: entry 6% cover 30%; }
+    .testi-grid .testi:nth-child(3) { animation-range: entry 12% cover 38%; }
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- 2.5D parallax motif ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .ring-motif--parallax {
+      animation: motif-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0% 100%;
+    }
+  }
+}
+@keyframes motif-drift {
+  from { transform: translateY(-3rem) scale(1); }
+  to { transform: translateY(4rem) scale(1.08); }
+}
+.ring-motif--story.ring-motif--parallax {
+  /* keep the centered translate as the transform origin baseline */
+  transform: translate(-50%, -50%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .ring-motif--story.ring-motif--parallax {
+      animation-name: motif-drift-centered;
+    }
+  }
+}
+@keyframes motif-drift-centered {
+  from { transform: translate(-50%, -50%) translateY(-2rem); }
+  to { transform: translate(-50%, -50%) translateY(3rem); }
+}
+
+/* ---------- Custom cursor (non-touch devices only, JS-gated) ---------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  will-change: transform;
+}
+body.has-custom-cursor .cursor-dot,
+body.has-custom-cursor .cursor-ring {
+  opacity: 1;
+}
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transition: transform 0.12s var(--ease), opacity 0.3s var(--ease);
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -13px 0 0 -13px;
+  border: 1px solid var(--gold);
+  transition: transform 0.32s var(--ease), width 0.3s var(--ease), height 0.3s var(--ease), margin 0.3s var(--ease), opacity 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.cursor-ring.cursor-active {
+  width: 52px;
+  height: 52px;
+  margin: -13px 0 0 -13px;
+  border-color: var(--gold-light);
+}
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor input,
+body.has-custom-cursor textarea {
+  cursor: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 640px) {
+  .story-grid {
+    grid-template-columns: 18rem 1fr;
+    align-items: center;
+  }
+  .ring-motif--story {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    justify-self: center;
+  }
+  .ring-motif--story.ring-motif--parallax {
+    transform: none;
+  }
+  @keyframes motif-drift-centered {
+    from { transform: translateY(-2rem); }
+    to { transform: translateY(3rem); }
+  }
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .testi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .hero-inner {
+    max-width: 48rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero { padding: 3.5rem 0 4rem; }
+  .story, .offerings, .testimonials, .reserve { padding: 4rem 0; }
+  .site-footer { padding: 4rem 0 2.5rem; }
+}

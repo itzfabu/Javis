@@ -1,0 +1,17 @@
+{
+  "business_name": "Alder & Vine Test 2",
+  "slug": "alder-vine-test-2",
+  "prompt_used": "A boutique wine bar and small-plates restaurant in a converted townhouse, warm and intimate, evening-focused, aiming for a premium but unpretentious feel.",
+  "reviews_used": [
+    "Best hidden gem in the neighborhood - the staff know their wine list inside out.",
+    "Perfect for a date night, cozy without being cramped.",
+    "Small plates were incredible, will be back for the tasting menu."
+  ],
+  "created_date": "2026-08-03T16:44:53.988091+00:00",
+  "status": "draft",
+  "client_contact": "",
+  "price": 450,
+  "license_type": "standard",
+  "reference_url": null,
+  "legal_basis": null
+}
