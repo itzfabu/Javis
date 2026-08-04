@@ -1,0 +1,26 @@
+{
+  "signoff": {
+    "status": "none",
+    "proposedAt": "2026-08-04T20:00:00+00:00",
+    "items": ["GATE TEST — create a file orb/gate-test-proof.txt containing the word OK and nothing else. Do not touch any other file."],
+    "respondedAt": "2026-08-04T20:05:00+00:00",
+    "userNote": ""
+  },
+  "queue": [
+    {
+      "id": "gate-test-1",
+      "text": "GATE TEST — create a file orb/gate-test-proof.txt containing the word OK and nothing else. Do not touch any other file.",
+      "status": "done",
+      "note": "Created orb/gate-test-proof.txt containing only 'OK'. No other files touched."
+    }
+  ],
+  "briefing": {
+    "date": "2026-08-04",
+    "generatedAt": "2026-08-04T20:10:00+00:00",
+    "researched": [],
+    "movedForward": [
+      "Gate test: created orb/gate-test-proof.txt containing 'OK' as pre-approved."
+    ],
+    "stuck": []
+  }
+}
