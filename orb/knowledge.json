@@ -17,6 +17,12 @@
                          "name":  "Streamer HUD Widget",
                          "owner":  "webdesigner",
                          "goal":  "Monetize the Jarvis System"
+                     },
+                     {
+                         "status":  "active",
+                         "name":  "Website Generator",
+                         "owner":  "webdesigner",
+                         "goal":  "Monetize the Jarvis System"
                      }
                  ],
     "agents":  [
@@ -37,6 +43,18 @@
                   {
                       "text":  "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income once there\u0027s income to track) | priority: medium | #jarvis-system",
                       "project":  "jarvis-system"
+                  },
+                  {
+                      "text":  "Research brand extraction: pull a client\u0027s real colors/fonts/logo from an existing site or brand input, feed as tokens into hero frames + page (Thread 1 of 3, do first - everything downstream depends on it) | priority: high | #website-generator",
+                      "project":  "website-generator"
+                  },
+                  {
+                      "text":  "Research the conversion skeleton: proven page structure below the hero (services, social proof, contact/lead flow) that turns visitors into leads (Thread 2 of 3, do after brand extraction) | priority: medium | #website-generator",
+                      "project":  "website-generator"
+                  },
+                  {
+                      "text":  "Research frame generation for the flipbook archetypes: evaluate AI text-to-video-\u003eframes vs. real 3D render-\u003eexport vs. hybrid template scenes; accuracy is non-negotiable for clients wanting their actual building/product (Thread 3 of 3, do last - depends on brand tokens being locked) | priority: medium | #website-generator",
+                      "project":  "website-generator"
                   },
                   {
                       "text":  "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",

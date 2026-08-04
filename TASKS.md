@@ -9,6 +9,10 @@ Format: - \[ ] Task text | priority: high/medium/low | due: YYYY-MM-DD | #projec
 - [ ] Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income once there's income to track) | priority: medium | #jarvis-system
   - Input ready for this one: vault/Ideas/Multi-Page Orb Dashboard.md (multi-page dashboard concept + notes-panel cleanup) and vault/Ideas/Finance Dashboard for Project Income.md - start here tomorrow morning.
 
+- [ ] Research brand extraction: pull a client's real colors/fonts/logo from an existing site or brand input, feed as tokens into hero frames + page (Thread 1 of 3, do first - everything downstream depends on it) | priority: high | #website-generator
+- [ ] Research the conversion skeleton: proven page structure below the hero (services, social proof, contact/lead flow) that turns visitors into leads (Thread 2 of 3, do after brand extraction) | priority: medium | #website-generator
+- [ ] Research frame generation for the flipbook archetypes: evaluate AI text-to-video->frames vs. real 3D render->export vs. hybrid template scenes; accuracy is non-negotiable for clients wanting their actual building/product (Thread 3 of 3, do last - depends on brand tokens being locked) | priority: medium | #website-generator
+
 - [ ] Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud
 - [ ] Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud
 - [ ] Decide delivery/sales channel (Gumroad, Etsy, itch.io, own site) | priority: medium | #streamer-hud

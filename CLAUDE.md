@@ -33,6 +33,17 @@
 - The planner agent should check whether current tasks and projects actually connect to an active goal; flag any project with no linked goal (or no goal at all defined) as an open question rather than silently planning around it.
 - Move completed tasks to the "Done" section instead of deleting them.
 
+# Accountability Layer (Sign-Off & Morning Briefing)
+State lives in `orb/accountability.json`, surfaced at the top of the Jarvis Background dashboard (localhost:8420, Background tab).
+
+- **Sign-off negotiation**: when Fabio signals he's ending a session for the day (e.g. "gute nacht", "ich bin fertig für heute", "das wars für heute"), or when he explicitly asks what to work on overnight — read TASKS.md, knowledge/PROJECTS.md, knowledge/GOALS.md, and vault/Ideas for candidates, then propose 2-5 concrete overnight items in chat. Write the proposal to `accountability.json` (`signoff.status = "pending"`, `signoff.items = [...]`, `signoff.proposedAt = now`) and wait for his response in the same conversation.
+  - If he approves in chat: set `signoff.status = "approved"`, populate `queue` with one entry per item (`status: "queued"`).
+  - If he redirects in chat: set `signoff.status = "redirected"` with his note in `signoff.userNote`.
+  - He can also respond later from the dashboard itself (Approve/Redirect buttons) — the Flask backend (`orb/app.py`, `/accountability/respond`) handles that path.
+  - Never start overnight work without `signoff.status == "approved"`. The `git-backup.ps1` SessionEnd hook checks this and only then launches the actual unattended run (`.claude/hooks/overnight-run.ps1` → `overnight-run-worker.ps1`).
+- **Morning briefing**: the overnight worker updates `accountability.json`'s `briefing` block (date, researched, movedForward, stuck) when it finishes, and resets `signoff.status` to `"none"` so the next negotiation can happen. Read `briefing.stuck` yourself at the start of a session if it's non-empty — that's unresolved work waiting on Fabio.
+- No mid-work interrupts yet — only these two checkpoints (before/after). Add mid-task check-ins only if overnight work is later observed drifting on large jobs.
+
 # Feste Regeln
 - Outlook ist nur lesend zu verwenden - E-Mails lesen, Kalender einsehen. Nie senden, löschen, bearbeiten oder hochladen. Einzige Ausnahme: neue Kalendereinträge/Termine anlegen ist erlaubt.
 - Google Drive hat vollen Lese-/Schreibzugriff - Dateien organisieren, verschieben, umbenennen ist erlaubt.

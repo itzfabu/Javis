@@ -1,6 +1,6 @@
 ---
 date: 2026-07-30
-updated: 2026-07-30
+updated: 2026-08-04
 type: project
 status: active
 tags:
@@ -31,6 +31,27 @@ Dual-purpose: building sites for Fabio's own future products, and selling websit
 service to companies across industries. Clone-and-rebuild (paste an existing site, rebrand it for
 a different client) is deferred out of MVP scope — different technical problem, and carries the
 legal-guardrail judgment already flagged in the Ideas note.
+
+## Next Steps — Research Roadmap (Fabio's note, 2026-08-04)
+
+Three threads, strictly ordered — each depends on the one before it. Tracked as tasks in
+TASKS.md under #website-generator.
+
+1. **Brand extraction (do first).** Everything downstream needs it. How does Jarvis pull a
+   client's real colors, fonts, and logo from an existing site / logo / brand input, so each
+   generated site feels like *theirs*, not a template — and feed those tokens into both the hero
+   frames (see Visual Richness open question above) and the rest of the page.
+2. **Conversion skeleton (do second).** The archetypes (see Open Question above) nail the hero;
+   a full site still has to convert. Research the proven page structure below the hero — services,
+   social proof, contact/lead flow — the layout that turns visitors into leads. Goal: sites that
+   *sell*, not just look modern. Ties directly into the Conversion Requirements section below.
+3. **Frame generation (do last — heaviest, depends on brand being locked).** Which tool reliably
+   renders the archetype frame sequences from Visual Richness above? Options to evaluate: (a) AI
+   text-to-video → split to frames — fast, weaker control/consistency; (b) real 3D render → export
+   frames — precise, slow, needs a 3D pipeline; (c) hybrid template scenes tweaked per client.
+   Accuracy is non-negotiable for a client wanting *their* actual building — a generic tower will
+   be noticed. This thread only starts once the flipbook-vs-GSAP open question above is resolved
+   *and* Thread 1 has locked how brand tokens flow into a frame set.
 
 ## Key Decisions
 
@@ -218,6 +239,66 @@ of on-screen pixel coverage per surface, so the extra resolution is discarded be
 visible. 2K wasn't separately tested — the mipmapping explanation already covers that middle
 ground, since the same downsampling logic applies at any resolution above what the canvas can
 actually display.
+
+### Open Question: Flipbook Alternative to Live Three.js (reopens the GSAP decision)
+
+Fabio's note, 2026-08-04: award-tier "self-building" scroll effects (e.g. a building assembling
+as the user scrolls) are typically *not* live 3D. Sites like Apple's product pages use a
+FLIPBOOK — a pre-rendered image sequence flipped through on a `<canvas>`, driven by scroll
+position via GSAP's `ScrollTrigger` (scrub mode) plus Lenis for smooth scroll. Looks like video,
+but scrubs exactly to scroll position. Proposed stack: GSAP (ScrollTrigger, scrub) + Lenis +
+Three.js reserved only for scenes that must be genuinely interactive.
+
+**Why this bears on the scaling problem already documented above:** the "Hero-object category
+palette" and glass-overexposure entries above show real per-project cost — HDRI/PBR tuning, a
+glass-material bug hunt, a mesh-vs-raycast debugging session just to find which mesh was actually
+responsible for a visual defect. A flipbook needs none of that tuning at generation time: render
+the frame sequence once per client (their building, product, etc.) into a folder of numbered
+images, then reuse one shared canvas + scroll-scrub engine across every generated site. The engine
+never changes; only the frames do. That fits a generator producing many sites better than
+hand-tuning a live 3D scene per client — which is exactly the gap this note calls out ("live
+Three.js must be hand-tuned per project → doesn't scale").
+
+**Direct conflict — this reopens "Why GSAP was considered and rejected" in UI Craft below.** That
+decision's reasoning was that every past failure traced back to dependency/version management, and
+that native CSS `animation-timeline` covers reveals/parallax at zero added weight and zero
+dependencies. A flipbook's scroll-scrubbing — frame index tied precisely and continuously to scroll
+offset, not just an enter/exit reveal trigger — is a materially different animation category than
+what native CSS scroll-driven animations were evaluated against. It is not yet established whether
+native CSS can drive frame-accurate canvas scrubbing the same way. This needs a real evaluation
+before reintroducing GSAP + Lenis as dependencies, not an assumption in either direction.
+
+**Not yet adopted.** Unlike the rest of this section, this is an open question, not a decision —
+it does not change the current live-Three.js hero pipeline until Fabio resolves it one way or the
+other.
+
+**Proposed pipeline, if adopted:**
+1. Generate/render the frame set for the client (their building, product, etc.)
+2. Drop frames into a shared canvas + GSAP ScrollTrigger scrub template
+3. Ship — the engine never changes, only the frames do
+
+**Perf notes from the source note:** preload frames; passive scroll listeners; throttle to
+`requestAnimationFrame`; only redraw the canvas when the frame index actually changes.
+
+**Archetype library, if adopted (Fabio's note, 2026-08-04):** one shared flipbook engine, swappable
+frame sets — Jarvis picks an archetype from the business type at generation time rather than a
+human choosing per-project. Five archetypes cover physical businesses; a sixth covers businesses
+with nothing physical to film/render.
+
+1. **ASSEMBLE** — something builds itself. → construction, architecture, furniture, craft/trades.
+2. **REVEAL** — elements fall/drop into place. → food, cosmetics, product/CPG brands.
+3. **SPIN** — a hero product rotates in space. → retail, tech, automotive.
+4. **FLYTHROUGH** — camera glides through a space. → real estate, hotels, gyms, venues.
+5. **TRANSFORM** — before/after morph. → renovation, fitness, beauty.
+6. **INTERFACE** — dashboards/UI/data coming alive (numbers count up, panels slide in, bespoke
+   illustrations); for things that can't be photographed. → SaaS, fintech, agencies, consultants.
+
+Selection rule: physical business → archetype 1-5 by category fit; invisible/software business →
+archetype 6. This is the piece that would let archetype selection itself be automated rather than
+hand-picked — consistent with the "engine never changes, only the frames do" scaling argument
+above, extended one level further: even the *choice* of frame set follows a fixed rule instead of
+per-project judgment. Still gated on the same open question above (this doesn't get built until
+the flipbook-vs-GSAP evaluation is resolved).
 
 ## Sources (Visual Richness)
 - [Best Three.js Websites 2026: 8 Sites + Techniques | Utsubo](https://www.utsubo.com/blog/best-threejs-websites-2026) — "one confident centerpiece" principle, Awwwards examples (Oryzo, Hubtown)

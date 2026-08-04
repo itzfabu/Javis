@@ -1,0 +1,17 @@
+{
+  "signoff": {
+    "status": "none",
+    "proposedAt": null,
+    "items": [],
+    "respondedAt": null,
+    "userNote": ""
+  },
+  "queue": [],
+  "briefing": {
+    "date": null,
+    "generatedAt": null,
+    "researched": [],
+    "movedForward": [],
+    "stuck": []
+  }
+}

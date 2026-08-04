@@ -75,6 +75,37 @@ body { background: radial-gradient(circle at center, #04141a 0%, #000 100%); hei
 .bg-columns { display: flex; gap: 16px; flex-wrap: wrap; }
 .bg-column { flex: 1; min-width: 180px; }
 .bg-column-title { font-size: 9px; opacity: 0.5; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+.bg-briefing-card { background: rgba(90,255,230,0.06); border: 1px solid rgba(90,255,230,0.3); border-radius: 12px; padding: 18px 22px; }
+.bg-briefing-header { display: flex; align-items: baseline; gap: 12px; font-size: 13px; letter-spacing: 2px; opacity: 0.85; margin-bottom: 14px; }
+.bg-briefing-date { font-size: 10px; opacity: 0.5; letter-spacing: 1px; }
+.bg-briefing-empty { font-size: 11px; opacity: 0.45; }
+.bg-briefing-cols { display: flex; gap: 20px; flex-wrap: wrap; }
+.bg-briefing-col { flex: 1; min-width: 200px; }
+.bg-briefing-col ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.bg-briefing-col li { font-size: 11px; line-height: 1.5; opacity: 0.85; padding: 6px 10px; background: rgba(10,40,45,0.3); border-radius: 6px; }
+.bg-briefing-col.stuck li { border-left: 2px solid #ff9a5c; }
+.bg-briefing-col-empty { font-size: 10px; opacity: 0.4; }
+.bg-signoff-card { background: rgba(10,40,45,0.4); border: 1px solid rgba(90,255,230,0.25); border-radius: 12px; padding: 16px 22px; }
+.bg-signoff-header { font-size: 12px; letter-spacing: 2px; opacity: 0.7; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.bg-signoff-status { font-size: 9px; padding: 3px 8px; border-radius: 10px; letter-spacing: 1px; text-transform: uppercase; }
+.bg-signoff-status.status-pending { background: rgba(255,207,127,0.15); color: #ffcf7f; }
+.bg-signoff-status.status-approved { background: rgba(111,255,143,0.15); color: #6fff8f; }
+.bg-signoff-status.status-redirected { background: rgba(255,154,92,0.15); color: #ff9a5c; }
+.bg-signoff-status.status-none { background: rgba(255,255,255,0.08); color: #888; }
+.bg-signoff-items { list-style: none; display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.bg-signoff-items li { font-size: 11px; opacity: 0.85; padding: 6px 10px; background: rgba(10,40,45,0.3); border-radius: 6px; }
+.bg-signoff-actions { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.bg-signoff-btn { background: rgba(90,255,230,0.15); border: 1px solid rgba(90,255,230,0.4); color: #baffef; border-radius: 6px; padding: 7px 16px; cursor: pointer; font-family: Orbitron, sans-serif; letter-spacing: 1px; font-size: 10px; }
+.bg-signoff-btn:hover { background: rgba(90,255,230,0.25); }
+.bg-signoff-btn.redirect { background: rgba(255,154,92,0.1); border-color: rgba(255,154,92,0.35); color: #ff9a5c; }
+.bg-signoff-btn.redirect:hover { background: rgba(255,154,92,0.2); }
+.bg-signoff-note-input { flex: 1; background: rgba(4,20,26,0.6); border: 1px solid rgba(90,255,230,0.25); border-radius: 6px; padding: 7px 10px; color: #baffef; font-family: Orbitron, sans-serif; font-size: 11px; outline: none; }
+.bg-signoff-meta { font-size: 10px; opacity: 0.5; margin-top: 8px; }
+.bg-queue-row { display: flex; align-items: center; gap: 10px; font-size: 11px; background: rgba(10,40,45,0.3); border: 1px solid rgba(90,255,230,0.15); border-radius: 6px; padding: 8px 12px; }
+.bg-queue-row.status-blocked { border-left: 2px solid #ff9a5c; }
+.bg-queue-row.status-in_progress { border-left: 2px solid #ffcf7f; }
+.bg-queue-row.status-done { opacity: 0.6; }
+.bg-queue-status-tag { font-size: 8px; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; margin-left: auto; }
 .status-captured { background: rgba(143,184,255,0.15); color: #8fb8ff; }
 .status-evaluating { background: rgba(201,166,255,0.15); color: #c9a6ff; }
 .status-building { background: rgba(255,154,92,0.15); color: #ff9a5c; }
@@ -817,6 +848,87 @@ function bgBoardColumn(label, items) {
     : "<div style=\"opacity:0.4; font-size:10px;\">none</div>";
   return "<div class=\"bg-column\"><div class=\"bg-column-title\">" + label + " (" + items.length + ")</div>" + body + "</div>";
 }
+function bgBriefingCol(label, items, cls) {
+  const body = (items && items.length)
+    ? "<ul>" + items.map(i => "<li>" + escapeHtml(i) + "</li>").join("") + "</ul>"
+    : "<div class=\"bg-briefing-col-empty\">none</div>";
+  return "<div class=\"bg-briefing-col" + (cls ? " " + cls : "") + "\"><div class=\"bg-column-title\">" + label + "</div>" + body + "</div>";
+}
+function renderBriefing(briefing) {
+  briefing = briefing || {};
+  if (!briefing.date) {
+    return "<div class=\"bg-briefing-card\"><div class=\"bg-briefing-header\">MORNING BRIEFING</div><div class=\"bg-briefing-empty\">No briefing yet - nothing has run overnight.</div></div>";
+  }
+  return "<div class=\"bg-briefing-card\">" +
+    "<div class=\"bg-briefing-header\">MORNING BRIEFING <span class=\"bg-briefing-date\">" + escapeHtml(briefing.date) + "</span></div>" +
+    "<div class=\"bg-briefing-cols\">" +
+      bgBriefingCol("Researched", briefing.researched) +
+      bgBriefingCol("Moved Forward", briefing.movedForward) +
+      bgBriefingCol("Stuck / Needs You", briefing.stuck, "stuck") +
+    "</div></div>";
+}
+function renderSignoff(signoff) {
+  signoff = signoff || { status: "none", items: [] };
+  const status = signoff.status || "none";
+  let body = "";
+  if (status === "none") {
+    body = "<div class=\"bg-briefing-empty\">No pending proposal. Jarvis will propose overnight work before the next session ends.</div>";
+  } else if (status === "pending") {
+    body = "<ul class=\"bg-signoff-items\">" + signoff.items.map(i => "<li>" + escapeHtml(i) + "</li>").join("") + "</ul>" +
+      "<div class=\"bg-signoff-actions\">" +
+        "<button class=\"bg-signoff-btn approve\" id=\"signoffApproveBtn\">Approve</button>" +
+        "<button class=\"bg-signoff-btn redirect\" id=\"signoffRedirectBtn\">Redirect</button>" +
+        "<input type=\"text\" id=\"signoffNoteInput\" class=\"bg-signoff-note-input\" placeholder=\"optional note (required for redirect)\">" +
+      "</div>";
+  } else if (status === "approved") {
+    body = "<ul class=\"bg-signoff-items\">" + signoff.items.map(i => "<li>" + escapeHtml(i) + "</li>").join("") + "</ul>" +
+      "<div class=\"bg-signoff-meta\">Approved " + escapeHtml((signoff.respondedAt || "").slice(0, 16).replace("T", " ")) + " - queued for tonight.</div>";
+  } else if (status === "redirected") {
+    body = "<div class=\"bg-signoff-meta\">Redirected " + escapeHtml((signoff.respondedAt || "").slice(0, 16).replace("T", " ")) +
+      (signoff.userNote ? (": " + escapeHtml(signoff.userNote)) : "") + "</div>";
+  }
+  return "<div class=\"bg-signoff-card\">" +
+    "<div class=\"bg-signoff-header\">SIGN-OFF NEGOTIATION <span class=\"bg-signoff-status status-" + status + "\">" + escapeHtml(status) + "</span></div>" +
+    body + "</div>";
+}
+const QUEUE_STATUS_LABEL = { queued: "queued", in_progress: "in progress", done: "done", blocked: "blocked" };
+function bgQueueRow(item) {
+  const st = item.status || "queued";
+  return "<div class=\"bg-queue-row status-" + st + "\">" +
+    "<span>" + escapeHtml(item.text) + "</span>" +
+    (item.note ? ("<span style=\"opacity:0.5;\">" + escapeHtml(item.note) + "</span>") : "") +
+    "<span class=\"bg-queue-status-tag\">" + escapeHtml(QUEUE_STATUS_LABEL[st] || st) + "</span>" +
+    "</div>";
+}
+function renderQueueSection(queue, stuck) {
+  queue = queue || [];
+  const current = queue.filter(q => q.status === "in_progress");
+  const queued = queue.filter(q => q.status === "queued");
+  const waiting = queue.filter(q => q.status === "blocked");
+  const waitingHtml = (waiting.length || (stuck && stuck.length))
+    ? (waiting.map(bgQueueRow).join("") + (stuck || []).map(s => "<div class=\"bg-queue-row status-blocked\"><span>" + escapeHtml(s) + "</span></div>").join(""))
+    : "<div style=\"opacity:0.4; font-size:10px;\">nothing waiting on you</div>";
+  return "<div class=\"bg-section\"><div class=\"bg-section-title\">CURRENT WORK (" + current.length + ")</div><div class=\"bg-task-list\">" +
+      (current.length ? current.map(bgQueueRow).join("") : "<div style=\"opacity:0.4; font-size:10px;\">nothing running right now</div>") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">QUEUED TASKS (" + queued.length + ")</div><div class=\"bg-task-list\">" +
+      (queued.length ? queued.map(bgQueueRow).join("") : "<div style=\"opacity:0.4; font-size:10px;\">queue empty</div>") + "</div></div>" +
+    "<div class=\"bg-section\"><div class=\"bg-section-title\">WAITING ON YOU</div><div class=\"bg-task-list\">" + waitingHtml + "</div></div>";
+}
+async function respondToSignoff(action) {
+  const note = (document.getElementById("signoffNoteInput") || {}).value || "";
+  if (action === "redirect" && !note.trim()) {
+    alert("Add a note describing what to do instead before redirecting.");
+    return;
+  }
+  try {
+    await fetch("/accountability/respond", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Jarvis-Token": JARVIS_TOKEN },
+      body: JSON.stringify({ action, note }),
+    });
+  } catch (e) {}
+  loadBackgroundDashboard();
+}
 function renderBackgroundDashboard(data) {
   const el = document.getElementById("backgroundContent");
   if (!el) return;
@@ -824,6 +936,9 @@ function renderBackgroundDashboard(data) {
   const goals = data.goals || [];
   const ideas = data.ideas || [];
   const unowned = data.unownedBoardItems || { backlog: [], sprint: [], inProgress: [], done: [] };
+  const signoff = data.signoff || { status: "none", items: [] };
+  const queue = data.queue || [];
+  const briefing = data.briefing || {};
 
   const warningsHtml = (t.warnings && t.warnings.length)
     ? t.warnings.map(w => "<div class=\"bg-warning-banner\">" + escapeHtml(w) + "</div>").join("")
@@ -831,6 +946,9 @@ function renderBackgroundDashboard(data) {
 
   el.innerHTML =
     warningsHtml +
+    renderBriefing(briefing) +
+    renderSignoff(signoff) +
+    renderQueueSection(queue, briefing.stuck) +
     "<div class=\"bg-section\"><div class=\"bg-section-title\">ACTIVE TASKS (" + t.active.length + ")</div><div class=\"bg-task-list\">" +
       t.active.map(x => bgTaskRow(x, "")).join("") + "</div></div>" +
     "<div class=\"bg-section\"><div class=\"bg-section-title\">DONE (" + t.done.length + ")</div><div class=\"bg-task-list\">" +
@@ -845,6 +963,11 @@ function renderBackgroundDashboard(data) {
       bgBoardColumn("Backlog", unowned.backlog) + bgBoardColumn("Sprint", unowned.sprint) +
       bgBoardColumn("In Progress", unowned.inProgress) + bgBoardColumn("Done", unowned.done) +
     "</div></div>";
+
+  const approveBtn = document.getElementById("signoffApproveBtn");
+  const redirectBtn = document.getElementById("signoffRedirectBtn");
+  if (approveBtn) approveBtn.addEventListener("click", () => respondToSignoff("approve"));
+  if (redirectBtn) redirectBtn.addEventListener("click", () => respondToSignoff("redirect"));
 }
 async function loadBackgroundDashboard() {
   try {

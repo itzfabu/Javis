@@ -5,6 +5,13 @@
 # (e.g. voice-response staging). No real notes or docs use .txt - those are .md.
 *.txt
 
+# Exceptions to the blanket *.txt rule above: paths where overnight-run work
+# products can legitimately land and must survive the backup, not silently
+# vanish while the queue item that produced them says "done" (#2026-08-04
+# overnight-runner safety testing - a gate-test proof file went uncommitted).
+!orb/overnight-*.txt
+!vault/**/*.txt
+
 # Junctions/hardlinks into vault/ for Obsidian's 3D-graph vault scope (#see graphify session 2026-07-27).
 # Git can't see these as links - it walks through them - so ignore the vault-side paths
 # and keep tracking only the real C:\Jarvis locations.

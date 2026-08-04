@@ -186,6 +186,31 @@ GOALS_MD_PATH = r"C:\Jarvis\knowledge\GOALS.md"
 VAULT_PROJECTS_DIR = r"C:\Jarvis\vault\Projects"
 VAULT_IDEAS_DIR = r"C:\Jarvis\vault\Ideas"
 ENGINEERING_BOARD_PATH = r"C:\Jarvis\vault\Boards\Engineering.md"
+ACCOUNTABILITY_PATH = r"C:\Jarvis\orb\accountability.json"
+ACCOUNTABILITY_LOCK = threading.Lock()
+
+DEFAULT_ACCOUNTABILITY = {
+    "signoff": {"status": "none", "proposedAt": None, "items": [], "respondedAt": None, "userNote": ""},
+    "queue": [],
+    "briefing": {"date": None, "generatedAt": None, "researched": [], "movedForward": [], "stuck": []},
+}
+
+def read_accountability():
+    if not os.path.exists(ACCOUNTABILITY_PATH):
+        return json.loads(json.dumps(DEFAULT_ACCOUNTABILITY))
+    try:
+        with open(ACCOUNTABILITY_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return json.loads(json.dumps(DEFAULT_ACCOUNTABILITY))
+    data.setdefault("signoff", DEFAULT_ACCOUNTABILITY["signoff"])
+    data.setdefault("queue", [])
+    data.setdefault("briefing", DEFAULT_ACCOUNTABILITY["briefing"])
+    return data
+
+def write_accountability(data):
+    with open(ACCOUNTABILITY_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
 
 def parse_projects_md():
     projects = []
@@ -490,13 +515,49 @@ def background_dashboard():
     ideas = parse_ideas()
     names = [p["name"] for p in projects]
     _, unowned = parse_engineering_board(names)
+    accountability = read_accountability()
     return jsonify({
         "tasks": tasks,
         "goals": goals,
         "ideas": ideas,
         "unownedBoardItems": unowned,
+        "signoff": accountability["signoff"],
+        "queue": accountability["queue"],
+        "briefing": accountability["briefing"],
         "generatedAt": datetime.now(timezone.utc).isoformat(),
     })
+
+@app.route("/accountability/respond", methods=["POST"])
+def accountability_respond():
+    token = request.headers.get("X-Jarvis-Token", "")
+    if token != SECRET_TOKEN:
+        return jsonify({"error": "unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    action = data.get("action")
+    note = (data.get("note") or "").strip()
+    if action not in ("approve", "redirect"):
+        return jsonify({"error": "action must be 'approve' or 'redirect'"}), 400
+
+    with ACCOUNTABILITY_LOCK:
+        acc = read_accountability()
+        if acc["signoff"]["status"] != "pending":
+            return jsonify({"error": "no pending proposal to respond to"}), 409
+
+        now = datetime.now(timezone.utc).isoformat()
+        acc["signoff"]["respondedAt"] = now
+        acc["signoff"]["userNote"] = note
+        if action == "approve":
+            acc["signoff"]["status"] = "approved"
+            acc["queue"] = [
+                {"id": str(uuid.uuid4()), "text": item, "status": "queued", "note": ""}
+                for item in acc["signoff"]["items"]
+            ]
+        else:
+            acc["signoff"]["status"] = "redirected"
+        write_accountability(acc)
+
+    return jsonify(acc)
 
 @app.route("/generated-sites.json")
 def generated_sites_dashboard():

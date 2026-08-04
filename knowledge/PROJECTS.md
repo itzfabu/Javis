@@ -30,3 +30,9 @@ Tag related tasks in TASKS.md with #project-name to link them here.
 - Goal: Monetize the Jarvis System
 - Notes: Standalone widget, no Claude/Flask backend - just the audio-reactive sphere as a pure OBS Browser Source. De-scoped deliberately from the earlier personal-assistant pivot to avoid the multi-tenant/hosting problem. Full findings: vault/Projects/Streamer HUD Widget Market Research.md.
 
+## Website Generator
+- Status: active
+- Owner agent: webdesigner
+- Goal: Monetize the Jarvis System
+- Notes: Generates real static HTML/CSS/JS landing sites from a prompt + reviews, not a templated system. Dual-purpose - Fabio's own future products, and website-generation as a service. MVP is generate-from-prompt only; clone-and-rebuild is scoped but deferred. Currently working through a flipbook-vs-live-Three.js open question for the hero animation layer, plus an ordered three-thread research plan (brand extraction -> conversion skeleton -> frame generation). Full detail: vault/Projects/Website Generator.md, background: vault/Ideas/Website Generator (Landing Pages + Clone-and-Rebuild).md. Added to PROJECTS.md 2026-08-04 - the project note existed already but was never registered here.
+
