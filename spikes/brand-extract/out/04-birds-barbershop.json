@@ -1,0 +1,78 @@
+{
+  "url": "https://birdsbarbershop.com",
+  "extractedAt": "2026-08-04T13:43:34.552Z",
+  "errors": [],
+  "confidence": {
+    "background": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "medium",
+      "note": "sampled from screenshot crop (image-based header, no computed background-color)"
+    },
+    "footer": {
+      "level": "low",
+      "note": "no distinct background found"
+    },
+    "cta": {
+      "level": "medium",
+      "note": "scored candidate match (score 23.0), still needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "surface": {
+      "level": "medium",
+      "note": "derived (tint) from background, not independently extracted"
+    },
+    "border": {
+      "level": "medium",
+      "note": "derived (shade) from background, not independently extracted"
+    },
+    "logo": {
+      "level": "low",
+      "note": "often a marketing/share graphic, not a clean logo mark - flag for manual review"
+    }
+  },
+  "color": {
+    "background": "rgb(247, 241, 234)",
+    "text": "rgb(51, 51, 51)",
+    "header": "rgb(220, 215, 209)",
+    "footer": null,
+    "cta": {
+      "text": "Book Now",
+      "backgroundColor": "rgb(17, 17, 17)",
+      "color": "rgb(247, 241, 234)",
+      "borderColor": "rgb(17, 17, 17)",
+      "score": 23,
+      "selectorClass": "elementor-button elementor-button-link elementor-size-sm"
+    },
+    "link": "rgb(17, 17, 17)",
+    "surface": "rgb(251, 248, 245)",
+    "border": "rgb(222, 217, 211)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "\"Zing Rust\", sans-serif",
+    "bodyFont": "\"Source Sans 3\", sans-serif",
+    "headingFirst": "Zing Rust",
+    "bodyFirst": "Source Sans 3",
+    "headingNormalized": "Zing Rust",
+    "bodyNormalized": "Source Sans 3"
+  },
+  "logo": {
+    "tier": "og-image",
+    "format": "jpg",
+    "url": "https://birdsbarbershop.com/wp-content/uploads/2026/02/default-social-share-image-1.jpg",
+    "downloadedPath": "out/04-birds-barbershop.logo.jpg",
+    "downloadedBytes": 56890
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "url": "https://www.cedarvillagedentistry.com",
+  "extractedAt": "2026-08-04T13:05:45.913Z",
+  "errors": [
+    "networkidle timed out, fell back to domcontentloaded: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.cedarvillagedentistry.com/\", waiting until \"networkidle\"\u001b[22m\n"
+  ],
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgba(0, 0, 0, 0.7)",
+    "header": "rgb(255, 255, 255)",
+    "footer": null,
+    "cta": null,
+    "link": "rgb(255, 255, 255)",
+    "surface": null,
+    "borderSample": null
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "Poppins, Helvetica, Arial, Lucida, sans-serif",
+    "bodyFont": "Lora, Georgia, \"Times New Roman\", serif",
+    "headingFirst": "Poppins",
+    "bodyFirst": "Lora"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[id*=\"logo\" i]",
+    "url": "https://cedarvillagedentistry.com/wp-content/uploads/2025/11/logo.png",
+    "downloadError": "HTTP 403"
+  }
+}

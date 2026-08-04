@@ -1,0 +1,41 @@
+{
+  "url": "https://newmanroofing.com",
+  "extractedAt": "2026-08-04T13:06:48.549Z",
+  "errors": [],
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(51, 49, 49)",
+    "header": null,
+    "footer": null,
+    "cta": {
+      "selector": ".btn-primary",
+      "backgroundColor": "rgb(31, 31, 31)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Shingle Roofing"
+    },
+    "link": "rgb(0, 0, 0)",
+    "surface": null,
+    "borderSample": "rgb(104, 110, 119)"
+  },
+  "customProperties": {
+    "--primary": "#1f1f1f",
+    "--secondary": "#c4a25f"
+  },
+  "customPropertiesFromRules": {
+    "--primary": "#1f1f1f"
+  },
+  "font": {
+    "headingFont": "\"DM Sans\", sans-serif",
+    "bodyFont": "\"DM Sans\", sans-serif",
+    "headingFirst": "DM Sans",
+    "bodyFirst": "DM Sans"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "img[class*=\"logo\" i]",
+    "url": "https://cdn-ilaiknh.nitrocdn.com/tNdmXdriuGfUocPvcMtByqfQEDXOslhS/assets/images/optimized/rev-b20f90a/newmanroofing.com/wp-content/uploads/2024/04/logo-white-200x.png",
+    "downloadedPath": "out/06-newman-roofing.logo.png",
+    "downloadedBytes": 4333
+  }
+}

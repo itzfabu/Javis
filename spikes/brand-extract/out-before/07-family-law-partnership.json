@@ -1,0 +1,36 @@
+{
+  "url": "https://www.flip.co.uk",
+  "extractedAt": "2026-08-04T13:07:10.152Z",
+  "errors": [],
+  "color": {
+    "background": "rgba(0, 0, 0, 0)",
+    "text": "rgb(26, 40, 68)",
+    "header": "rgb(243, 242, 241)",
+    "footer": "rgb(243, 242, 241)",
+    "cta": {
+      "selector": "[class*=\"cta\" i]",
+      "backgroundColor": "rgb(211, 196, 148)",
+      "color": "rgb(26, 40, 68)",
+      "text": "Get Started Online"
+    },
+    "link": "rgb(26, 40, 68)",
+    "surface": "rgb(26, 40, 68)",
+    "borderSample": "rgb(0, 56, 255)"
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "circularxxweb-book, serif",
+    "bodyFont": "CircularXXWeb-Book, serif",
+    "headingFirst": "circularxxweb-book",
+    "bodyFirst": "CircularXXWeb-Book"
+  },
+  "logo": {
+    "tier": "inline-svg",
+    "format": "svg",
+    "selector": "header svg",
+    "svgOuterHTMLLength": 110,
+    "downloadedPath": "out/07-family-law-partnership.logo.svg",
+    "downloadedBytes": 110
+  }
+}

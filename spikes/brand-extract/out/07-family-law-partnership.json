@@ -1,0 +1,85 @@
+{
+  "url": "https://www.flip.co.uk",
+  "extractedAt": "2026-08-04T13:44:18.269Z",
+  "errors": [],
+  "confidence": {
+    "background": {
+      "level": "medium",
+      "note": "transparent computed value, normalized to assumed white"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "high",
+      "note": "direct computed value on header"
+    },
+    "footer": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "cta": {
+      "level": "medium",
+      "note": "scored candidate match (score 23.0), still needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "surface": {
+      "level": "medium",
+      "note": "derived (tint) from background, not independently extracted"
+    },
+    "border": {
+      "level": "medium",
+      "note": "derived (shade) from background, not independently extracted"
+    },
+    "logo": {
+      "level": "medium",
+      "note": "passed display:none / icon-font / size / use-ref validation, but validation is heuristic, not certain"
+    }
+  },
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(26, 40, 68)",
+    "header": "rgb(243, 242, 241)",
+    "footer": "rgb(243, 242, 241)",
+    "cta": {
+      "text": "Get Started Online",
+      "backgroundColor": "rgb(211, 196, 148)",
+      "color": "rgb(26, 40, 68)",
+      "borderColor": "rgb(26, 40, 68)",
+      "score": 23,
+      "selectorClass": "n-cta n-cta--gold"
+    },
+    "link": "rgb(214, 195, 143)",
+    "surface": "rgb(255, 255, 255)",
+    "border": "rgb(230, 230, 230)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "circularxxweb-book, serif",
+    "bodyFont": "CircularXXWeb-Book, serif",
+    "headingFirst": "circularxxweb-book",
+    "bodyFirst": "CircularXXWeb-Book",
+    "headingNormalized": "Circularxxweb",
+    "bodyNormalized": "CircularXXWeb"
+  },
+  "logo": {
+    "tier": "inline-svg-validated",
+    "format": "svg",
+    "selector": "header svg",
+    "renderedSize": {
+      "width": 280,
+      "height": 46
+    },
+    "hadUseRef": true,
+    "unresolvedUseRef": false,
+    "svgOuterHTMLLength": 9016,
+    "downloadedPath": "out/07-family-law-partnership.logo.svg",
+    "downloadedBytes": 9016
+  }
+}

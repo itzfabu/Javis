@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A: Native CSS scroll-driven flipbook</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #04141a; color: #baffef; font-family: monospace; }
+  .info { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 10px 16px;
+    background: rgba(0,0,0,0.7); font-size: 13px; display: flex; gap: 24px; }
+  .scroll-track { height: 900vh; position: relative; }
+  .sticky-viewport { position: sticky; top: 0; height: 100vh; display: flex;
+    align-items: center; justify-content: center; overflow: hidden; }
+
+  /* --- THE ACTUAL TECHNIQUE: sprite-sheet background-position stepped via
+     CSS steps() timing, driven purely by animation-timeline: scroll(). No JS
+     is involved in producing this animation - the two rules below and the
+     @keyframes are the entire mechanism. --- */
+  .sprite {
+    width: 400px;
+    height: 600px;
+    background-image: url('spritesheet.png');
+    background-repeat: no-repeat;
+    background-size: 38400px 600px; /* 96 frames * 400px, native size */
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+    outline: 1px solid rgba(90,255,230,0.3);
+  }
+  @keyframes scrub-frames {
+    from { background-position-x: 0px; }
+    to   { background-position-x: -38000px; } /* (96-1) * 400px */
+  }
+
+  .marker { position: absolute; left: 16px; font-size: 11px; opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="info">
+  <span>IMPLEMENTATION A - Native CSS (steps() + background-position, animation-timeline: scroll())</span>
+  <span id="dbgScrollY">scrollY: 0</span>
+  <span id="dbgFrame">frame: -</span>
+  <span id="dbgBgPos">bgPosX: -</span>
+</div>
+
+<div class="scroll-track">
+  <div class="marker" style="top: 0;">start</div>
+  <div class="marker" style="top: 50%;">mid</div>
+  <div class="marker" style="top: 100%; transform: translateY(-100%);">end</div>
+  <div class="sticky-viewport">
+    <div class="sprite" id="sprite"></div>
+  </div>
+</div>
+
+<script>
+// MEASUREMENT INSTRUMENTATION ONLY - reads computed style each rAF tick to
+// verify what the pure-CSS animation is actually doing. Does not drive or
+// influence the animation in any way.
+const sprite = document.getElementById('sprite');
+const dbgScrollY = document.getElementById('dbgScrollY');
+const dbgFrame = document.getElementById('dbgFrame');
+const dbgBgPos = document.getElementById('dbgBgPos');
+const FRAME_W = 400;
+const N_FRAMES = 96;
+
+window.__frameLog = [];
+window.__logging = false;
+
+function currentFrameFromBgPos() {
+  const cs = getComputedStyle(sprite);
+  const bg = cs.backgroundPositionX; // e.g. "-3600px"
+  const px = parseFloat(bg) || 0;
+  const frame = Math.round(-px / FRAME_W);
+  return { px, frame };
+}
+
+function tick() {
+  const { px, frame } = currentFrameFromBgPos();
+  dbgScrollY.textContent = 'scrollY: ' + Math.round(window.scrollY);
+  dbgFrame.textContent = 'frame: ' + frame;
+  dbgBgPos.textContent = 'bgPosX: ' + px.toFixed(1) + 'px';
+  if (window.__logging) {
+    window.__frameLog.push({ t: performance.now(), scrollY: window.scrollY, frame });
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+window.__maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+window.__expectedFrame = (scrollY) => {
+  const max = window.__maxScroll();
+  const t = Math.min(1, Math.max(0, scrollY / max));
+  return Math.min(N_FRAMES - 1, Math.floor(t * 95 + 1e-9));
+};
+</script>
+</body>
+</html>

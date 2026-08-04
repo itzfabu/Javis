@@ -1,0 +1,50 @@
+{
+  "url": "https://gfryork.com",
+  "extractedAt": "2026-08-04T13:08:07.493Z",
+  "errors": [],
+  "color": {
+    "background": "rgba(0, 0, 0, 0)",
+    "text": "rgb(18, 36, 58)",
+    "header": "rgba(7, 23, 40, 0.92)",
+    "footer": null,
+    "cta": {
+      "selector": "button",
+      "backgroundColor": "rgb(8, 28, 51)",
+      "color": "rgb(255, 255, 255)",
+      "text": "←"
+    },
+    "link": "rgb(255, 255, 255)",
+    "surface": "rgba(255, 255, 255, 0.96)",
+    "borderSample": "rgba(255, 255, 255, 0.18)"
+  },
+  "customProperties": {
+    "--color-primary": "#d5253f",
+    "--color-secondary": "#123d6b",
+    "--color-accent": "#081c33",
+    "--color-text": "#12243a"
+  },
+  "customPropertiesFromRules": {
+    "--color-primary": "var(--gfr-red)",
+    "--color-secondary": "var(--gfr-blue)",
+    "--color-accent": "var(--gfr-navy)",
+    "--color-surface": "var(--gfr-surface)",
+    "--color-surface-alt": "var(--gfr-surface-soft)",
+    "--color-text": "var(--gfr-ink)",
+    "--color-text-muted": "var(--gfr-text)",
+    "--color-border": "var(--gfr-line)"
+  },
+  "font": {
+    "headingFont": "\"Barlow Condensed\", sans-serif",
+    "bodyFont": "Barlow, sans-serif",
+    "headingFirst": "Barlow Condensed",
+    "bodyFirst": "Barlow"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[class*=\"logo\" i]",
+    "url": "https://gfryork.com/wp-content/uploads/gfr-logo-white.png",
+    "downloadedPath": "out/09-grace-family-roofing.logo.png",
+    "downloadedBytes": 8674
+  }
+}

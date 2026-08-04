@@ -1,0 +1,122 @@
+{
+  "url": "https://gfryork.com",
+  "extractedAt": "2026-08-04T13:45:05.253Z",
+  "errors": [],
+  "confidence": {
+    "background": {
+      "level": "medium",
+      "note": "transparent computed value, normalized to assumed white"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "medium",
+      "note": "sampled from screenshot crop (image-based header, no computed background-color)"
+    },
+    "footer": {
+      "level": "low",
+      "note": "no distinct background found"
+    },
+    "cta": {
+      "level": "medium",
+      "note": "scored candidate match (score 22.4), still needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "surface": {
+      "level": "medium",
+      "note": "derived (tint) from background, not independently extracted"
+    },
+    "border": {
+      "level": "medium",
+      "note": "derived (shade) from background, not independently extracted"
+    },
+    "logo": {
+      "level": "medium",
+      "note": "heuristic match on class/id/alt - confirmed reliable in the original spike, still worth a quick human glance"
+    }
+  },
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(18, 36, 58)",
+    "header": "rgb(33, 47, 63)",
+    "footer": null,
+    "cta": {
+      "text": "Contact Us",
+      "backgroundColor": "rgba(255, 255, 255, 0.08)",
+      "color": "rgb(255, 255, 255)",
+      "borderColor": "rgba(255, 255, 255, 0.42)",
+      "score": 22.4445625,
+      "selectorClass": "gfr-btn gfr-btn--ghost"
+    },
+    "link": "rgb(231, 27, 82)",
+    "surface": "rgb(255, 255, 255)",
+    "border": "rgb(230, 230, 230)"
+  },
+  "customProperties": {
+    "--color-primary": {
+      "raw": "#d5253f",
+      "normalized": "rgb(213, 37, 63)"
+    },
+    "--color-secondary": {
+      "raw": "#123d6b",
+      "normalized": "rgb(18, 61, 107)"
+    },
+    "--color-accent": {
+      "raw": "#081c33",
+      "normalized": "rgb(8, 28, 51)"
+    },
+    "--color-text": {
+      "raw": "#12243a",
+      "normalized": "rgb(18, 36, 58)"
+    }
+  },
+  "customPropertyCrossCheck": {
+    "--color-primary": {
+      "confirmedByStructuralMatch": false,
+      "matchedAgainst": null
+    },
+    "--color-secondary": {
+      "confirmedByStructuralMatch": false,
+      "matchedAgainst": null
+    },
+    "--color-accent": {
+      "confirmedByStructuralMatch": false,
+      "matchedAgainst": null
+    },
+    "--color-text": {
+      "confirmedByStructuralMatch": false,
+      "matchedAgainst": null
+    }
+  },
+  "customPropertiesFromRules": {
+    "--color-primary": "var(--gfr-red)",
+    "--color-secondary": "var(--gfr-blue)",
+    "--color-accent": "var(--gfr-navy)",
+    "--color-surface": "var(--gfr-surface)",
+    "--color-surface-alt": "var(--gfr-surface-soft)",
+    "--color-text": "var(--gfr-ink)",
+    "--color-text-muted": "var(--gfr-text)",
+    "--color-border": "var(--gfr-line)"
+  },
+  "font": {
+    "headingFont": "\"Barlow Condensed\", sans-serif",
+    "bodyFont": "Barlow, sans-serif",
+    "headingFirst": "Barlow Condensed",
+    "bodyFirst": "Barlow",
+    "headingNormalized": "Barlow Condensed",
+    "bodyNormalized": "Barlow"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[class*=\"logo\" i]",
+    "url": "https://gfryork.com/wp-content/uploads/gfr-logo-white.png",
+    "downloadedPath": "out/09-grace-family-roofing.logo.png",
+    "downloadedBytes": 8674
+  }
+}

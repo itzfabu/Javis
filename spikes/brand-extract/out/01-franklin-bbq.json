@@ -1,0 +1,79 @@
+{
+  "url": "https://franklinbbq.com",
+  "extractedAt": "2026-08-04T13:42:45.113Z",
+  "errors": [],
+  "confidence": {
+    "background": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "medium",
+      "note": "sampled from screenshot crop (image-based header, no computed background-color)"
+    },
+    "footer": {
+      "level": "low",
+      "note": "no distinct background found"
+    },
+    "cta": {
+      "level": "medium",
+      "note": "scored candidate match (score 23.0), still needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "surface": {
+      "level": "medium",
+      "note": "derived (tint) from background, not independently extracted"
+    },
+    "border": {
+      "level": "medium",
+      "note": "derived (shade) from background, not independently extracted"
+    },
+    "logo": {
+      "level": "medium",
+      "note": "heuristic match on class/id/alt - confirmed reliable in the original spike, still worth a quick human glance"
+    }
+  },
+  "color": {
+    "background": "rgb(239, 238, 222)",
+    "text": "rgb(78, 75, 78)",
+    "header": "rgb(220, 211, 194)",
+    "footer": null,
+    "cta": {
+      "text": "Order in Advance",
+      "backgroundColor": "rgb(230, 116, 55)",
+      "color": "rgb(255, 255, 255)",
+      "borderColor": "rgb(255, 255, 255)",
+      "score": 23,
+      "selectorClass": "btn btn--border theme-btn--primary-inverse sqs-button-elemen"
+    },
+    "link": "rgb(230, 116, 55)",
+    "surface": "rgb(247, 247, 239)",
+    "border": "rgb(215, 214, 200)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "cheap-pine-sans",
+    "bodyFont": "sans-serif",
+    "headingFirst": "cheap-pine-sans",
+    "bodyFirst": "sans-serif",
+    "headingNormalized": "Cheap Pine Sans",
+    "bodyNormalized": "Sans Serif"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "img[alt*=\"logo\" i]",
+    "url": "https://images.squarespace-cdn.com/content/v1/68e8046383dcbe440e273429/67b3ddc3-66c9-437e-ab1d-b877a09e39a2/Franklin-BBQ_Giftcard.png",
+    "downloadedPath": "out/01-franklin-bbq.logo.png",
+    "downloadedBytes": 51742
+  }
+}

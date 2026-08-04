@@ -1,0 +1,36 @@
+{
+  "url": "https://franklinbbq.com",
+  "extractedAt": "2026-08-04T13:05:42.164Z",
+  "errors": [],
+  "color": {
+    "background": "rgb(239, 238, 222)",
+    "text": "rgb(78, 75, 78)",
+    "header": null,
+    "footer": null,
+    "cta": {
+      "selector": "[class*=\"cta\" i]",
+      "backgroundColor": "rgb(230, 116, 55)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Accept all"
+    },
+    "link": "rgb(255, 255, 255)",
+    "surface": "rgb(255, 255, 255)",
+    "borderSample": "rgba(0, 0, 0, 0.12)"
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "cheap-pine-sans",
+    "bodyFont": "sans-serif",
+    "headingFirst": "cheap-pine-sans",
+    "bodyFirst": "sans-serif"
+  },
+  "logo": {
+    "tier": "inline-svg",
+    "format": "svg",
+    "selector": "header svg",
+    "svgOuterHTMLLength": 2832,
+    "downloadedPath": "out/01-franklin-bbq.logo.svg",
+    "downloadedBytes": 2832
+  }
+}

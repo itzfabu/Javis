@@ -1,0 +1,38 @@
+{
+  "url": "https://hiutdenim.co.uk",
+  "extractedAt": "2026-08-04T13:06:28.692Z",
+  "errors": [],
+  "color": {
+    "background": "rgb(245, 244, 240)",
+    "text": "rgb(0, 0, 0)",
+    "header": null,
+    "footer": "rgb(245, 244, 240)",
+    "cta": {
+      "selector": "button[type=\"submit\"]",
+      "backgroundColor": "rgb(0, 0, 0)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Sign up"
+    },
+    "link": "rgb(255, 255, 255)",
+    "surface": null,
+    "borderSample": "oklch(0.97 0 0)"
+  },
+  "customProperties": {
+    "--color-primary": "oklch(.50726 .208156 29.2339)"
+  },
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "\"Founders Grotesk\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "bodyFont": "\"Founders Grotesk\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "headingFirst": "Founders Grotesk",
+    "bodyFirst": "Founders Grotesk"
+  },
+  "logo": {
+    "tier": "inline-svg",
+    "format": "svg",
+    "selector": "header svg",
+    "svgOuterHTMLLength": 599,
+    "downloadedPath": "out/03-hiut-denim.logo.svg",
+    "downloadedBytes": 599
+  }
+}

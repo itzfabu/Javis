@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>B: GSAP ScrollTrigger + Lenis canvas flipbook</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #04141a; color: #baffef; font-family: monospace; }
+  .info { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 10px 16px;
+    background: rgba(0,0,0,0.7); font-size: 13px; display: flex; gap: 24px; }
+  .scroll-track { height: 900vh; position: relative; }
+  .sticky-viewport { position: sticky; top: 0; height: 100vh; display: flex;
+    align-items: center; justify-content: center; overflow: hidden; }
+  canvas { width: 400px; height: 600px; outline: 1px solid rgba(90,255,230,0.3); }
+  .marker { position: absolute; left: 16px; font-size: 11px; opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="info">
+  <span>IMPLEMENTATION B - GSAP ScrollTrigger (scrub) + Lenis, canvas + individual PNGs</span>
+  <span id="dbgScrollY">scrollY: 0</span>
+  <span id="dbgFrame">frame: -</span>
+  <span id="dbgLoaded">loaded: 0/96</span>
+</div>
+
+<div class="scroll-track" id="scrollTrack">
+  <div class="marker" style="top: 0;">start</div>
+  <div class="marker" style="top: 50%;">mid</div>
+  <div class="marker" style="top: 100%; transform: translateY(-100%);">end</div>
+  <div class="sticky-viewport">
+    <canvas id="canvas" width="400" height="600"></canvas>
+  </div>
+</div>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+const N_FRAMES = 96;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const dbgScrollY = document.getElementById('dbgScrollY');
+const dbgFrame = document.getElementById('dbgFrame');
+const dbgLoaded = document.getElementById('dbgLoaded');
+
+// Lenis smooth scroll, wired into GSAP's ticker per the standard integration
+// pattern (Lenis drives the actual scroll, ScrollTrigger reads it).
+const lenis = new Lenis();
+window.lenis = lenis; // exposed for test-driver scrollTo() - native window.scrollTo()
+                       // gets fought/overridden by Lenis's own raf loop otherwise
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+gsap.ticker.lagSmoothing(0);
+
+const images = new Array(N_FRAMES);
+let loadedCount = 0;
+let currentFrame = -1;
+
+function drawFrame(i) {
+  if (i === currentFrame) return; // only redraw when frame index actually changes
+  const img = images[i];
+  if (!img || !img.complete) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  currentFrame = i;
+}
+
+for (let i = 0; i < N_FRAMES; i++) {
+  const img = new Image();
+  img.onload = () => {
+    loadedCount++;
+    dbgLoaded.textContent = 'loaded: ' + loadedCount + '/' + N_FRAMES;
+    if (i === 0) drawFrame(0);
+  };
+  img.src = 'frames/frame-' + String(i).padStart(3, '0') + '.png';
+  images[i] = img;
+}
+
+const state = { frame: 0 };
+const frameObj = gsap.to(state, {
+  frame: N_FRAMES - 1,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '#scrollTrack',
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 0, // 0 = tie directly to scroll position, no additional easing lag
+  },
+  onUpdate: () => {
+    drawFrame(Math.round(state.frame));
+  },
+});
+
+window.__frameLog = [];
+window.__logging = false;
+function tick() {
+  dbgScrollY.textContent = 'scrollY: ' + Math.round(window.scrollY);
+  dbgFrame.textContent = 'frame: ' + currentFrame;
+  if (window.__logging) {
+    window.__frameLog.push({ t: performance.now(), scrollY: window.scrollY, frame: currentFrame });
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+window.__maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+window.__expectedFrame = (scrollY) => {
+  const max = window.__maxScroll();
+  const t = Math.min(1, Math.max(0, scrollY / max));
+  return Math.min(N_FRAMES - 1, Math.floor(t * 95 + 1e-9));
+};
+</script>
+</body>
+</html>

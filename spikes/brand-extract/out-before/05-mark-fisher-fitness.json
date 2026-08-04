@@ -1,0 +1,36 @@
+{
+  "url": "https://markfisherfitness.com",
+  "extractedAt": "2026-08-04T13:06:44.886Z",
+  "errors": [],
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(51, 51, 51)",
+    "header": null,
+    "footer": null,
+    "cta": {
+      "selector": "[class*=\"cta\" i]",
+      "backgroundColor": "rgba(2, 1, 1, 0)",
+      "color": "rgb(255, 255, 255)",
+      "text": "Small Group Personal Training\t\t\t\t\t\n\t\t\t\t\n"
+    },
+    "link": "rgb(115, 10, 141)",
+    "surface": null,
+    "borderSample": null
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "\"Bebas Neue\", sans-serif",
+    "bodyFont": "\"Nourd Light Font\", sans-serif",
+    "headingFirst": "Bebas Neue",
+    "bodyFirst": "Nourd Light Font"
+  },
+  "logo": {
+    "tier": "inline-svg",
+    "format": "svg",
+    "selector": "header svg",
+    "svgOuterHTMLLength": 336,
+    "downloadedPath": "out/05-mark-fisher-fitness.logo.svg",
+    "downloadedBytes": 336
+  }
+}

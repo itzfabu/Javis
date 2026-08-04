@@ -1,0 +1,36 @@
+{
+  "url": "https://birdsbarbershop.com",
+  "extractedAt": "2026-08-04T13:06:33.098Z",
+  "errors": [],
+  "color": {
+    "background": "rgb(247, 241, 234)",
+    "text": "rgb(51, 51, 51)",
+    "header": null,
+    "footer": null,
+    "cta": {
+      "selector": "button[type=\"submit\"]",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "color": "rgb(17, 17, 17)",
+      "text": "Submit"
+    },
+    "link": "rgb(17, 17, 17)",
+    "surface": null,
+    "borderSample": "rgb(255, 255, 255)"
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "\"Zing Rust\", sans-serif",
+    "bodyFont": "\"Source Sans 3\", sans-serif",
+    "headingFirst": "Zing Rust",
+    "bodyFirst": "Source Sans 3"
+  },
+  "logo": {
+    "tier": "inline-svg",
+    "format": "svg",
+    "selector": "header svg",
+    "svgOuterHTMLLength": 265,
+    "downloadedPath": "out/04-birds-barbershop.logo.svg",
+    "downloadedBytes": 265
+  }
+}

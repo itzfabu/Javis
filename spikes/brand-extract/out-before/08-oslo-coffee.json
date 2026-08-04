@@ -1,0 +1,33 @@
+{
+  "url": "https://www.oslocoffee.com",
+  "extractedAt": "2026-08-04T13:07:14.741Z",
+  "errors": [
+    "networkidle timed out, fell back to domcontentloaded: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.oslocoffee.com/\", waiting until \"networkidle\"\u001b[22m\n"
+  ],
+  "color": {
+    "background": "rgb(244, 244, 244)",
+    "text": "rgb(14, 31, 82)",
+    "header": null,
+    "footer": "rgb(255, 255, 255)",
+    "cta": null,
+    "link": "rgb(14, 31, 82)",
+    "surface": null,
+    "borderSample": null
+  },
+  "customProperties": {},
+  "customPropertiesFromRules": {},
+  "font": {
+    "headingFont": "objektiv-mk1, sans-serif",
+    "bodyFont": "objektiv-mk1, sans-serif",
+    "headingFirst": "objektiv-mk1",
+    "bodyFirst": "objektiv-mk1"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[class*=\"logo\" i]",
+    "url": "https://oslocoffee.com/cdn/shop/t/26/assets/oslo-logo-white_400x.png?v=20527188679633558461764620190",
+    "downloadedPath": "out/08-oslo-coffee.logo.png",
+    "downloadedBytes": 33011
+  }
+}
