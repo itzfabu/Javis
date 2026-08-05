@@ -49,10 +49,6 @@
                       "project":  "website-generator"
                   },
                   {
-                      "text":  "Research frame generation for the flipbook archetypes: evaluate AI text-to-video-\u003eframes vs. real 3D render-\u003eexport vs. hybrid template scenes; accuracy is non-negotiable for clients wanting their actual building/product (Thread 3 of 3, do last - depends on brand tokens being locked) | priority: medium | #website-generator",
-                      "project":  "website-generator"
-                  },
-                  {
                       "text":  "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
                       "project":  "streamer-hud"
                   },

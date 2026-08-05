@@ -1,0 +1,10 @@
+{
+  "name": "frame-generation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Throwaway spike: does a fixed-geometry/fixed-camera three.js template scene, parametrized only by per-client color/logo, produce a plausible per-client SPIN frame sequence (Thread 3, option c - hybrid template). Not part of the generator.",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

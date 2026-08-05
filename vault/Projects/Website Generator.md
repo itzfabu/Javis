@@ -1899,6 +1899,216 @@ which never sets the 500vh height at all — an accidental save, not a designed 
 - [Web Design Trends 2026: What Actually Held Up After Six Months | Studio Meyer](https://studiomeyer.io/en/blog/webdesign-trends-2026-reality-check) — performance cost of 3D hero elements, "brand is the experience" scoping
 - [Self-hosting third-party resources: the good, the bad and the ugly | Web Performance Calendar](https://calendar.perfplanet.com/2019/self-hosting-third-party-resources-the-good-the-bad-and-the-ugly/) — self-hosting vs CDN reliability reasoning
 
+## Thread 3: Frame Generation — PROPOSAL (2026-08-05), research only, not adopted
+
+**PROPOSAL, not a decision — unlike Thread 1 and Thread 2, this has not gone through Fabio's
+approval step yet.** Recommendation: **hybrid template scenes (option c) as the default mechanism
+for four of the six archetypes (SPIN, REVEAL, TRANSFORM, INTERFACE); real capture (option b),
+scoped as a manual paid add-on rather than the default pipeline, for the two archetypes whose
+entire premise is showing the client's own specific building/space (ASSEMBLE, FLYTHROUGH) if a
+client wants literal accuracy there; AI text-to-video (option a) rejected outright as the
+mechanism for this project's deterministic sprite-sheet pipeline.** This is a three-way split, not
+a single clean winner across all six archetypes — stated plainly below rather than papered over,
+because ASSEMBLE and FLYTHROUGH are exactly the two archetypes where "accuracy is non-negotiable"
+is hardest to satisfy automatically.
+
+**The accuracy bar this evaluation is held to, restated from the task that opened this thread:**
+this has to render a client's *actual* building/product/logo, not a generic stock scene — "a
+client will notice a generic tower." That bar is what breaks the clean pattern below.
+
+### Option (a): AI text-to-video → frames — rejected as the mechanism
+
+Current-generation tools (researched, not hands-on tested — see gaps below) solve *character*
+consistency, not *exact-geometry* consistency. Runway Gen-4's reference-image system, Veo 3.1's
+"Ingredients to Video" (3 reference images), Kling 3.0 Omni, and Seedance 2.0 (9 images) are all
+built and marketed around keeping a *person's* face/clothing/mood stable across shots from a
+reference image — a genuinely different problem from holding a specific building's exact facade
+proportions, window layout, and massing rigid across a deterministic, scripted multi-frame camera
+path. None of the current tooling documentation found describes "hold this exact structure's
+geometry fixed while a scripted camera does X" — the underlying mechanism is a diffusion model
+re-interpreting a scene from a reference *image*, not manipulating a rigid 3D asset, so
+frame-to-frame drift/morphing in exactly the geometric details a client would recognize (their
+building's proportions, their product's exact shape) is a structural property of how these models
+work, not a maturity gap likely to close with the next model version.
+
+**A second, independent problem: camera-path control.** Every archetype here needs an *exact*,
+reusable camera contract — ASSEMBLE needs 8 discrete block-drop beats, FLYTHROUGH needs a specific
+5-beat path (reception → hallway → treatment room → staff → desk, see the dental/medical decision
+above), all synced frame-for-frame to `steps(frameCount − 1, jump-none)` and scroll position. AI
+video tools generate a fixed clip with the model's own implicit camera motion — there is no
+reported way to specify "frame 34 of 96 must be exactly this composition" the way a scripted
+three.js camera path or a real camera rig can. Even if geometry consistency were solved, the
+camera-path contract this project already committed to (the RESOLVED Flipbook Alternative section
+above) would still not be satisfiable from a single generated clip.
+
+**Not tested hands-on — stated as a gap, not glossed over.** No API key/paid account for
+Runway/Kling/Veo/Luma is available in this environment, and this environment does have Higgsfield
+MCP tools that proxy several of these models — but invoking them spends real account credits/money,
+which the standing rule against autonomously spending money without asking covers; not run without
+Fabio's explicit approval. This section's verdict is reasoned from each vendor's own published
+mechanism description (reference-image conditioning for *character* consistency), not from a direct
+test — flagged honestly as the weakest-evidence option of the three.
+
+**Conclusion: rejected as the frame-generation mechanism for the deterministic sprite-sheet
+pipeline.** The mismatch (implicit stochastic camera + geometry vs. this project's exact
+frame-count/camera-path contract) is structural, not something a better model closes. Possibly
+interesting as a *separate*, lower-stakes idea — a short supplementary marketing/social clip where
+approximate likeness is acceptable — but that is not this thread's job and shouldn't be conflated
+with the hero sprite-sheet.
+
+### Option (b): Real 3D capture → render → export frames — accurate, but inherently manual
+
+**Researched cost/turnaround for professional-grade capture:** commercial 3D laser scanning/BIM
+work runs **$3,000–$10,000+ per building, $0.20–$0.70/sq ft, with a 2–4 week turnaround** (rush
+delivery carries a 25–50% premium) — real market figures, not estimated (see Sources). That's for
+survey-grade BIM deliverables, likely heavier than a stylized cinematic hero needs.
+
+**A lighter DIY path is plausible but not independently sourced here, stated as a reasoned
+estimate, not a researched figure:** client-submitted or Fabio-captured phone photos → photogrammetry
+software (Meshroom/RealityCapture) → manual Blender cleanup and retopology by a competent 3D
+artist. Rough estimate: **low hundreds to ~$2–3k and several days of dedicated skilled labor per
+building/interior**, scaling up sharply for FLYTHROUGH's multi-room requirement (reception, hallway,
+treatment room, etc. — each room is effectively a separate capture-and-clean pass, not one shot).
+
+**The real problem isn't cost, it's automation.** Raw photogrammetry output is always noisy —
+holes, floating geometry, incorrect scale — and turning it into a clean, render-ready, correctly-lit
+mesh is a judgment call a skilled artist makes per scan, not a scriptable step. This is not a "we
+haven't automated it yet" gap; it's inherent to the problem of reconstructing clean geometry from
+messy real-world photos. That directly violates the "no per-site hand-tuning" bar Thread 1 and
+Thread 2 both held themselves to — it cannot be waved away as a future automation task the way, say,
+the token-schema pipeline could be.
+
+**Conclusion: precise, but does not fit the default "many clients, no hand-tuning" pipeline.**
+Legitimate as an explicit, client-funded premium tier for a client who specifically wants their real
+building/space rendered — not the default MVP path.
+
+### Option (c): Hybrid template scenes — recommended default, but not for all six archetypes
+
+**Spike run to test this directly:** `C:\Jarvis\spikes\frame-generation\template_spin.py` builds a
+fixed "geometry" (a stylized product silhouette) and a fixed camera path (a 360° turn), then
+generates two full 48-frame sequences for two simulated clients differing *only* in the
+color/logo params passed in — the same shape as Thread 1's `frameGeneration.paletteForFrames` /
+`logoCompositing` token fields. Both ran end to end with zero manual tuning: **4.5ms/frame and
+3.8ms/frame respectively, ~69KB and ~66KB sprite sheets** (`out/template-spin-results.json`).
+Visual spot-check (`out/clientA-roastery/frame-000.png`, `out/clientB-tech/frame-012.png`) confirms
+the mechanism works as intended: the label reads correctly when facing camera and correctly fades
+out edge-on, and the two clients are visually distinct from the same underlying script. **Scope
+note: this ran in Python/Pillow (2D), not through an actual three.js headless capture** — this
+session's Bash tool denied both `npm install` and every attempted `node` invocation (script files
+and inline `-e` alike), so the Playwright-based capture pipeline used by the existing
+`flipbook-scale` spike could not be re-run here. What this spike validates is specifically the
+piece that wasn't already covered elsewhere in this document: that a fixed template driven purely
+by a per-client params dict produces a correct, distinct, no-hand-tuning output end to end.
+Three.js's ability to actually *render* a category-appropriate template scene (a building massing
+study, a product) was already separately validated earlier in this Visual Richness section (r128,
+PBR materials, HDRI lighting, sustained 60fps, generalized cleanly across two categories) — combining
+that existing evidence with this spike's parametrization result is the basis for the recommendation
+below, not a claim that three.js rendering was re-tested here.
+
+**The honest accuracy limit, stated plainly:** the template's *geometry* stays generic/abstract by
+design — a stylized bottle shape, a generic architectural massing block. That satisfies the bar for
+archetypes where an idealized, stylized representation is an accepted genre convention and the
+brand identity is carried by color/logo/material, not by literal silhouette accuracy — this
+document's own Awwwards evidence elsewhere (Longbow winning Site of the Day on a two-colour palette
+with no photorealistic 3D at all) already supports that abstraction reads as premium, not cheap, in
+this genre. **It does not satisfy the bar for the two archetypes whose entire point is showing the
+client's own specific space** — ASSEMBLE (their actual building) and FLYTHROUGH (their actual
+interior). A generic template tower assembling itself, or a generic hallway walkthrough, is exactly
+the "client will notice a generic tower" failure this thread was told is non-negotiable to avoid.
+Templating alone cannot close that gap — the geometry itself *is* the client-specific content for
+those two, not an incidental carrier for their brand colors the way it is for a product rotation.
+
+### The ASSEMBLE / FLYTHROUGH gap — the real tension, not resolved by picking one option
+
+No single mechanism is both fully automated *and* fully accurate for these two archetypes. Recommended
+split, disclosed as a genuine product tradeoff rather than a hidden gap (same reframing move Thread 1
+used for the mandatory logo-review gate — "confirm your brand" instead of a silent limitation):
+- **Default (free/included) tier:** ship the generic/abstract template for ASSEMBLE and FLYTHROUGH
+  too, explicitly disclosed to the client as a stylized representation, not a scan of their specific
+  building — consistent with this document's stated position elsewhere that abstraction is a
+  legitimate premium-design choice, not a corner cut.
+- **Paid add-on tier:** real photogrammetry-based capture (option b above) for clients who
+  specifically want their literal building/interior rendered, priced and scoped as manual work
+  outside the automated default pipeline — not something the generator claims to do at scale for
+  every client.
+- **Fallback within the free tier:** the existing archetype-selection rule already permits
+  category-based reassignment; a client uncomfortable with a generic ASSEMBLE/FLYTHROUGH scene can be
+  steered toward REVEAL/TRANSFORM/INTERFACE where applicable, sidestepping the accuracy problem
+  entirely rather than solving it.
+
+### Recommendation, stated decisively
+
+1. **Default pipeline for SPIN, REVEAL, TRANSFORM, INTERFACE:** hybrid template scenes in three.js
+   (already vendored at r128, zero new dependency — matches this project's stated anti-dependency
+   bias, the same reasoning that rejected Dembrandt, GSAP+Lenis, and a font-matching API earlier),
+   parametrized purely from Thread 1's `frameGeneration` token block. Automated, no per-site
+   hand-tuning, sub-5ms/frame per this spike's measured throughput.
+2. **ASSEMBLE and FLYTHROUGH ship generic/disclosed-as-stylized by default**, with real
+   photogrammetry-based capture offered as an explicit manual, paid add-on — not the default
+   automated path. This is the one place this thread cannot deliver a fully automated, fully
+   accurate answer, and it is stated as such rather than resolved on paper.
+3. **AI text-to-video (option a) rejected** as the mechanism for the deterministic sprite-sheet
+   pipeline — the mismatch between implicit stochastic camera/geometry and this project's exact
+   frame-count/camera-path contract is structural. Flagged as a separate, lower-stakes idea (a
+   supplementary marketing clip) worth a future look, explicitly not this thread's deliverable.
+4. **Logo compositing still waits on the human-reviewed asset.** Nothing here changes Thread 1's
+   mandatory review gate — the template spike's logo-text stand-in models *where* the real,
+   client-confirmed logo asset composites in (per `logoCompositing.appearsAtFrameFraction`), it is
+   not a suggestion to composite an unreviewed logo.
+
+### Native aspect ratio per archetype — the flagged open item, resolved
+
+Only ASSEMBLE's portrait 2:3 (tested end-to-end via the sprite-scaling spike) and FLYTHROUGH's
+landscape ~16:9 (reasoned for the dental/medical variant, 2026-08-05) were previously addressed. The
+remaining four, reasoned from each archetype's actual content and genre convention, not guessed:
+
+| Archetype | Recommended ratio | Reasoning |
+|---|---|---|
+| **ASSEMBLE** | 2:3 portrait (tested) | unchanged — a tower rising vertically reads as portrait |
+| **REVEAL** | 4:5 portrait-leaning | elements dropping into place is primarily vertical motion, same gravity logic as ASSEMBLE — but the settled end-state is a fuller tableau (e.g. ingredients/product arranged together), not one tall stack, so slightly less extreme than 2:3 |
+| **SPIN** | 1:1 square | a rotating object's silhouette swings between wide (0°/180°) and narrow (90°/270°) — square framing absorbs that swing without wasted vertical space; matches this spike's own 500×500 test canvas and the near-universal 1:1 convention of e-commerce 360° product viewers, the direct genre precedent |
+| **TRANSFORM** | 3:2 landscape | before/after content (renovation, fitness, beauty) is shown side-by-side or via a wipe in existing genre convention (before/after sliders), which needs horizontal travel distance — landscape but less extreme than FLYTHROUGH, since the subject (a room, a face, a body) is still a relatively centered composition, not a full spatial glide |
+| **FLYTHROUGH** | 16:9 landscape | generalizes the dental/medical-specific 2026-08-05 decision to the whole archetype — real estate/hotel/gym/venue walkthrough videography is shot landscape as a near-universal convention regardless of category |
+| **INTERFACE** | 16:9 or wider landscape | the archetype's actual subject — dashboards, panels, data displays — is inherently landscape by genre convention (screens, SaaS/fintech UI), the same reasoning FLYTHROUGH uses, applied to software content instead of physical space |
+
+**Honest gap:** REVEAL, SPIN, TRANSFORM, and INTERFACE's ratios above are reasoned from genre
+convention and this thread's own spike canvas choice, not independently verified end-to-end through
+the percentage-based CSS technique the way ASSEMBLE's 2:3 was in the sprite-scaling spike. The CSS
+mechanism itself doesn't care about aspect ratio (already proven ratio-agnostic by that spike), so
+no correctness risk is expected — but none of these four have been run through it directly.
+
+### Honest gaps — not resolved on paper
+
+- **Option (a) was not tested hands-on.** No API access/authorized spend for Runway/Kling/Veo/Luma
+  this session (see Higgsfield-MCP note above) — the rejection is reasoned from published
+  reference-image-consistency mechanism descriptions, not a direct test. If a future pass gets
+  explicit budget approval, this is the one part of this thread's verdict most worth re-checking
+  empirically rather than taking on faith.
+- **Photogrammetry cost/time:** only the professional BIM-grade figures ($3,000–$10,000+, 2–4 weeks)
+  are sourced from real market data. The cheaper DIY estimate (low hundreds to ~$2–3k, several days)
+  is a reasoned guess from the general shape of the professional pricing, not independently sourced.
+- **The hybrid-template spike ran in 2D/Pillow, not through an actual three.js headless render.**
+  This session's Bash tool blocked all attempted `node`/PowerShell execution (`npm install`,
+  `node -e`, and running saved `.js` files were all denied) — `scene.html` and `capture.js` are left
+  in the spike folder as an unexecuted reference design of what the real three.js/Playwright capture
+  pass would look like, not as evidence anything ran. The parametrization/automation pattern is
+  validated by `template_spin.py`; the three.js rendering step specifically was not re-executed in
+  this session, though it was separately validated earlier in this document for two categories.
+- **No end-to-end integration test** of the full pipeline (Thread 1 extraction → human review →
+  Thread 3 compositing) against a real client exists yet — each thread has only been validated in
+  isolation.
+- **The ASSEMBLE/FLYTHROUGH default-vs-paid-tier split is a product proposal, not validated with any
+  actual client** — untested whether clients will accept a disclosed-as-stylized default or will
+  reliably reach for the paid add-on when it matters to them.
+
+### Sources (Thread 3)
+- [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
+- [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities
+- [Best AI Image-to-Video Generators 2026 | UlazAI](https://ulazai.com/best-ai-image-to-video-generators-2026/) — image-to-video camera-motion behavior
+- [3D Laser Scanning Cost Guide 2026 | Arrival 3D](https://arrival3d.com/3d-laser-scanning-costs/) — professional 3D scanning cost/turnaround figures
+- [3D Scanning Cost Guide 2026 | THE FUTURE 3D](https://www.thefuture3d.com/learn/3d-scanning-cost-guide/) — commercial scanning cost breakdown, per-sq-ft pricing
+- Spike: `C:\Jarvis\spikes\frame-generation\` (`template_spin.py`, `out/template-spin-results.json`, `scene.html`/`capture.js` as unexecuted reference design)
+
 ## UI Craft
 
 Parallel track to Visual Richness (3D), not a replacement for it — where that section covers the

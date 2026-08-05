@@ -1,0 +1,20 @@
+[
+  {
+    "client": "clientA-roastery",
+    "frames": 48,
+    "elapsedSec": 0.217,
+    "msPerFrame": 4.5,
+    "spriteSheet": "spritesheet-clientA-roastery.png",
+    "spriteSheetKB": 69.2,
+    "sheetDims": "24000x500"
+  },
+  {
+    "client": "clientB-tech",
+    "frames": 48,
+    "elapsedSec": 0.182,
+    "msPerFrame": 3.8,
+    "spriteSheet": "spritesheet-clientB-tech.png",
+    "spriteSheetKB": 66.1,
+    "sheetDims": "24000x500"
+  }
+]

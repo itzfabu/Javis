@@ -1,6 +1,6 @@
 {
   "signoff": {
-    "status": "approved",
+    "status": "none",
     "proposedAt": "2026-08-05T10:24:38Z",
     "items": [
       {
@@ -38,36 +38,54 @@
       "project": "website-generator",
       "priority": "medium",
       "approach": "Now unblocked - sprite-scaling prerequisite cleared this session, output spec defined (one sprite sheet per client/archetype, horizontal layout, 2x display-cap resolution, percentage-based CSS). Spike-based investigation under C:\\Jarvis\\spikes\\, matching this session's pattern. Write findings + recommendation into vault/Projects/Website Generator.md as a Thread 3 PROPOSAL, update TASKS.md. Research + design only, do not build the real pipeline.",
-      "status": "queued"
+      "status": "done",
+      "note": "DONE 2026-08-05: PROPOSAL (not yet Fabio-approved, same pre-approval stage Thread 1/2 went through) appended to vault/Projects/Website Generator.md. Recommendation splits by archetype: hybrid template scenes (three.js, already vendored, zero new dependency) as default for SPIN/REVEAL/TRANSFORM/INTERFACE, validated by a spike at spikes/frame-generation/template_spin.py (~4ms/frame, no hand-tuning). AI text-to-video rejected outright (current tools solve character consistency, not exact-geometry/camera-path consistency; no API budget authorized to test hands-on). Real 3D capture accurate but inherently manual/costly ($3k-$10k+/2-4wk) - scoped as a paid add-on, not default. Honest gap flagged: ASSEMBLE and FLYTHROUGH are where template abstraction genuinely fails the 'client will notice a generic building' bar - recommended generic-by-default with real capture as a paid upgrade for those two. Aspect-ratio open item resolved for all 6 archetypes. TASKS.md updated, Thread 3 moved to Done. Note: planned three.js/Playwright headless capture was blocked by this session's Bash permission gate (node/npm denied) - pivoted to a Python/Pillow spike for the part that mattered most; scene.html/capture.js left as an honest, unexecuted reference design, flagged as such rather than presented as verified."
     },
     {
       "text": "Package the Streamer HUD Widget for end customers: clean file + setup guide, no dev/diagnostic mode visible.",
       "project": "streamer-hud",
       "priority": "high",
       "approach": "Review current widget code/build output, strip or hide dev/diag affordances, produce a distributable clean package.",
-      "status": "queued"
+      "status": "done",
+      "note": "Already complete from the 2026-07-29 session - verified tonight, not re-done. orb/product/StreamerHUD/ (mirrored in orb/product/_stage/, zipped as StreamerHUD-v1.zip) contains only reactive-hud-pack.html, Setup-Guide.md, and Start-Widget-Server.bat. Confirmed clean: the diag overlay and synthetic test-signal mode are both code-gated behind unused ?diag/?test URL params (off by default, no UI affordance), and the seller-only License-Key-Generator-SELLER-ONLY.html lives outside the product folder (orb/, not orb/product/) so it was never bundled. No changes needed."
     },
     {
       "text": "Write customer-facing setup instructions for the Streamer HUD Widget (OBS Browser Source flag + one-time mic permission click).",
       "project": "streamer-hud",
       "priority": "medium",
       "approach": "Short, plain-language doc a non-technical streamer can follow. Draft only - Fabio reviews before it's used anywhere.",
-      "status": "queued"
+      "status": "done",
+      "note": "Already complete from the 2026-07-29 session - verified tonight, not re-done. orb/product/StreamerHUD/Setup-Guide.md covers both required points (OBS launch-flag edit for mic access, one-time Interact->Allow click) in plain language, plus widget-server startup, OBS Browser Source add, and a troubleshooting section. Cross-checked against the actual widget markup (gear icon position, settings panel contents) - accurate to the current build. Still a draft pending Fabio's review per the original approach note, unchanged."
     },
     {
       "text": "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income).",
       "project": "jarvis-system",
       "priority": "medium",
       "approach": "Inputs already staged: vault/Ideas/Multi-Page Orb Dashboard.md and vault/Ideas/Finance Dashboard for Project Income.md. Research + proposal only, write findings to vault/Projects/Jarvis System.md.",
-      "note": "Goal link is flagged as tentative in knowledge/PROJECTS.md - 'improve the system itself' doesn't cleanly map to either active goal (Get Jarvis into daily use / Monetize the Jarvis System). Surfacing this rather than silently assuming a fit.",
-      "status": "queued"
+      "note": "DONE 2026-08-05: findings appended to vault/Projects/Jarvis System.md. Recommendations - (1) notes-panel cleanup: build now, concrete rule proposed (drop ideas past 'captured' status, drop other vault notes once wikilinked from an active project), pending Fabio's sign-off on the rule before code changes; (2) multi-page dashboard split: further along than the idea note suggested - main/background/projects/websites tabs are already fully wired, only finance and system-health remain 'COMING SOON' placeholders; (3) finance dashboard: defer, unchanged - verified precondition ('first real sale') still doesn't hold, all 4 #streamer-hud tasks still open, no sales channel chosen, no income yet; (4) new recommendation - build a System Health dashboard next, ahead of Finance, since it has no external blocker and would surface real gaps already logged (untested OpenAI fallback, a session-rotation fix needing manual restart, no Twitch reconnect). Goal-link tentativeness restated as an open question for Fabio, not resolved. No changes made to TASKS.md, this file, or any orb/ code.",
+      "status": "done"
     }
   ],
   "briefing": {
-    "date": null,
-    "generatedAt": null,
-    "researched": [],
-    "movedForward": [],
-    "stuck": []
+    "date": "2026-08-05",
+    "generatedAt": "2026-08-05T13:55:00+02:00",
+    "researched": [
+      "Website Generator Thread 3 (frame generation): evaluated AI text-to-video, real 3D capture, and hybrid template scenes for the hero sprite-sheet archetypes; wrote a PROPOSAL to vault/Projects/Website Generator.md with a spike validating the template approach",
+      "Jarvis system improvements: reviewed the two staged ideas (multi-page dashboard, finance dashboard) against actual current dashboard/code state and logged findings to vault/Projects/Jarvis System.md",
+      "Verified the existing Streamer HUD packaging (StreamerHUD-v1.zip) and setup guide against the current widget code for cleanliness and accuracy"
+    ],
+    "movedForward": [
+      "Thread 3 PROPOSAL written: hybrid template scenes (three.js, no new dependency) recommended as default for 4 of 6 hero archetypes; real 3D capture scoped as a paid add-on for the 2 archetypes (ASSEMBLE, FLYTHROUGH) where a generic template genuinely won't pass the 'client's actual building' bar; all 6 archetypes now have a reasoned native aspect ratio. TASKS.md updated, Thread 3 moved to Done.",
+      "Streamer HUD packaging and setup-guide tasks confirmed already complete from the 2026-07-29 session - re-verified clean tonight (dev/diag/test modes are URL-param-gated and off by default, seller-only license tool correctly excluded from the customer package), no rework needed.",
+      "Jarvis System notes updated with a concrete cleanup rule proposal for the notes panel, a corrected status read on the multi-page dashboard split (further along than the idea note suggested - only Finance and System Health are still placeholders), and a new recommendation to build a System Health dashboard before Finance."
+    ],
+    "stuck": [
+      "Website Generator Thread 3 PROPOSAL is not yet approved by Fabio (same pre-approval gate Thread 1 and Thread 2 went through) - needs his review/decision before any pipeline work starts.",
+      "The Thread 3 spike's three.js/Playwright headless-capture piece could not run tonight - node/npm was blocked by this session's Bash permission gate. The scene.html/capture.js reference design is unexecuted, not verified - worth a follow-up session with node access if the template-scene approach gets approved.",
+      "AI text-to-video option for Thread 3 was evaluated on public info only, not tested hands-on - the Higgsfield MCP tools available in this environment could test it directly but that spends money, which needs Fabio's authorization first.",
+      "Jarvis System notes-panel cleanup rule is proposed but not implemented - needs Fabio's sign-off on the exact rule (drop ideas past 'captured' status, drop other vault notes once wikilinked from an active project) before code changes.",
+      "Finance dashboard remains correctly deferred - its precondition (first real sale) still doesn't hold; all 4 #streamer-hud tasks (packaging done, but sales channel, setup-instructions review, and licensing terms still open) need to close before there's income to track.",
+      "The Jarvis System project's goal link in knowledge/PROJECTS.md is still tentative ('improve the system itself' doesn't cleanly fit either active goal) - flagged again tonight, still needs Fabio's call on whether it needs its own goal."
+    ]
   }
 }

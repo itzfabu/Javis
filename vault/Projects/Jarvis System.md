@@ -1,6 +1,6 @@
 ---
 date: 2026-07-29
-updated: 2026-07-28
+updated: 2026-08-05
 type: project
 status: active
 tags:
@@ -28,38 +28,81 @@ Personal AI assistant system (`C:\Jarvis`), covering the core Claude Code-based 
 
 ## Recent Activity
 
-### OmniRoute + Tool-Installationen (2026-07-28)
-- OmniRoute (lokaler LLM-Unified-Router, `C:\Jarvis\omniroute`) installiert per npm/npx, abgesichert: nur `127.0.0.1`-Bindung, Secrets zufaellig generiert (nie im Klartext gezeigt), Passwort-Reset ueber echtes Terminal statt Pipe. Bewusst OHNE OAuth-Cloaking-Mechanismus verbunden (der haette Claude Codes eigene Anthropic-Session missbraucht, ToS-Risiko) - noch kein Provider aktiv, Anthropic-Anbindung wegen separater API-Kosten vorerst zurueckgestellt. Siehe [[Ideas/Jarvis Provider-Unabhaengigkeit - Roadmap]].
-- 5 Tools/Repos geprueft und installiert (Details: [[Knowledge/CAPABILITIES]]): HKUDS/OpenSpace (als MCP-Server registriert), hyperframes (HTML-zu-Video, automatisch installierte globale Skills inkl. eines Critical-Risk-Skills wieder entfernt), camofox-browser (Stealth-Browser, Bindung ebenfalls auf localhost korrigiert), OpenMontage (Setup manuell nachgebildet, `make` fehlte), claude-code-best-practice (reine Referenz).
-- Git-Repo-Hygiene: OpenSpace war versehentlich als eingebettetes Repo committet (Gitlink), OmniRoutes Laufzeit-DB/Logs wurden versehentlich mitversioniert - beides korrigiert, `.gitignore` entsprechend erweitert.
+### Improvement research: dashboards + architecture (2026-08-05, overnight)
 
-### Session-Rotation gegen Token-Wachstum (2026-07-28)
-- Problem: `orb/app.py` hat `localhost:8420` (Webchat) immer per `--resume` auf dieselbe, nie rotierende `WEBCHAT_SESSION_ID` laufen lassen - jede Nachricht musste das komplette, seit Tagen wachsende Transkript neu laden. Das war der konkrete Grund fuer "zu viele Tokens".
-- Fix: `session_state.json` (Session-ID + Turn-Zaehler) ersetzt die statische ID. Nach `ROTATE_AFTER_TURNS` (aktuell 20) startet automatisch eine frische Session ohne `--resume`.
-- Warum das nichts verliert: CLAUDE.md, knowledge/PROJECTS.md/GOALS.md/TASKS.md, der Vault und die Auto-Memory-Dateien werden bei jedem Subprocess-Aufruf ohnehin frisch neu gelesen, unabhaengig von der Session-ID. Nur das rohe Chat-Transkript wird gekappt - das "Second Brain" traegt die Kontinuitaet, nicht der teure Rohverlauf.
-- Achtung: Fix greift erst nach Neustart von `orb/app.py` (kein Auto-Reload).
-- Idee dahinter direkt aus [[Knowledge/CAPABILITIES]] uebernommen (claude-mem: komprimiert/spielt relevanten Kontext zurueck statt Rohverlauf; knowledge-graph: Git-natives Memory statt Transkript-Replay) - beide Repos selbst nicht installiert, nur das Funktionsprinzip nachgebaut.
+Overnight research task (TASKS.md, `#jarvis-system`) to evaluate the two staged ideas
+([[Ideas/Multi-Page Orb Dashboard]], [[Ideas/Finance Dashboard for Project Income]]) plus anything
+else genuinely warranted, grounded in a direct read of `orb/app.py` (941 lines, all routes checked)
+and `orb/index.html` (nav shell + view containers checked), not just the vault notes describing them.
 
-### Kern-System - fertig
-- orb/app.py: Flask-Backend, Chat-Endpoint, Claude-CLI-Shellout, TTS (edge-tts), Task-Integration, OpenAI-Fallback
-- orb/index.html: Orb-Dashboard, Partikel-Sphere, Knowledge-Graph-Visualisierung, audio-reaktiv
-- 8 Subagents (.claude/agents/*.md), alle mit Knowledge/Vault-Awareness nachgeruestet - Frontmatter-Referenz auf PROJECTS.md/vault war zwar vorhanden, aber "verifiziert" war irrefuehrend: bis 2026-07-30 waren alle 8 Dateien wegen UTF-8-BOM + CRLF vor dem YAML-Frontmatter-Delimiter faktisch gar nicht geladen (Agent-Tool zeigte nur die 6 eingebauten Agenten, keinen der 8 eigenen). Behoben und live neu verifiziert (alle 8 erscheinen jetzt in der "Available agent types"-Liste). Siehe [[Debugging/2026-07-30 - Subagents Not Loading (BOM + CRLF)]].
-- Knowledge-System: knowledge/PROJECTS.md, GOALS.md, TASKS.md + sync-knowledge.ps1
-- Hooks (alle 7 verifiziert vorhanden): sync-knowledge, watch-knowledge, fetch-context, git-backup, guard-connectors, set-thinking, speak-response
-- Obsidian-Vault mit PARA-Struktur eingerichtet (Anmerkung: diese Zeile beschreibt den alten Vault, nicht diesen)
-- 3D-Wissensgraph vollstaendig konfiguriert (23 Gruppen/Farben im 3D-Graph-Plugin, verifiziert - ueber Junctions/Hardlinks erweitert) - **Bestaetigt beim Import (2026-07-29):** `.obsidian/plugins/new-3d-graph/data.json` im alten Vault enthaelt tatsaechlich genau 23 Gruppen-Eintraege (Pfad-Query + Hex-Farbe je Eintrag, z.B. Jarvis-README.md, CLAUDE.md, .claude/hooks/*, Projects/*). Das aehnlich benannte, ebenfalls aktivierte Plugin `3d-graph-new` (andere Plugin-ID, andere Codebasis) hat dagegen eine leere `groups: []` - dort existiert keine Farbkonfiguration. Beide Plugins sind laut `community-plugins.json` gleichzeitig aktiviert, was nach ungenutzter Redundanz aussieht, nicht nach Absicht.
-- CAPABILITIES.md - Faehigkeiten-Katalog externer Tools
-- ChatGPT/OpenAI-Fallback bei Claude-Nutzungslimit in app.py (committed, Syntax geprueft, ABER NOCH NICHT LIVE GETESTET)
-- Daily News Brief (Cloud-Routine, DAILY-BRIEF.md wird real erzeugt)
-- Weekly Vault Insights Review (Cloud-Routine, vault/Resources/Insights.md real vorhanden, schlaegt bereits Wikilinks vor)
+**Goal-link flag restated, not resolved:** this project's link to a goal in `knowledge/GOALS.md`
+remains tentative - "Get Jarvis into daily use", explicitly marked "(tentative...)" in
+`knowledge/PROJECTS.md`. Nothing below resolves this; flagging again per this project's own pattern
+of surfacing goal-fit questions rather than assuming. Where a recommendation below leans on a goal
+for its reasoning, the specific goal it leans on is named explicitly.
 
-### Streamer HUD Widget (Produktlinie) - grossteils fertig, nicht final
-- 14 visuelle Styles verifiziert im Code (nicht 5): 2 kostenlos (Sphere, Waveform), 12 Pro (Orbit Rings, Hologram Grid, Radar Sweep, Data Stream, Radar+Sphere Combo, Mirrored Waveform, VU Ring, Arc Gauge, Heartbeat Monitor, Lightning, Particle Burst, Firework, Twitch Events)
-- Farb-/Theme-Anpassung: erledigt (TASKS.md: "Add color/theme customization options to the streamer HUD widget" abgehakt)
-- Twitch-Integration: OAuth + EventSub-WebSocket-Code vorhanden (follow/subscribe/raid-Events, Client-ID-Eingabe im UI) - Code bestaetigt, "real getestet" bzw. Bug-Anzahl aus den Dateien nicht verifizierbar
-- Freemium-Lizenzschluessel-System: Generator (License-Key-Generator-SELLER-ONLY.html) + Validator (isValidLicenseKey im Widget-Code) beide vorhanden - Bugfix-Historie nicht aus den Dateien verifizierbar
-- Distribution: StreamerHUD-v1.zip, Setup-Guide.md und Start-Widget-Server.bat existieren bereits im Code - aber laut TASKS.md noch NICHT final abgeschlossen (siehe Noch offen)
-- OBS-Integration: laut Vorgabe real getestet mit 3 behobenen Bugs - aus den Dateien allein nicht verifizierbar (kein Changelog), aber plausibel angesichts des Reifegrads des Codes
+**1. Multi-Page Orb Dashboard ([[Ideas/Multi-Page Orb Dashboard]]) - status update, one new sub-finding.**
+Point 1 (multi-page split) is further along than the idea note's last update suggested: verified in
+code that `main`, `background`, and `projects` views are fully wired to real data
+(`/background-dashboard.json`, `/projects-dashboard.json`), and `websites` is *also* now fully wired
+- a real generation form (`#generateWebsiteForm`) posting to `/generate-website` plus a live grid
+reading `/generated-sites.json` (`orb/index.html` lines ~207-258). Only two of the six pages remain
+literal placeholders in the markup: `view-finance` and `view-system-health` both render just
+`<div class="dash-placeholder">... COMING SOON</div>` (lines 206 and 263). Point 2 (notes panel
+should drop filed/actioned items) is untouched - confirmed by reading
+`.claude/hooks/sync-knowledge.ps1` lines 75-84: it still does an unconditional directory listing of
+every `.md` under `Projects/Ideas/Architecture/Knowledge/Boards/Daily`, with no filter for
+already-actioned items, exactly as the idea note describes.
+- **Recommendation - notes panel cleanup: build now.** Small, well-scoped, no external dependency,
+  and it's a real (if minor) UX papercut in daily use, which is the one goal this project does
+  cleanly connect to ("Get Jarvis into daily use"). Concrete rule to adopt (the idea note flagged
+  this as needing a rule before touching code): use the `status` frontmatter field the Ideas
+  lifecycle already defines (`captured / evaluating / building / shelved`, per
+  [[Knowledge/Ideas Index]]) - only list ideas still at `captured` in the NOTES panel; once a note
+  moves to `evaluating`/`building`/`shelved` it's implicitly been looked at and can drop off. For
+  Projects/Architecture/Knowledge/Boards/Daily notes (which don't use that status field), a
+  reasonable parallel rule is: drop a note once it's referenced via `related-projects`/wikilink from
+  an *active* Project note, since being linked into a live project is what "filed" means for those
+  folders. This still needs a human sign-off on the exact rule before `sync-knowledge.ps1` changes,
+  per the idea note's own instruction - not decided unilaterally here, just narrowed from "define a
+  rule" to one concrete proposal.
+- **Recommendation - System Health page: build next, ahead of Finance.** Not one of the two staged
+  ideas, but a direct consequence of reading this project's own "Noch offen" list below: several
+  things are marked "not live tested" (OpenAI fallback, Twitch reconnect) or carry caveats like
+  "fix only takes effect after an `orb/app.py` restart, no auto-reload" (session rotation). A System
+  Health page has zero external dependency (unlike Finance, which is blocked on an actual sale) and
+  directly serves "Get Jarvis into daily use" by making the system's own reliability visible instead
+  of relying on prose caveats in a vault note. Scope minimally to start: last-run timestamp/success
+  state for the 7 hooks, the daily-brief and weekly-insights cloud routines, and current session
+  rotation state (`orb/session_state.json` turn count) - resist scope creep into a heavier monitoring
+  system until this minimal version proves useful.
+
+**2. Finance Dashboard for Project Income ([[Ideas/Finance Dashboard for Project Income]]) - precondition checked, still not met.**
+The idea note's own trigger is explicit: "first real sale/income event from any Jarvis-built
+product." Checked `TASKS.md` `#streamer-hud` items directly (the only product close to sellable):
+all four remaining items are still open and unchecked - package for end customers, customer-facing
+setup instructions, delivery/sales channel decision (Gumroad/Etsy/itch.io/own site), and licensing
+terms. No sales channel has been chosen yet, and no income event appears anywhere in
+`knowledge/PROJECTS.md`, `TASKS.md`, or this project's own log. Website Generator is further from a
+sale still - `generated-sites.json` currently reflects draft/demo sites, not paid deliveries.
+- **Recommendation: defer, unchanged from the idea note's own assessment.** Nothing found tonight
+  changes the "no data to run on yet" conclusion. Revisit when the trigger actually fires (first
+  sale/income event) - at that point the idea note's own next steps (data source per channel, manual
+  vs. API pull) are still the right starting questions.
+
+**3. Other architecture observations (read-only, no code touched per task scope) - none rise to a
+new recommendation, noted for completeness:**
+- The accountability/sign-off layer (`orb/accountability.json`, `/accountability/respond`) is
+  reasonably well-built as implemented - queue, signoff states, and briefing block all present and
+  match what CLAUDE.md documents. `CLAUDE.md` already flags "no mid-work interrupts yet" as a known,
+  deliberate limitation with a stated trigger for revisiting it ("only if overnight work is later
+  observed drifting on large jobs") - no new evidence found tonight that it's actually biting, so not
+  elevating this to a recommendation, just noting the existing flag still stands.
+- Session rotation fix (`ROTATE_AFTER_TURNS = 20` in `orb/app.py`) carries a documented caveat above
+  ("only takes effect after a restart, no auto-reload") - whether `orb/app.py` has actually been
+  restarted since that fix landed isn't verifiable from a static code read. Open question, not a
+  finding - worth a quick manual check (is `orb/session_state.json`'s turn counter behaving as
+  expected) next time the dashboard is used, rather than something to fix blind.
 
 ## Open Items (Noch offen)
 
@@ -78,6 +121,9 @@ Personal AI assistant system (`C:\Jarvis`), covering the core Claude Code-based 
 - [[Ideas/Automatisches Wikilinking]]: Idee, nicht begonnen
 - Mobile-Zugriff: nicht begonnen
 - Sprachsteuerung/Wake-Word: nicht begonnen
+- NOTES panel doesn't drop filed/actioned items (see 2026-08-05 research above) - rule proposed, not yet implemented pending sign-off.
+- Finance dashboard page still a placeholder - correctly deferred, no income event yet (see 2026-08-05 research above).
+- System Health dashboard page still a placeholder - proposed as the next build target, ahead of Finance (see 2026-08-05 research above).
 
 ## Related
 - [[Architecture/Jarvis System Architecture]]
@@ -85,3 +131,5 @@ Personal AI assistant system (`C:\Jarvis`), covering the core Claude Code-based 
 - [[Projects/Jarvis-as-a-Service Launch]]
 - [[Knowledge/CAPABILITIES]]
 - [[Ideas/Jarvis Provider-Unabhaengigkeit - Roadmap]]
+- [[Ideas/Multi-Page Orb Dashboard]]
+- [[Ideas/Finance Dashboard for Project Income]]

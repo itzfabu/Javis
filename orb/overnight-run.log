@@ -1,0 +1,12 @@
+﻿2026-08-05 13:40:45 Starting overnight run
+2026-08-05 13:53:48 git-backup guard: overnight worker (pid 40248) still running - skipped backup and overnight-run.ps1
+2026-08-05 13:53:48 Claude run finished, exit=0
+All four approved overnight queue items are done and `accountability.json` is valid, updated, and reset for the next sign-off negotiation.
+
+Summary:
+- **Streamer HUD packaging + setup guide** ÔÇö already complete from an earlier session; re-verified clean tonight (dev/diag/test modes are URL-gated off by default, seller-only license tool correctly excluded), no rework needed.
+- **Website Generator Thread 3** (frame generation) ÔÇö PROPOSAL written: hybrid template scenes (three.js, no new dependency) recommended for 4 of 6 hero archetypes, real 3D capture scoped as a paid add-on for the 2 archetypes where a generic template won't pass the "client's actual building" bar. All 6 archetypes now have a reasoned aspect ratio. Not yet Fabio-approved ÔÇö same gate Threads 1/2 went through.
+- **Jarvis system research** ÔÇö findings logged: build a notes-panel cleanup rule and a System Health dashboard next; Finance dashboard correctly stays deferred (no income yet); the multi-page dashboard split is further along than expected.
+
+Two things need your input when you're back: approving the Thread 3 proposal, and signing off on the proposed notes-panel cleanup rule. Full detail is in `briefing.stuck` in the JSON and in the two vault project notes.
+

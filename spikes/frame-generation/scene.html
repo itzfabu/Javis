@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="600" height="600"></canvas>
+<script src="vendor/three.min.js"></script>
+<script>
+/*
+ * Parametric SPIN-archetype template scene (hybrid-template spike).
+ * Geometry and camera path are FIXED — only color/logo/background are
+ * parametrized per "client" via URL query string, to test option (c)
+ * from Thread 3's frame-generation evaluation: a hybrid template scene
+ * where the engine never changes, only client params do.
+ *
+ * Query params:
+ *   primary   - hex color for the product body, e.g. C4622D
+ *   accent    - hex color for the cap/trim, e.g. E8A23D
+ *   bg        - hex color for the background, e.g. FBF6EF
+ *   logo      - text to render onto a label plane (stand-in for a real
+ *               logo asset; a real pipeline would composite an actual
+ *               PNG/SVG here per the frameGeneration.logoCompositing spec)
+ *
+ * window.__renderFrame(t) sets rotation for t in [0,1] and forces a
+ * synchronous render, so a headless capture script can screenshot an
+ * exact, deterministic frame — no animation loop, no timing races.
+ */
+const params = new URLSearchParams(location.search);
+const primary = '#' + (params.get('primary') || 'C4622D');
+const accent  = '#' + (params.get('accent')  || 'E8A23D');
+const bg      = '#' + (params.get('bg')      || 'FBF6EF');
+const logoText = params.get('logo') || 'BRAND';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(600, 600, false);
+renderer.setPixelRatio(1);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(bg);
+
+const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+camera.position.set(0, 0.15, 3.2);
+camera.lookAt(0, 0, 0);
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1.1);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xffffff, 1.4);
+key.position.set(2, 3, 2);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.6);
+rim.position.set(-2, 1, -2);
+scene.add(rim);
+
+// --- Fixed geometry: an abstract "product" (bottle-like body + cap) ---
+// The shape itself is generic/template geometry, deliberately NOT a
+// specific client product model — that's the honest limitation this
+// spike exists to surface, not something to hide.
+const group = new THREE.Group();
+
+const bodyGeo = new THREE.CylinderGeometry(0.55, 0.62, 1.7, 32);
+const bodyMat = new THREE.MeshStandardMaterial({ color: primary, roughness: 0.35, metalness: 0.1 });
+const body = new THREE.Mesh(bodyGeo, bodyMat);
+group.add(body);
+
+const capGeo = new THREE.CylinderGeometry(0.3, 0.35, 0.35, 32);
+const capMat = new THREE.MeshStandardMaterial({ color: accent, roughness: 0.3, metalness: 0.2 });
+const cap = new THREE.Mesh(capGeo, capMat);
+cap.position.y = 1.02;
+group.add(cap);
+
+// --- Label plane: this is the part real client data actually drives ---
+// (color params above + this canvas-texture label are the analogue of
+// Thread 1's paletteForFrames + logoCompositing handoff.)
+const labelCanvas = document.createElement('canvas');
+labelCanvas.width = 512; labelCanvas.height = 256;
+const ctx = labelCanvas.getContext('2d');
+ctx.fillStyle = '#FFFFFF';
+ctx.fillRect(0, 0, 512, 256);
+ctx.fillStyle = primary;
+ctx.font = 'bold 64px sans-serif';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText(logoText, 256, 128);
+const labelTex = new THREE.CanvasTexture(labelCanvas);
+const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.6 });
+const labelGeo = new THREE.PlaneGeometry(0.9, 0.5);
+const label = new THREE.Mesh(labelGeo, labelMat);
+label.position.set(0, 0.05, 0.621);
+group.add(label);
+
+scene.add(group);
+
+// --- Fixed camera path: object does a full 360 turn in place (SPIN) ---
+window.__renderFrame = function(t) {
+  group.rotation.y = t * Math.PI * 2;
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>
