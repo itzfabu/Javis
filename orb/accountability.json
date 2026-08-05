@@ -1,12 +1,68 @@
 {
   "signoff": {
-    "status": "none",
-    "proposedAt": null,
-    "items": [],
-    "respondedAt": null,
+    "status": "approved",
+    "proposedAt": "2026-08-05T10:24:38Z",
+    "items": [
+      {
+        "text": "Research frame generation for the flipbook archetypes (Thread 3 of the Website Generator roadmap): evaluate AI text-to-video->frames vs. real 3D render->export vs. hybrid template scenes.",
+        "project": "website-generator",
+        "priority": "medium",
+        "approach": "Now unblocked - sprite-scaling prerequisite cleared this session, output spec defined (one sprite sheet per client/archetype, horizontal layout, 2x display-cap resolution, percentage-based CSS). Spike-based investigation under C:\\Jarvis\\spikes\\, matching this session's pattern. Write findings + recommendation into vault/Projects/Website Generator.md as a Thread 3 PROPOSAL, update TASKS.md. Research + design only, do not build the real pipeline."
+      },
+      {
+        "text": "Package the Streamer HUD Widget for end customers: clean file + setup guide, no dev/diagnostic mode visible.",
+        "project": "streamer-hud",
+        "priority": "high",
+        "approach": "Review current widget code/build output, strip or hide dev/diag affordances, produce a distributable clean package."
+      },
+      {
+        "text": "Write customer-facing setup instructions for the Streamer HUD Widget (OBS Browser Source flag + one-time mic permission click).",
+        "project": "streamer-hud",
+        "priority": "medium",
+        "approach": "Short, plain-language doc a non-technical streamer can follow. Draft only - Fabio reviews before it's used anywhere."
+      },
+      {
+        "text": "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income).",
+        "project": "jarvis-system",
+        "priority": "medium",
+        "approach": "Inputs already staged: vault/Ideas/Multi-Page Orb Dashboard.md and vault/Ideas/Finance Dashboard for Project Income.md. Research + proposal only, write findings to vault/Projects/Jarvis System.md.",
+        "note": "Goal link is flagged as tentative in knowledge/PROJECTS.md - 'improve the system itself' doesn't cleanly map to either active goal (Get Jarvis into daily use / Monetize the Jarvis System). Surfacing this rather than silently assuming a fit."
+      }
+    ],
+    "respondedAt": "2026-08-05T10:37:27Z",
     "userNote": ""
   },
-  "queue": [],
+  "queue": [
+    {
+      "text": "Research frame generation for the flipbook archetypes (Thread 3 of the Website Generator roadmap): evaluate AI text-to-video->frames vs. real 3D render->export vs. hybrid template scenes.",
+      "project": "website-generator",
+      "priority": "medium",
+      "approach": "Now unblocked - sprite-scaling prerequisite cleared this session, output spec defined (one sprite sheet per client/archetype, horizontal layout, 2x display-cap resolution, percentage-based CSS). Spike-based investigation under C:\\Jarvis\\spikes\\, matching this session's pattern. Write findings + recommendation into vault/Projects/Website Generator.md as a Thread 3 PROPOSAL, update TASKS.md. Research + design only, do not build the real pipeline.",
+      "status": "queued"
+    },
+    {
+      "text": "Package the Streamer HUD Widget for end customers: clean file + setup guide, no dev/diagnostic mode visible.",
+      "project": "streamer-hud",
+      "priority": "high",
+      "approach": "Review current widget code/build output, strip or hide dev/diag affordances, produce a distributable clean package.",
+      "status": "queued"
+    },
+    {
+      "text": "Write customer-facing setup instructions for the Streamer HUD Widget (OBS Browser Source flag + one-time mic permission click).",
+      "project": "streamer-hud",
+      "priority": "medium",
+      "approach": "Short, plain-language doc a non-technical streamer can follow. Draft only - Fabio reviews before it's used anywhere.",
+      "status": "queued"
+    },
+    {
+      "text": "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income).",
+      "project": "jarvis-system",
+      "priority": "medium",
+      "approach": "Inputs already staged: vault/Ideas/Multi-Page Orb Dashboard.md and vault/Ideas/Finance Dashboard for Project Income.md. Research + proposal only, write findings to vault/Projects/Jarvis System.md.",
+      "note": "Goal link is flagged as tentative in knowledge/PROJECTS.md - 'improve the system itself' doesn't cleanly map to either active goal (Get Jarvis into daily use / Monetize the Jarvis System). Surfacing this rather than silently assuming a fit.",
+      "status": "queued"
+    }
+  ],
   "briefing": {
     "date": null,
     "generatedAt": null,

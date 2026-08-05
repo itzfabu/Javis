@@ -1,0 +1,10 @@
+{
+  "name": "flipbook-scale",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Throwaway spike: does the flipbook sprite-sheet technique scale to a real full-bleed hero, and if not, what does. Reuses assets from ../flipbook-scrub unmodified. Not part of the real generator.",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

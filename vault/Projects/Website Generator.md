@@ -56,12 +56,55 @@ TASKS.md under #website-generator.
    Thread 3's two gating conditions is cleared. It remains blocked on Thread 1 (brand extraction),
    which has not started.**
 
-## Thread 1: Brand Extraction — PROPOSAL (2026-08-04), awaiting Fabio's approval
+## Thread 1: Brand Extraction — APPROVED as architecture (2026-08-05), pipeline not yet built
 
-**Status: research + design only, nothing built.** This is a proposal to review and approve or
-redirect, not an adopted decision — unlike the rest of this note, nothing here changes how the
-generator works until Fabio signs off. Gates Thread 2 (conversion skeleton needs to know what it's
-styling) and Thread 3 (frame generation needs locked brand tokens, per the roadmap above).
+**DECISION (2026-08-05): APPROVED as validated architecture — but the token pipeline is NOT being
+built yet, and no further polish spikes for now.** Rationale: the remaining gaps found in the
+validation/re-test rounds below (logo wrong on 2/9, CTA tie-breaking when a page has several real
+buttons, 2 sites with zero header signal) are real but they don't change any decision. The
+mandatory human review gate on logo + accent stays mandatory whether the hit rate is 5/9 or 8/9 —
+selector-based extraction on arbitrary real websites will never reach the near-perfect accuracy
+that would let the gate be dropped. So further rounds optimize a number that moves nothing: not
+the architecture, not the token schema, not the product shape. Diminishing returns. The known gaps
+below stay recorded as-is for whoever builds the extractor later.
+
+**DECIDED (2026-08-05): the CLIENT performs the brand review, not Fabio.** This shapes the product
+more than the hit rate does, which is why it was recorded as an open question before the token
+pipeline was built rather than left implicit.
+
+Reasoning:
+- Fabio reviewing caps throughput at his own attention — every generated site needs his eyes before
+  shipping, forever. That directly contradicts the "no per-site hand-tuning" premise stated in the
+  problem framing below.
+- The client is better at the job, not just cheaper. They know their own brand; Fabio would be
+  guessing whether an extracted color is right. Per this thread's own validation results below, the
+  weak fields (logo, accent/CTA color) are exactly the ones a client can answer instantly — "is this
+  your logo?", "is this your brand color?" — where Fabio has no independent way to know.
+- It reframes a limitation as a product surface: a "confirm your brand" onboarding step is a normal,
+  expected part of website onboarding, not a visible defect in the generator.
+
+Consequences for whoever builds the token pipeline:
+- **The pipeline needs a review UI and a correction round-trip, not a fire-and-forget script.**
+  Build-once cost, versus review-forever if this had gone the other way — worth the extra build
+  effort given the throughput ceiling it avoids.
+- **The review step must surface, at minimum:** the extracted logo, the accent/primary color, and
+  the detected fonts — each with an easy correction path (upload a different logo, pick a different
+  color) rather than requiring the client to understand or edit raw token JSON.
+- **Per the Derivation Layer above, values marked `derived: true` should be visually distinguished
+  from extracted ones in this UI** — a client correcting an extracted fact ("that's not our logo")
+  is a different interaction than a client overriding a computed fallback ("we'd rather a different
+  shade"), and the UI should make clear which is which rather than presenting both with equal
+  claimed confidence.
+- **This decision also closes the wrong-URL gap the walking skeleton found** (nothing in the
+  pipeline catches "this is someone else's site" — see Walking Skeleton Findings below, where the
+  spike extracted Grace Family Roofing's logo onto a fake client and nothing flagged it). A client
+  looking at their own "confirm your brand" screen and seeing an unfamiliar logo/colors is a natural,
+  free catch for exactly that failure mode — not a separate mechanism that needs to be designed.
+
+**Status: research + design complete, architecture approved, nothing built yet.** The token schema
+below is locked and available for Thread 2 to consume (styling needs the schema shape, not a
+running pipeline). Thread 3 (frame generation) still needs the pipeline actually built before it
+can composite real client tokens/logos into frame sequences, per the roadmap above.
 
 **The problem:** the generator must go from "whatever a client gives us" — a URL, a logo file, a
 typed-out brand guide, or nothing at all — to a structured set of design tokens, automatically,
@@ -326,6 +369,49 @@ spike's placeholder rainbow), reads `backgroundForFrames` for the frame backgrou
 requirement this thread surfaces — composites `logo.assetPath` into the sequence per
 `logoCompositing`, so the client's actual mark appears in their hero animation, not just their
 colors.
+
+### Derivation Layer (added 2026-08-05, per walking-skeleton findings)
+
+**Addition to the locked schema above, backward-compatible — not a reopening of Thread 1's
+architecture decision.** The walking skeleton (see Walking Skeleton Findings near the end of this
+note) hit two real schema gaps on its first live run against a real site: a color role returned
+null with no defined fallback, and `surface` collapsed to the exact same value as `background` on
+a light-background site, leaving Thread 2's skeleton with no way to visually separate sections.
+Both trace to the same root cause — the schema specifies fields extraction cannot reliably produce,
+with no defined behavior for when it doesn't. This section defines that behavior.
+
+**Null fallback per color role**, applied only when direct extraction (including CSS custom
+properties) returns nothing usable at all:
+- `secondary` (sourced from footer background): derive as `primary` shaded 40% darker — the same
+  tint/shade mechanism already used for `border`.
+- `accent` (sourced from CTA background): fall back to `primary` if no CTA candidate clears the
+  extractor's confidence bar at all (distinct from a low-confidence candidate, which still surfaces
+  for human review per the mandatory review gate — this fallback is only for the "nothing found"
+  case, not the "found something dubious" case).
+- `primary` (sourced from header background): if genuinely nothing is found (no header/nav element,
+  no custom property, no image-sample fallback), fall back to a fixed dark neutral (`#1A1A1A`)
+  rather than leave the token null — a generated page with a generic dark neutral a human can
+  override at review is a softer failure than a null token breaking the page template outright.
+- `text` / `background`: extraction already normalizes these reliably (validated 9/9 and 9/9 in
+  Thread 1's spike) — no new fallback needed.
+
+**`surface` must be DERIVED, not extracted — this is the fix for the collapse problem.** Redefine
+`surface` in the schema as always computed from `background`, never taken directly from a "card/
+section background, computed" selector the way the worked example above implied: apply a tint (if
+background is light) or shade (if background is dark) of a **minimum 6% perceptual lightness
+delta**, so `surface` is guaranteed visually distinct from `background` regardless of what
+extraction finds. The light-background collapse case this fixes is the majority case, not an edge
+one, per Thread 1's own 9-site validation spike above. `border` keeps its existing derivation
+(shade of background), unchanged.
+
+**Every token value gets a `derived: true/false` flag**, so downstream stages and any review step
+can distinguish an extracted fact from a computed one at a glance, not just infer it from reading
+the `source` string. Example, extending the worked schema above:
+
+```json
+"surface":   { "value": "#F4F0EA", "source": "derived: 6% tint of background", "derived": true },
+"secondary": { "value": "#2A2018", "source": "footer background, computed", "derived": false }
+```
 
 ### VALIDATION RESULTS (2026-08-04) — spike against 9 real sites
 
@@ -596,6 +682,586 @@ something it can trust straight out of extraction.
 - **Nothing here has been run against a single real client website.** This entire thread is
   research and design, exactly as scoped — the next step, if approved, is a small build against a
   handful of real, diverse sites before treating any of the above as settled.
+
+## Thread 2: Conversion Skeleton — APPROVED as architecture (2026-08-05), nothing built
+
+**DECISION (2026-08-05): APPROVED as architecture — skeleton and category table adopted, nothing
+built.** The section order, the mandatory/conditional/optional split, the per-category variant
+table, the omit-by-default list, and the content-input table below are all adopted as the design.
+Same pattern as Thread 1: approved as a design, not as a build instruction — no templates exist
+yet.
+
+**Carried forward as adopted decisions, not open questions:**
+- Click-to-call is the visually dominant action for call/book categories (trades, dental, salons,
+  restaurants); the form is the fallback, not the primary.
+- Forms default to 3-4 fields, plus at most **one** structured dropdown where a qualifying detail
+  is load-bearing (e.g. job type for trades, new-vs-existing patient for dental). Never expand past
+  that in generation defaults.
+- Trust signals are never fabricated. Years in business, license numbers, guarantees, service area,
+  insurance accepted: client-supplied or omitted. Never invented.
+- No stock-photo team sections, ever. Real client photo or no section — never a placeholder.
+- Mobile reuses the same static hero fallback already mandatory for Firefox, rather than running
+  the sprite-sheet scrub — reasoned, not measured. The on-device-testing flag stays open.
+
+**Two items carried over for other threads to pick up, recorded here so they aren't lost:**
+- **Thread 1 schema addition (small, backward-compatible):** promote `category` to a first-class
+  token field (e.g. `"category": "food-beverage"`) rather than leaving it inside `archetype.reason`
+  free text, so Thread 2 (and Thread 3) can read it directly instead of re-deriving it.
+- **Thread 3 gap — RESOLVED 2026-08-05:** dental/medical didn't map cleanly to any of the six
+  archetypes; TRANSFORM fit a cosmetic-leaning practice but not a general/family practice. Decided:
+  general/family practice maps to FLYTHROUGH (a calm environment tour, addressing dental/medical
+  anxiety the same way FLYTHROUGH already builds trust for gyms/hotels), not a seventh archetype.
+  Full reasoning, concrete frame sequence, and aspect-ratio recommendation in the Visual Richness →
+  archetype library section below.
+
+**Status: architecture approved, nothing built.** Builds on the existing Conversion Requirements
+section below (form-length, headline, single-CTA, trust-signal, load-speed findings already
+established there) rather than repeating it — this thread's job was the *page structure* those
+findings get assembled into, below the hero, which Thread 3's archetype list already specs.
+
+**The problem, restated:** a premium hero (Thread 3) gets someone to stay on the page for three
+seconds. Whether that visitor becomes a phone call, a booking, or a quote request depends entirely
+on what's below the fold — and that's currently unspec'd. This thread defines it concretely enough
+for the generator to assemble automatically, with no per-category hand-tuning at generation time
+(same design bar Thread 1 held itself to).
+
+### 1. Section order — one skeleton, category-conditional content
+
+**Finding: one skeleton works; categories don't need genuinely different orders, they need
+different *content* inside the same slots.** Every category researched — food/beverage, trades,
+retail, real estate/hospitality, gyms, beauty, dental, professional services/SaaS — converges on
+the same underlying sequence: establish legitimacy fast, show what you offer, prove other people
+trusted you, answer the objection that's stopping them, then ask for the action, repeated. What
+changes per category is *which* trust signals matter and *what* the offer section actually
+contains (a menu vs. a quote form vs. a class schedule) — not the order those things appear in.
+This matches the landing-page research directly: social proof "positioned mid-page after
+introducing your solution but before the final call-to-action," with CTAs "prominently near the
+hero, after building desire mid-page, and near final content."
+
+**Recommended skeleton, in order:**
+
+1. **Hero** — already spec'd (Thread 3). Not re-specified here.
+2. **Trust bar** (mandatory) — a thin strip immediately under the hero: review rating + count,
+   years in business, a license/certification badge, service area — whichever of these the client
+   actually supplied (see Content Input below). This is the "decide within 10-15 seconds" window
+   research keeps surfacing for local/service categories — the trust bar is what fills it before
+   the visitor has scrolled far enough to reach the dedicated reviews section.
+3. **Services / Offerings** (mandatory, content shape varies by category) — what you get: a menu,
+   a service list, a treatment list, a product grid. This is the "what's in it for me" section the
+   headline-clarity research calls out as the thing visitors need answered fast.
+4. **Social proof** (mandatory) — a dedicated reviews section, 3-6 of the reviews already entered
+   manually per the existing Key Decisions entry — not just the trust-bar's rating number restated.
+5. **Category-conditional deep section** — gallery, before/after, class schedule, case studies,
+   portfolio. Present only when the category needs it *and* the client has actually supplied the
+   content it requires (see Content Input below — this is the section most likely to be skipped in
+   practice).
+6. **FAQ** (optional, category-conditional) — objection-handling for the specific hesitation a
+   category's visitors carry (insurance coverage, warranty length, service area radius).
+7. **Contact / Conversion section** (mandatory) — the actual form/call/booking block. Repeats the
+   *same* CTA established in the hero — not a new, competing one — per the single-CTA finding
+   already in Conversion Requirements below (13.5% vs. 11.9% for one link vs. two-to-four).
+8. **Footer** (mandatory) — NAP (name/address/phone), hours, service area, secondary nav. Already
+   covered as a design-craft beat ("footer-as-episode") in UI Craft below; this thread adds the
+   *content* requirement underneath that craft treatment.
+
+**Outside the vertical order:** a sticky mobile CTA bar (see Mobile below) — a persistent overlay,
+not a scroll-order section.
+
+**Mandatory vs. category-conditional vs. optional, stated plainly:**
+
+| Section | Status |
+|---|---|
+| Hero | Mandatory (Thread 3, not re-specified here) |
+| Trust bar | Mandatory (content conditional on what the client supplies) |
+| Services/Offerings | Mandatory |
+| Social proof / reviews | Mandatory |
+| Category deep section (gallery/before-after/schedule/case studies) | Category-conditional, and further gated on real content being available |
+| FAQ | Optional |
+| Contact/Conversion | Mandatory |
+| Footer | Mandatory |
+| Generic "About Us" text wall | **Omit by default** — see Section 5 |
+| Team section (stock or generic) | **Omit by default** — see Section 5 |
+| Blog feed | **Omit by default** — see Section 5 |
+
+### 2. The conversion action itself
+
+**Local-service categories: the call is the win, and the numbers are lopsided, not marginal.**
+Click-to-call converts at 5-25% versus typical web-form conversion, mobile-optimized local pages
+with click-to-call convert 47% higher than non-optimized ones, and — most strikingly — businesses
+rate inbound calls as "excellent leads" at 61% versus 52% for web leads, with one source estimating
+25-40% of callers become customers versus ~2% of form-fillers. **This means: for trades, dental,
+salons, and restaurants taking reservations, the phone number is not one option among several — it
+should be the visually dominant action, with the form as the fallback for people who can't or won't
+call**, not the reverse.
+
+**Form length: the general-CRO finding and the trades-specific claim are in real tension, stated
+honestly rather than smoothed over.** General CRO research is consistent and steep: conversion
+drops from ~18-23% at 1-3 fields to ~9-11% at 4-5 fields and collapses further past 7 (one dataset:
+11-field → 4-field cut lifted conversion 120%). But trade-specific sources claim 4-8 field quote
+forms with dropdowns/conditional logic work *because* the qualifying detail (job type, property
+size) is what makes a quote-request lead usable at all — and separately claim trust-signal
+proximity to the CTA swings conversion far more than form length alone (a cited but
+unverified-methodology figure: 1-2% quote conversion without trust signals near the form vs. 8-15%
+with them). **Recommendation, given the tension:** default to the general-CRO baseline — 3-4
+fields (name, phone, one message/need field) — for every category, and allow exactly **one**
+additional *structured* field (a dropdown, not free text) for categories where a qualifying detail
+is genuinely load-bearing (trades: job type; dental: new vs. existing patient). Never expand past
+that on the generation defaults. This is a reasoned compromise between two real but conflicting
+signals, not a resolved question — flagged again under Honest Gaps.
+
+**CTA repetition:** per Conversion Requirements below, a single CTA beats multiple competing ones —
+but "single" means *one action*, repeated at multiple points (hero, after the offerings section,
+in the contact section, in the sticky mobile bar), not one appearance. The hero CTA alone is known
+to underperform; this skeleton's mandatory Contact/Conversion section exists specifically to give
+that CTA a second, deliberate placement after trust and offerings have been established.
+
+**Per-category primary action** — see the category table below.
+
+### 3. Trust signals
+
+**Reviews:** already an input (Key Decisions — manually entered, not API-pulled). This thread adds
+*where*: a rating/count summary in the trust bar (Section 1, slot 2) plus a dedicated multi-review
+section (slot 4) — research specifically flags placing proof "where hesitation peaks" (near the
+CTA) as more effective than a single generic testimonials block, and one source ties positive
+homepage ratings to the single most-cited trust signal in an 8,000-respondent consumer survey
+(86% citing star ratings/reviews as most likely to drive a purchase decision from a new company).
+
+**What else carries weight, and — critically — what the generator can actually obtain:**
+
+| Trust signal | Generator can obtain it? | Notes |
+|---|---|---|
+| Google reviews | Yes | Already solved (Key Decisions) |
+| Years in business | **No — client must supply** | Cannot be inferred or safely guessed |
+| License/certification number | **No — client must supply** | Fabricating this would be actively dishonest, not just a gap |
+| Service area | **No — client must supply** | A map or named-town list; research favors a map over a long city list |
+| Insurance/financing accepted | **No — client must supply** | Named specifically in dental research as an underrated conversion factor |
+| Real team/before-after photos | **No — image generation is out of scope** (per Output Structure) | See Section 5 — this is why these sections stay category-conditional on real content existing, not a default |
+| Guarantees/warranties | **No — client must supply** | Same fabrication risk as licensing |
+
+**The pattern across this table:** almost every high-value trust signal beyond reviews is a fact
+the generator cannot source itself — it requires expanding the existing generation intake form
+(the same place Thread 1's "is this the business's own site?" field already lives), not a content
+or design decision this thread can resolve alone. Recorded here, not resolved.
+
+### 4. Mobile
+
+**Section order:** no evidence found for reordering sections between desktop and mobile — the
+skeleton in Section 1 holds; what changes is presentation, not sequence.
+
+**Sticky call/CTA bar: recommended default-on for call/book-action categories, with the "not
+always a win" caveat kept explicit, not smoothed over.** Sticky bottom CTAs are documented at
+15-25% lift generally and up to 45% for click-to-call specifically in some industries — but the
+same research explicitly warns a sticky element "is not always successful, and sometimes can even
+have a negative impact," with success most consistently shown at the point of highest-intent
+action (checkout-equivalent), which for a local-service page is exactly the contact/booking action.
+**Recommendation:** default on for categories whose primary action is call/book (trades, dental,
+salons, restaurant reservations), single dismissible bottom bar, bottom-right thumb zone; default
+off (or a lighter "Get Started" variant) for retail/SaaS categories where the action isn't a call.
+
+**Form behavior:** no mobile-specific research finding beyond what's already covered in Section 2
+(field count) — mobile forms should use native input types (`tel`, dropdowns over free text, per
+the 15.2%-fewer-abandonments finding already cited) so mobile keyboards match the field.
+
+**Hero animation degradation on mobile — recommendation: reuse the same static-fallback path
+already mandatory for Firefox, rather than running the sprite-sheet scrub on mobile at all.** Three
+reasons, stated as a reasoned default, not a measured result: (1) the flipbook mechanism
+(`background-position` steps) requires a main-thread repaint per step, not a compositor-only
+property — Thread 3's own spike disclosed this cost is genuinely unmeasured in this environment
+("not rigorously measurable... a real verdict needs on-device DevTools profiling"), and mobile CPUs
+are exactly where an unmeasured main-thread cost is riskiest; (2) mobile visitors are shown by
+research to be closer to a decision already (the "call within 24 hours" / "decide in 10-15 seconds"
+findings above) — a decorative hero flourish serves that visitor less than getting them to the
+trust bar and CTA fast; (3) reusing the existing Firefox static-frame path costs zero new
+engineering — one fallback state serves both "unsupported browser" and "mobile," rather than
+building a second bespoke mobile-only degradation path. This is the same honesty standard Thread 3
+already set for itself on this exact question — flagged for real on-device testing before being
+treated as final, not asserted as measured fact.
+
+### 5. What to omit
+
+**Generic "About Us" text walls: omit by default.** No research found supporting them as a
+conversion-positive section for a small local business specifically — they read as filler where a
+trust bar (Section 1) and real reviews already do the credibility work faster.
+
+**Stock-photo team sections: omit by default, never generated as a placeholder.** Research is
+consistent and specific here: real photos (even smartphone-quality) measurably outperform stock
+photography on trust, and stock photos are actively ignored or trust-decreasing. The generator has
+no image-generation pipeline (explicitly out of scope, per Output Structure) — so the only two
+honest options are (a) a real client-supplied team photo, or (b) no team section at all. **Never a
+stock-photo placeholder** — that's a worse outcome than omission, not a neutral one, consistent
+with the "wrong-but-confident is worse than none" principle Thread 1's validation already
+established for logo extraction.
+
+**Blog feeds: omit by default.** Nothing in the generation pipeline produces ongoing blog content
+(this is a one-shot site generator, not a CMS), and a feed of zero or stale posts actively signals
+neglect rather than authority. Category-conditional FAQ (Section 1) serves the same objection-
+handling purpose blogs are sometimes justified by, without the maintenance-content problem.
+
+### Per-category variant table
+
+Reuses the same category classification Thread 3's archetype list and the UI Craft typography
+mapping already established — **this thread does not introduce a second taxonomy.** See the schema
+note below: this requires one small addition to Thread 1's token schema to work cleanly.
+
+| Category | Archetype (Thread 3) | Primary conversion action | Category-specific mandatory content | Notes |
+|---|---|---|---|---|
+| Food & Beverage (restaurant, cafe, bakery) | REVEAL | Reservation/order link, click-to-call | Menu (HTML, not PDF/image) + hours + location map | Fixed-nav quick-action buttons; 70%+ of restaurant traffic is mobile |
+| Construction & Trades (roofer, contractor, plumber) | ASSEMBLE | Quote-request form + click-to-call | License/insurance badge, service-area map | The one extra qualifying dropdown from Section 2 applies here |
+| Retail & Product (boutique, manufacturer) | SPIN | Shop/contact link | Product gallery | Closer to e-commerce norms than lead-gen; MVP scope is generate-from-prompt lead-gen, not checkout — flagged, not resolved here |
+| Real Estate & Hospitality (agent, hotel, venue) | FLYTHROUGH | Schedule tour/book | Gallery + availability/contact | Hero flythrough already sells the space; below-fold reinforces logistics |
+| Gyms & Fitness Studios | FLYTHROUGH | Book a class / free trial | Class schedule, trainer credentials | |
+| Beauty & Personal Care (salon, spa) | TRANSFORM | Book appointment + click-to-call | Before/after gallery (real photos only, see Section 5), service menu | |
+| Health & Dental | *Not covered by Thread 3's 6-archetype list — see gap below* | Book appointment + click-to-call | Insurance/financing info, credentials | Named conversion factor in dental research specifically: insurance visibility |
+| Professional Services & SaaS (law, consulting, agency, software) | INTERFACE | Contact/demo-request form | Credentials/case studies, process clarity | Longer consideration cycle; form can lean to 5 fields rather than 3-4 |
+
+**Cross-thread gap this table surfaced, not resolved here:** dental/medical doesn't fit cleanly
+into Thread 3's six archetypes — TRANSFORM (before/after) fits a cosmetic-leaning practice but not
+a general/family practice, which has no natural "transform" story. Recording this for whoever picks
+Thread 3 back up; not a Thread 2 decision to make.
+
+### Content input — where does each section's copy actually come from
+
+| Section | Source | Honest flag |
+|---|---|---|
+| Hero | LLM-generated from client's prompt/description (existing pipeline) | — |
+| Trust bar facts (years, license, area) | **Client must supply directly** | Not inferable; needs an intake-form addition |
+| Services/Offerings | Client's prompt/description, LLM-expanded | Category-specific detail (menu items, prices, treatment names) should not be LLM-invented — needs client-supplied structured input for anything factual |
+| Social proof | Manually-entered reviews (Key Decisions, already solved) | — |
+| Category deep section (gallery, before/after, schedule) | **Client-supplied images/data** | No image pipeline exists yet (Output Structure) — this section is effectively unpopulatable until that's built or the client supplies assets directly |
+| FAQ | LLM-drafted questions (category-typical objections), client-confirmed answers | Never LLM-invent a specific factual answer (warranty length, insurance accepted) |
+| Contact/Conversion form | Structural, not generated content | Submission destination (email/phone) is client-supplied |
+| Footer NAP | **Client must supply directly** | Address/phone/hours cannot be invented |
+
+**Amendment flagged 2026-08-05, from the walking-skeleton findings near the end of this note — not
+resolved here, just recorded against this table.** The walking skeleton's construction/trades test
+run correctly omitted the category deep-section (gallery) per this table's own rule — no real
+client-supplied photos existed for the fake client, so nothing was shown rather than a placeholder.
+But the honest verdict on the resulting page was that its absence hurt worst for exactly this
+category — construction, where seeing the actual work *is* the sale. That suggests that for some
+categories (construction/trades, renovation, beauty/before-after), client-supplied photos for the
+category deep-section aren't optional polish the way this table's framing implies — they may be
+closer to required content, with a materially weaker product if the client can't supply them.
+Flagged as a possible amendment to this table's mandatory/conditional/optional split; not resolved
+here.
+
+### Thread 1 → Thread 2 handoff
+
+Thread 2 consumes, from Thread 1's locked token schema: `color.*` (styles every section and the
+repeated CTA buttons), `color.accessibility` (resolves text-on-CTA contrast for the repeated
+button, not just the hero), `typography.heading/body/scale` (section headings and body copy),
+`logo` (page header/nav placement, not just the hero composite), and `spacing.unit/radius`
+(consistent section padding and card radius across the skeleton).
+
+**One small schema addition this thread requires:** Thread 1's schema currently only exposes
+category indirectly, inside `archetype.reason` as a free-text string (`"category: food/beverage,
+per Thread 3 archetype-to-category mapping"`). Thread 2 needs to read the category value directly
+to pick the right row from the table above — parsing it back out of a reason string is fragile.
+**Recommend promoting it to a first-class field**, e.g. `"category": "food-beverage"` alongside
+`archetype`, so both threads read the same value instead of Thread 2 re-deriving it. This is a
+small, backward-compatible addition to a schema that's otherwise locked, not a reopening of Thread
+1's architecture decision above.
+
+### Honest gaps — not resolved on paper, need real testing or real client sites
+
+- **No data specific to this pipeline's own generated sites** — every finding above is general CRO
+  or category-specific agency research, not measured against an actual generated-site visitor.
+- **Form-field-count recommendation (Section 2) is a reasoned compromise between conflicting
+  sources, not a resolved number** — needs real A/B data on generated sites before treating 3-4+1
+  as final.
+- **The trades-specific "1-2% vs. 8-15%" quote-conversion figure and the "4-8 field" claim come
+  from agency blog content with no disclosed methodology** — presented here as directional
+  industry opinion, not verified data, consistent with this note's standard of saying so plainly.
+- **Mobile hero-animation degradation (Section 4) is a reasoned default, not a measured result** —
+  same category of gap Thread 3's own spike already disclosed for scroll-scrub jank generally, now
+  extended to a mobile-specific call this thread makes without new measurement.
+- **Category taxonomy is a simplification** — a real business that spans categories (a restaurant
+  that also caters, a gym that also sells retail product) has no defined rule for which single
+  category/skeleton variant it gets. Unresolved.
+- **No form backend exists in the current architecture.** The generator outputs static
+  HTML/CSS/JS with no server (Output Structure) — the mandatory Contact/Conversion section's form
+  needs somewhere to actually submit to (`mailto:`, a third-party form-submission service, or
+  something else). This blocks the mandatory Contact/Conversion section from functioning
+  end-to-end and isn't decided anywhere in this note yet — a real gap, not a content or layout
+  question this thread can close.
+- **Single-page vs. multi-page is not reopened here, but worth flagging:** research shows
+  single-page structure converts better for a simple, single-offer business (>37.5% in one
+  comparison) and matches the generator's current one-`index.html` output — but multi-page
+  structure is shown to matter for local SEO specifically (service pages, location pages), which a
+  one-page generated site can't capture. Out of this thread's scope; noted for whoever later
+  weighs SEO strategy against the current single-page architecture.
+
+### Form Backend — DECIDED (2026-08-05): Web3Forms now, self-hosted endpoint deferred to a switch trigger
+
+**DECISION (2026-08-05): Web3Forms now, self-hosted endpoint later — the research's own plan B is
+promoted to plan A for the current stage.** This inverts the proposal's original recommendation
+below, so the reasoning for the inversion is recorded here rather than left implicit:
+- The self-hosted Flask endpoint is still the better long-term answer, and the research for it
+  below stands as written — nothing about it was wrong. But its entire cost is **ongoing
+  operational responsibility**, and the generator has no working end-to-end pipeline and no clients
+  yet. Taking on personal uptime liability for other people's incoming leads — before there are any
+  leads — is pure downside with no offsetting benefit yet.
+- **The failure modes are asymmetric, not just different.** If a form SaaS goes down, that's a
+  vendor problem with a vendor's on-call team and a clear migration path. If Fabio's Windows PC is
+  off for a weekend, leads vanish silently and the client finds out from a customer who says "I
+  filled out your form and nobody called" — that damage lands on Fabio as the person who built the
+  site, not on a third party.
+- **The Flask app (`orb/app.py`) currently runs locally on a workstation that gets restarted
+  routinely during development.** Fine for a personal dashboard; not an uptime story for client
+  lead capture. Moving it somewhere always-on is a prerequisite for the self-hosted option, not a
+  minor detail to handle later.
+- The proposal's own alerting/health-check mechanism for the self-hosted option is explicitly
+  undesigned (see Honest Gaps below) — a further, concrete reason it isn't ready to carry real
+  leads yet.
+- Thread 2 already established the form is the **secondary** conversion path — click-to-call
+  converts far better for local service businesses. The secondary path doesn't deserve to be the
+  thing Fabio takes operational liability for, especially this early.
+
+**Adopted for now:**
+- **Web3Forms** — one account, many generated sites, per the research finding below that several
+  services (Web3Forms among them) are purpose-built for exactly this shape.
+- A visible `mailto:` line as zero-cost redundancy (unchanged from the proposal).
+- Prominent click-to-call as the primary action (unchanged from Thread 2).
+
+**Switch trigger — recorded so this isn't relitigated later.** Build the self-hosted Flask intake
+endpoint (relaying through Resend, per the research below as written) when **either**: (a) there
+are 5+ paying clients, or (b) the Web3Forms free tier starts capping out. Prerequisites at that
+point, not after: the Flask app must be hosted somewhere always-on, and the alerting/health-check
+mechanism must be designed first.
+
+**Status: decision made, nothing built.** The self-hosted research below stays in the note as-is,
+ready to deploy at the switch trigger above — it is being sequenced later, not rejected.
+
+---
+
+**Original proposal (2026-08-05), superseded above for the current stage, kept for context and for
+the eventual self-hosted build:**
+
+Thread 2's Contact/Conversion section (mandatory) and the Honest Gaps above both flagged the same
+real hole: generated output is static HTML/CSS/JS with no server (Output Structure), so the
+mandatory form has nowhere to submit to. Right now, on every site this pipeline generates, the
+primary fallback conversion mechanism doesn't work end-to-end. This matters less than it would if
+forms were the primary action — Thread 2 already established click-to-call as visually dominant
+for most categories — but "the fallback silently doesn't work" is still a real defect, not a
+cosmetic one.
+
+**Option 1 — `mailto:`.** Zero dependency, zero cost, works forever, nothing to break. Rejected as
+the primary mechanism: it hands the visitor off to a separate mail application, which a large and
+growing share of mobile/webmail users don't have configured at all — the visitor either sees a
+broken "no app found" prompt or has to copy an address into Gmail-in-a-browser by hand. No
+precise mailto-specific conversion figure was found in this research pass (flagged honestly below,
+not invented), but the mechanism itself directly contradicts the low-friction, 3-4-field form
+design Thread 2 just adopted — it doesn't submit a form at all, it abandons the visitor into a
+different app mid-task. **Kept, but only as an always-visible redundant fallback line ("or email us
+directly at ___"), never as the form's actual submission mechanism** — zero-cost insurance for the
+case where the real mechanism (Option 3 below) is down, not the primary path.
+
+**Option 2 — third-party form services (Formspree, Basin, Web3Forms, Static Forms, Formgrid, etc.).**
+Researched free-tier limits and the multi-client question directly:
+- Formspree and Basin: 50 submissions/month free, then $8+/month paid.
+- Web3Forms: genuinely unlimited free, but email-only — no dashboard, no submission storage, just a
+  relay to an inbox.
+- Static Forms, StaticForms, and Formgrid are explicitly built for this project's exact shape: one
+  agency account serving many client sites/forms, each isolated with its own notifications and
+  tagging. **This directly answers the "does each client need their own account" question: no** —
+  several services are purpose-built for one account, many generated sites.
+- **Rejected as the primary mechanism anyway**, for the same reason Dembrandt, GSAP+Lenis, and the
+  font-matching APIs were rejected earlier in this note: a small, third-party form-SaaS is exactly
+  the dependency profile this project's history warns about, and here the blast radius is worse
+  than those cases — if the service shuts down, changes pricing, or has an outage, **every
+  generated site across every client breaks simultaneously**, with no fallback and no fix Fabio
+  controls the timeline on.
+
+**Option 3 — self-hosted intake endpoint, recommended.** A small route added to the existing Flask
+app (`orb/app.py` already runs and is already Fabio's infrastructure — this is additive, not a new
+service to stand up) that receives POSTs from every generated site's form (a hidden `client_id`/
+`slug` field identifies which site a submission came from) and relays each one to that client's
+email. **Critically, this does not mean self-hosting a mail server** — research specifically warns
+that self-hosted SMTP has a real, hard-to-fully-fix deliverability problem: even with correct
+SPF/DKIM/DMARC configuration, a new/self-hosted sending IP is treated with default suspicion by
+Gmail and Microsoft. The recommendation is a **hybrid**: Fabio owns the intake logic and the code
+(no vendor can take that away or shut it down), but the actual outbound send goes through a
+transactional email API — **Resend** (3,000 free emails/month, then $20/month for 50,000) is the
+best fit found: cheap, generous free tier for an early client base, authenticated sending from a
+domain Fabio controls, and — importantly for this project's dependency posture — a commodity
+utility with several viable swap-in alternatives (Postmark, SendGrid) if it ever needs replacing,
+which is a much lower-risk single-vendor bet than trusting one small forms-SaaS with every client's
+lead pipeline and configuration.
+- **Spam/abuse exposure:** real, and the same problem every third-party service above also has to
+  solve (they list reCAPTCHA/Turnstile/Altcha for exactly this). V1 mitigation: a honeypot field
+  (zero cost, catches most bots) plus server-side rate limiting per IP; server-side validation, not
+  just client-side, per the deliverability research above. Cloudflare Turnstile (free, one sitekey
+  reusable across every generated site) is a reasonable next step if honeypot+rate-limit proves
+  insufficient — not needed at v1.
+- **Deliverability:** as long as sending goes through Resend with a properly authenticated domain
+  (SPF/DKIM/DMARC on a domain Fabio controls), this has the same deliverability profile as the
+  third-party services above — they aren't doing anything more sophisticated than authenticated
+  relay through their own sending domains either.
+- **Does this make Fabio a dependency/liability for client leads? Yes, honestly.** This is the real
+  business-model tradeoff the recommendation carries, not a footnote: if Fabio's server or the
+  Flask app goes down, or Resend has an outage, **every generated site's leads fail simultaneously**
+  until someone notices — same blast radius as Option 2's failure mode, except now Fabio personally
+  owns uptime and the fix timeline instead of a vendor's on-call team. This is an ongoing
+  operational responsibility, not a one-time build decision, and it scales with client count: fine
+  at a handful of clients, a real support burden if this grows to "many."
+
+**What happens when it fails, and who notices:** the failure mode is silent by default — a POST
+that 500s or times out has no visible error surfaced to the site visitor beyond a generic
+form-failed state, and neither Fabio nor the client would know a lead was lost unless something is
+watching for it. This is unresolved at the proposal stage: minimally, the intake endpoint needs a
+health/alerting hook before this ships to a real client — piggybacking on the same accountability/
+dashboard pattern already used elsewhere in this system is the natural fit, not a new mechanism.
+
+**Degradation path — the phone number stays primary regardless of form status.** This is the
+direct payoff of Thread 2's own decision that click-to-call is the dominant action for most
+categories, not the form: a visitor whose form submission fails silently still has a prominently
+displayed phone number in the same section, unaffected by any of the above. For the categories
+where the form genuinely is the primary action (professional services/SaaS, per Thread 2's category
+table), the redundant `mailto:` line from Option 1 is the last-resort path when the POST endpoint
+itself is down.
+
+**Recommendation, stated plainly:** self-hosted intake endpoint (Option 3) relaying through Resend,
+with a visible `mailto:` line (Option 1) as zero-cost redundant insurance, and Web3Forms (from
+Option 2) recorded as the explicit fallback-plan-B if Fabio later decides he doesn't want the
+ongoing operational responsibility Option 3 carries — that's a legitimate reason to revisit this,
+not a flaw in the research.
+
+**Honest gaps:**
+- **No mailto-specific conversion-penalty figure was found** — the rejection above is reasoned from
+  the mechanism (hands off to a separate, often-unconfigured app) plus its direct conflict with
+  Thread 2's low-friction form design, not from a measured number. Flagged rather than invented.
+- **Generated-site hosting/deployment is itself undecided** — this note has no recorded decision on
+  where generated sites are actually served from once delivered to a client (checked directly: no
+  hosting/deploy decision exists elsewhere in this note). That absence is *why* Netlify Forms/
+  Cloudflare Pages Functions weren't recommended here — they only make sense if sites deploy to
+  that specific host, which isn't decided. **If a future hosting decision lands on Netlify for
+  unrelated reasons, this recommendation should be revisited** — a platform-native form handler
+  would remove the need for Fabio's own endpoint entirely.
+- **Real submission volume is unknown** — there are no live clients yet, so Resend's free tier is
+  confirmed sufficient only in the sense that it comfortably covers a small/early client base, not
+  validated against real scale.
+- **Spam-abuse volume against a public endpoint is unmeasured** — honeypot + rate-limiting is a
+  reasonable v1 guess based on how the third-party services describe their own defenses, not
+  something tested against real attack traffic here.
+- **The alerting/health-check mechanism for Option 3 is not designed, only flagged as required**
+  before this ships to a real client.
+- **The sending domain itself isn't chosen** — Resend needs a domain Fabio controls to authenticate
+  SPF/DKIM/DMARC against; which domain is an open, undecided detail, not a research question.
+
+### Sources (Form Backend)
+- [Form Conversion Rate Benchmarks 2026 — Digital Applied](https://www.digitalapplied.com/blog/form-conversion-rate-benchmarks-2026-data-points) — desktop-vs-mobile completion gap, mobile abandonment causes
+- [Formspree Free Plan Limits (2026) — FormTorch](https://formtorch.com/compare/formspree-free-plan-limits) — Formspree free-tier submission cap
+- [Formspree vs Basin 2026 — Splitforms](https://splitforms.com/blog/formspree-vs-basin) — Basin free-tier and pricing
+- [Formspree vs Web3Forms 2026 — Splitforms](https://splitforms.com/blog/formspree-vs-web3forms) — Web3Forms unlimited-free, email-only model
+- [Static Forms — Features](https://www.staticforms.dev/features) — one-account-many-client-sites model
+- [Email Deliverability Best Practices: 10 Tactics for 2026 — Static Forms](https://www.staticforms.dev/blog/email-deliverability-best-practices) — SPF/DKIM/DMARC, authenticated sending domain guidance
+- [10 Steps To Set Up A Self-Hosted Mail Server Without Hitting Spam — DuoCircle](https://www.duocircle.com/email-hosting/10-steps-set-up-self-hosted-mail-server-avoid-spam) — new/self-hosted IP reputation risk with major providers
+- [Resend vs SendGrid vs Postmark Pricing at 1K, 10K, 100K — Vibe Coder Blog](https://blog.vibecoder.me/email-service-pricing-resend-sendgrid-postmark) — transactional email API pricing comparison
+- [Email API Pricing Comparison (July 2026) — BuildMVPFast](https://www.buildmvpfast.com/api-costs/email) — Resend free-tier figures
+- [Netlify Forms — Cloudflare Pages Migration Docs](https://developers.cloudflare.com/pages/migrations/migrating-from-netlify/) — confirms Netlify Forms is host-native and doesn't transfer to Cloudflare Pages
+- [Forms on Cloudflare Pages are Needlessly Complicated — Cloudflare Community](https://community.cloudflare.com/t/forms-on-cloudflare-pages-are-needlessly-complicated/670762) — confirms Cloudflare Pages has no built-in form handler equivalent to Netlify's
+
+### Sources (Thread 2)
+- [Landing Page Best Practices That Convert in 2026 — Lovable](https://lovable.dev/guides/landing-page-best-practices-convert) — section order, CTA placement, proof-near-CTA
+- [25 Landing Page Best Practices That Convert in 2026 — Landingi](https://landingi.com/landing-page/41-best-practices/) — section flow, hierarchy
+- [Click-to-Call Button Best Practices Guide — The Ad Firm](https://www.theadfirm.net/click-to-call-and-contact-buttons-best-practices-to-turn-mobile-visitors-into-customers/) — click-to-call conversion multiplier
+- [Business Phone Call Statistics: 50+ Data Points (2026) — AInora](https://ainora.lt/blog/business-phone-call-statistics-2026) — call-vs-form lead quality, caller-to-customer rate
+- [Local Search Statistics 2026 — BizIQ](https://biziq.com/blog/local-search-statistics/) — 60%/88% mobile local-search-to-contact figures
+- [Mobile Phone Calls = Higher Conversion Rates — Conversion Sciences](https://conversionsciences.com/mobile-phone-calls-higher-conversion-rates/) — mobile-optimized click-to-call lift
+- [Form Conversion Rate Benchmarks 2026 — Digital Applied](https://www.digitalapplied.com/blog/form-conversion-rate-benchmarks-2026-data-points) — field-count-vs-conversion curve
+- [5 Studies on How Form Length Impacts Conversion Rates — Ventureharbour](https://ventureharbour.com/how-form-length-impacts-conversion-rates/) — HubSpot 11→4 field / 120% lift study
+- [29 Landing Page Social Proof Element Performance Statistics — TryFlint](https://www.tryflint.com/blog/landing-page-social-proof-element-performance-statistics) — proof-placement-near-hesitation-points
+- [The Best Places to Feature Testimonials on Landing Pages — Say About Us](https://sayabout.us/blog/the-best-places-to-feature-testimonials-on-landing-pages) — placement patterns
+- [Win Report: How a "sticky" call to action increased sales by 25% — Conversion Rate Experts](https://conversion-rate-experts.com/sticky-cta-win-report/) — sticky CTA lift and "not always a win" caveat
+- [Top Strategies for Roofing Contractor Website Conversion Optimization — Robben Media](https://robbenmedia.com/top-10-tips-for-roofing-contractor-website-conversion-optimization/) — trades trust-bar/quote-form claims (agency-sourced, methodology undisclosed)
+- [14 Modern Roofing Websites (And Why They Convert) — Roofing Webmasters](https://www.roofingwebmasters.com/roofing-websites/) — same category, cross-check
+- [Restaurant Website Design: 7 Must-Have Elements (2026) — Chowly](https://chowly.com/resources/blogs/restaurant-website-design-7-elements-of-a-high-converting-restaurant-website/) — HTML menu, fixed-nav quick actions
+- [The 10 Essential Elements of Restaurant Websites — BentoBox](https://www.getbento.com/blog/the-10-essential-elements-of-a-restaurant-website/) — menu as most-visited/deciding page
+- [The Complete Dental Website Design Guide (2026) — Leadtek](https://leadtek.ai/blog/dental-website-design-guide) — insurance-visibility conversion factor, credentials-near-booking
+- [Dental Website Design: What Actually Converts in 2026 — Kelly WM](https://kellywm.com/blog/dental-website-design) — 10-15 second decision window
+- [9 Best About Us Pages for Small Business — It's Buzz Interactive](https://www.itsbuzzinteractive.com/blog/best-about-us-pages-for-small-businesses) — real-vs-stock photo trust findings
+- [Why Trust Signals Are the Missing Link on Most Local Business Websites — Best Version Media](https://www.bestversionmedia.com/why-trust-signals-are-the-missing-link-on-most-local-business-websites/) — years-in-business, service-area-map-over-city-list
+- [Trust Signals That Convert Visitors Into Customers — Mailchimp](https://mailchimp.com/resources/trust-signals/) — general trust-signal framing
+- [High-Impact Hero Sections That Don't Hurt Page Speed: A CRO Guide — Stellar](https://www.gostellar.app/blog/high-impact-hero-sections-that-dont-hurt-page-speed/) — hero asset weight vs. bounce rate, static-fallback recommendation
+- [One Page Vs Multi Page Website For Service Providers — Twofold](https://twofold.squarespace.com/blog/one-page-vs-multi-page-website) — single-page conversion lift for simple-offer businesses
+- [Services Page vs Service Pages for Local SEO — SPB Web](https://www.spbweb.com/post/services-page-vs-service-pages-local-business) — multi-page local-SEO tradeoff
+
+## Walking Skeleton Findings (2026-08-05)
+
+**A rough end-to-end pipeline was built in `C:\Jarvis\spikes\generator-e2e\`** — one hardcoded
+construction/trades client, brand extracted from a real live site using `extract2.js` unmodified
+(reused from Thread 1's validation spike, not improved), the `flipbook-scrub` spike's placeholder
+tower sprite sheet reused as-is for the hero, Thread 2's page skeleton, and the Web3Forms/mailto/
+click-to-call form-backend decision, all wired together into one self-contained output folder. This
+was explicitly a walking skeleton, not a product attempt — the goal was finding handoff failures
+between the three threads' separately-researched designs, not building anything real. **It
+succeeded at that.** Four real breaks surfaced, none of which any single thread's own research
+would have found, because each only exists at the seam between two threads' work.
+
+### The four breaks
+
+1. **The flipbook hero technique doesn't work at real hero scale.** The spike that resolved native
+   CSS vs. GSAP (see RESOLVED Flipbook Alternative above) proved the technique in a fixed 400×600px
+   box. Wired into a real full-bleed hero, the unscaled sprite sheet showed 3-4 adjacent frames
+   side by side instead of one. Full detail, consequences, and the new Thread 3 prerequisite this
+   creates are recorded directly under the flipbook section above, not repeated here.
+2. **The 500vh scroll-track is invisible to anything that doesn't emulate live scrolling** — a
+   plain full-page screenshot showed ~400vh of blank space between hero and content. Recorded as
+   unsolved directly under the flipbook section above.
+3. **Thread 1's schema has real fields with no defined fallback when extraction returns null.** Hit
+   immediately: the live test site's footer color came back null, and the schema had no documented
+   behavior for that. Now fixed at the schema level — see the new Derivation Layer under Thread 1's
+   Token Schema above.
+4. **`surface` and `background` collapse to the same value on light-background sites** — most real
+   sites, per Thread 1's own 9-site validation — leaving Thread 2's skeleton with no way to
+   visually separate sections. Also fixed via the new Derivation Layer above (surface is now always
+   derived from background with a minimum lightness delta, never extracted directly).
+
+### Smaller finds
+
+- **No field anywhere catches "wrong URL supplied."** The spike extracted Grace Family Roofing's
+  real logo and colors onto the fake client "Ironclad Construction Co." and nothing in the pipeline
+  flagged the mismatch — visually obvious in the output (the header showed both names side by
+  side), but there's no automated same-business sanity check anywhere in the review gate. A real
+  client accidentally pasting a competitor's URL, or their old/wrong domain, would sail through
+  identically. Belongs somewhere in the mandatory review gate; not designed here.
+- **The extracted logo asset was white-on-transparent and only rendered correctly by luck**, because
+  this build's header happened to be dark. Nothing in Thread 1's schema records that a logo variant
+  needs a dark (or light) surface to be visible — a page template that placed the same asset on a
+  light surface would render it invisible. Logo/background compatibility is unhandled.
+- **The font-substitution table was never actually exercised.** The test site's fonts (Barlow /
+  Barlow Condensed) happened to already be real Google Fonts, so Thread 1's still-unbuilt
+  substitution table was never tested by this run. Still an open gap, not newly closed.
+- **A Windows/git-bash environment quirk, not a design flaw:** Node's `readline` reliably resolves
+  only the first prompt against piped (non-TTY) stdin, then hangs on the second — reproduced with a
+  minimal 3-line repro. Real interactive terminal use is unaffected. Worth knowing for whoever
+  builds the real review-gate CLI on this platform.
+
+### What went cleanly — worth recording, not just the failures
+
+- **Extraction → token mapping worked first try**, once the role mapping (primary←header,
+  secondary←footer, accent←CTA) — which Thread 1's schema only ever *implied* through inline
+  comments in its worked example, never stated as a rule — was made explicit in code.
+- **The WCAG contrast math (Thread 1's "implement directly, no dependency" decision) worked exactly
+  as estimated** — about 15 lines, correct on the first run.
+- **Web3Forms + mailto + click-to-call wired together with zero surprises** — the Thread 2
+  form-backend decision translated directly into working HTML, no gaps found at that seam.
+
+These three designs held up under real contact with implementation. Worth stating plainly alongside
+the four breaks above, since a findings list that only records failures would understate how much
+of the prior research was actually right.
+
+### The product-quality verdict
+
+The resulting page reads as a real, navigable small-business site — header, hero, trust bar,
+services, reviews, FAQ, contact, footer, sticky mobile call bar, all present and in the right
+order. But it **looks generated, not premium**: flat card grids, no real photography, the
+placeholder tower reading as a coding demo rather than a client's actual building. This was
+expected — Thread 3 (real per-client frames) and the later UI Craft polish were explicitly out of
+scope for this spike — but it should be stated plainly rather than left as an assumption: **the
+pipeline connects end-to-end; the product is not close.** Nothing this pipeline generated today
+would close a sale. See the content-input amendment flagged above (Thread 2) for one concrete
+consequence: for categories like construction, client-supplied photos for the category deep-section
+may not be optional polish at all.
 
 ## Key Decisions
 
@@ -967,8 +1633,11 @@ with nothing physical to film/render.
 1. **ASSEMBLE** — something builds itself. → construction, architecture, furniture, craft/trades.
 2. **REVEAL** — elements fall/drop into place. → food, cosmetics, product/CPG brands.
 3. **SPIN** — a hero product rotates in space. → retail, tech, automotive.
-4. **FLYTHROUGH** — camera glides through a space. → real estate, hotels, gyms, venues.
-5. **TRANSFORM** — before/after morph. → renovation, fitness, beauty.
+4. **FLYTHROUGH** — camera glides through a space. → real estate, hotels, gyms, venues, **general/
+   family dental & medical practices (added 2026-08-05, see below)**.
+5. **TRANSFORM** — before/after morph. → renovation, fitness, beauty, **cosmetic/aesthetic dental &
+   medical practices** (unchanged — already fit before this decision; only general/family practice
+   was the open gap).
 6. **INTERFACE** — dashboards/UI/data coming alive (numbers count up, panels slide in, bespoke
    illustrations); for things that can't be photographed. → SaaS, fintech, agencies, consultants.
 
@@ -978,6 +1647,252 @@ hand-picked — consistent with the "engine never changes, only the frames do" s
 above, extended one level further: even the *choice* of frame set follows a fixed rule instead of
 per-project judgment. Still gated on the same open question above (this doesn't get built until
 the flipbook-vs-GSAP evaluation is resolved).
+
+### RESOLVED (2026-08-05): dental/medical archetype gap — general/family practice maps to FLYTHROUGH
+
+**Not a seventh archetype.** Dental/medical was never one monolithic category for archetype
+purposes — it splits in two, and only half of it was actually unresolved:
+- **Cosmetic/aesthetic-leaning practices** (whitening, orthodontics-as-cosmetic, dermatology,
+  aesthetic medicine): already fit **TRANSFORM** cleanly — a real before/after story, unchanged by
+  this decision.
+- **General/family practice** (checkups, cleanings, routine care — no before/after story to tell):
+  this was the actual gap. **Decided: maps to FLYTHROUGH, not a new archetype.**
+
+**Why FLYTHROUGH, not a seventh archetype:** a general dental or medical practice is a real,
+photographable physical space — the same underlying category as FLYTHROUGH's existing real
+estate/hotels/gyms/venues, not the invisible/software territory INTERFACE covers. The psychological
+job a hero has to do is also the same one FLYTHROUGH already does for gyms and hotels: **reduce
+anxiety about an unfamiliar space by showing it's calm, clean, and welcoming before the visitor has
+to commit to walking in.** Dental/medical arguably needs this more than gyms do — "fear of the
+dentist" is a well-documented, specific barrier a calm environment tour directly addresses. No
+existing archetype's *mechanism* needed to change; only its *tone* does, which this note already has
+a working pattern for (the same way food/beverage gets warm earth tones and tech gets blue/violet in
+Thread 1's default-palette table — archetype mechanism stays fixed, category sets the creative
+direction on top of it).
+
+**Concrete frame sequence** (the test this decision has to pass — if no compelling sequence exists,
+that's evidence for mapping elsewhere instead): camera glides from a bright, welcoming reception
+desk → down a clean, well-lit hallway → into a modern treatment room with a comfortable chair, warm
+lighting, no visible sharp instruments → past a friendly staff member mid-smile → settles on the
+front desk / scheduling area as the final frame. Every beat is ordinary, calming, and specifically
+chosen to defuse dental anxiety — not a dramatic reveal, a reassurance.
+
+**Tone, tied directly to Thread 2's own conversion-driver finding for this category:** Thread 2
+already established that booking, insurance visibility, and credentials — not visual drama — are
+what actually converts for dental/medical. **A quieter hero is correct here, and this decision
+implements that directly**: same FLYTHROUGH mechanism used for gyms/hotels, but paced slower and
+calmer (a gentle glide, not a fast dramatic sweep), consistent with a trust-building job rather than
+an excitement-building one. The archetype choice and Thread 2's conversion findings reinforce each
+other rather than pulling in different directions.
+
+**Native aspect ratio — the open item the sprite-scaling resolution flagged, addressed for this
+archetype specifically:** recommend **landscape, ~16:9**, not the ASSEMBLE tower's portrait 2:3. A
+camera-glide through a real space is inherently a landscape composition — real estate and
+architectural walkthrough videography is shot landscape as a near-universal convention, since a
+wide field of view is what actually reads as "a space," where a portrait crop reads as an object.
+This is a reasoned recommendation from genre convention, not independently tested here — only the
+tower's 2:3 has been verified end-to-end (per the sprite-scaling resolution above); confirming 16:9
+specifically renders cleanly through the same percentage-based CSS technique is Thread 3's job when
+it starts, not assumed settled by this decision.
+
+### RESOLVED (2026-08-05): sprite-scaling gap — percentage-based CSS + contained composition
+
+**The CAVEAT below (2026-08-05, from the walking-skeleton findings) is resolved, not just
+acknowledged.** Original caveat text kept immediately after this box for the record. Investigated
+directly in `C:\Jarvis\spikes\flipbook-scale\` (throwaway, reused the existing 96-frame sprite sheet
+and frames from `flipbook-scrub` unmodified — nothing regenerated). Full findings:
+`C:\Jarvis\spikes\flipbook-scale\FINDINGS.md`.
+
+**Root cause confirmed: the walking skeleton's bug was pixel-based `background-size`, not a limit
+of the technique.** `background-size: 38400px 600px` (literal native pixel size) on a box wider than
+one frame let several adjacent 400px-wide frames show through a wide viewing window. Switching to
+**percentage units** — `background-size: 9600% 100%` (9600% = 96 frames × 100%), with
+`background-position-x` animated in **percent** (0%→100%, not pixels) — fixes this completely,
+because CSS background-position percentages resolve relative to the container's own size: each
+frame always occupies exactly 100% of the container's width, at *any* width. Verified across 5 real
+viewport widths (1920/1440/1024/768/390): clean, single, undistorted frames every time, with frame
+accuracy holding (45/60 automated samples exact; the remaining 15 are one identical, deterministic
+±1-frame rounding artifact at exactly the 50% scroll midpoint, present uniformly regardless of
+viewport or technique — evidence of a benign `steps(95, jump-none)` boundary convention, not drift
+or a real defect). **One sprite sheet, no breakpoints, no multiple resolutions needed for the
+stepping mechanism itself to work correctly at any width.**
+
+**But there's one real, non-negotiable requirement: the container must keep the frame's native
+aspect ratio.** Tested full-bleed (100vw × 100vh, ignoring the sprite's 2:3 shape) with the same
+percentage technique: the bleeding bug is gone, but a **different, real problem appears — visible
+content distortion**, each frame squashed non-uniformly to fill a box shaped nothing like the
+source content (confirmed by screenshot). **This is a content/design mismatch, not a CSS
+engineering problem** — no scaling technique makes a portrait sprite look right stretched into a
+landscape full-viewport box.
+
+**Resolution: don't force full-bleed.** Compose the hero as a **contained, centered hero-object**
+sized to the sprite's native aspect ratio, capped at a sane maximum (tested:
+`height: min(78vh, 720px); aspect-ratio: 2/3`) — not a literal full-bleed background. This is not a
+compromise invented for this fix; it's consistent with this note's own prior precedent for the 3D
+hero-object work above ("exactly one hero-section 3D object... never a full 3D environment... a
+single well-lit hero object... is enough to reposition a corporate site as premium," without needing
+edge-to-edge coverage). The walking skeleton's "full-bleed hero" framing was this project's own
+unexamined assumption, not something any of the three threads actually mandated.
+
+**Two other alternatives from the original caveat, tested and settled:**
+- **Vertical sprite strip:** technically works identically to horizontal (same accuracy, same
+  bleed-free behavior) — but costs **2.56x more in file size for byte-identical content** (262.7KB
+  vs. 102.5KB, repacked from the same existing frames via Pillow, no new artwork), almost certainly
+  because PNG's row-based compression loses the horizontal redundancy between adjacent frames.
+  Rejected on cost alone.
+- **Memory/decode ceiling:** tested directly against a real 76,800×1200px native source image (not
+  just a virtually CSS-upscaled small one) — rendered correctly, zero errors, zero corruption, at
+  every scroll position. No hard ceiling found in this Chromium build at these scales (untested on
+  other browsers/GPUs/mobile devices).
+
+**Updated file-weight numbers — the shift IS real, stated plainly, and does NOT overturn the
+CSS-vs-GSAP decision.** The capped contained box needs real resolution to look crisp on high-DPI
+displays, not just the placeholder's native 400×600. Measured by upscaling the existing sheet
+(Pillow, no new content):
+
+| Resolution | Per-frame | Sheet size | File weight |
+|---|---|---|---|
+| 1x (original) | 400×600 | 38,400×600 | 102.5 KB |
+| 1.5x | 600×900 | 57,600×900 | 315.5 KB |
+| 2x (recommended) | 800×1200 | 76,800×1200 | 531.1 KB |
+
+**Recommendation: render production sprites at 2x (≈531KB per client/archetype).** That's real
+growth from the 100.1KB figure that partly informed the original CSS-vs-GSAP file-weight
+comparison — worth stating honestly, as the original caveat asked. It does **not** reverse that
+decision: frame accuracy is still a tie, the dependency-management argument (versioning,
+CDN/self-hosting, build-step drift) stands independent of sprite file size, and 531KB is still one
+single asset with no added HTTP requests — nowhere close to GSAP+Lenis's ~401.7KB-and-rising
+dependency-plus-individual-files cost once that side is held to the same resolution (not measured
+here — flagged as an honest gap below, since only the sprite side of that comparison was re-tested).
+
+**Thread 3 output spec — the concrete deliverable this resolution unlocks:**
+- **One sprite sheet per client per archetype** (not per breakpoint/resolution tier — the
+  percentage technique makes those unnecessary).
+- **Horizontal strip layout**, frames left-to-right. Not vertical.
+- **Recommended base resolution: 2x the display cap** — concretely 800×1200/frame if the contained
+  box stays capped around 720px tall as tested here; scales the same way for any archetype that
+  adopts a similar cap.
+- **Frame count and CSS mechanism:** whatever count an archetype settles on (96 for ASSEMBLE,
+  unchanged), driven by `background-size: <100 × frameCount>% 100%` and `background-position-x`
+  animated in **percent**, 0%→100%, via `steps(frameCount − 1, jump-none)` — **a hard requirement,
+  not a style preference**, since pixel-based sizing is exactly what caused the original bug.
+- **Container contract:** the hero markup sizes the sprite-box element to match the generated
+  frames' aspect ratio via CSS `aspect-ratio`, composed as a contained/centered hero-object, never
+  a literal full-bleed background-cover.
+- **Open item this surfaces, not resolved here:** each archetype likely wants its own native aspect
+  ratio (a tower assembling is naturally portrait; a SPIN product rotation may want closer to 1:1; a
+  FLYTHROUGH may want wider) — only the placeholder tower's 2:3 was tested. Thread 3 needs to define
+  an aspect ratio per archetype, not assume 2:3 universally.
+
+**Honest gaps:**
+- The GSAP+individual-PNG side of the file-weight comparison was not re-measured at a matched
+  higher resolution — only the sprite side was re-tested here. The dependency argument doesn't
+  depend on this number, but the *file-weight* portion of the original comparison is honestly only
+  half re-verified.
+- The exact resolution multiplier (2x, not 1.5x or 2.5x) is a reasoned recommendation from measured
+  file sizes and a rough upscale-factor calculation, not a perceptual-blur study on a real device.
+- The `steps(95, jump-none)` midpoint rounding artifact wasn't root-caused to the exact CSS spec
+  mechanism — reported as benign given its perfect uniformity across all 15 occurrences, not chased
+  further.
+- Real on-device jank/performance profiling for the percentage-based technique specifically wasn't
+  done — same category of gap the original flipbook spike already disclosed for the pixel-based
+  version; this investigation was scoped to the scaling/bleed question, not re-litigating perf.
+- No hard memory/texture ceiling found in this Chromium build up to ~184,000px virtual /
+  76,800px native widths — untested on other browsers, GPUs, or mobile devices.
+
+### CAVEAT (2026-08-05, from walking-skeleton findings) — original text, kept for the record
+
+**Native CSS still wins; nothing here un-resolves the decision above.** But the spike that resolved
+this tested the technique in a **fixed 400×600px box**, where the visible area is exactly one
+frame wide. Wiring the identical CSS into a real, full-bleed hero (~1440px wide) in the walking
+skeleton (`C:\Jarvis\spikes\generator-e2e\`) showed the unscaled sprite sheet revealing **3-4
+adjacent frames side by side**, not one — confirmed directly by screenshot before it was worked
+around. Prior testing (the "sampled at 10/25/50/100% scroll" accuracy check above) only ever
+verified *which frame number* was showing, never what that looked like inside a real page layout.
+**That's a gap in how the spike was validated, not just in the technique itself.**
+
+Consequences, stated plainly:
+- The walking skeleton's workaround — pinning the animated sprite to its proven native 400×600
+  scale, centered within the hero, rather than full-bleed — is a stopgap. It is almost certainly
+  not what a premium full-bleed hero (per this note's own "one confident centerpiece" framing
+  above) is supposed to look like.
+- A responsive, full-bleed hero likely needs per-client sprite sheets at **multiple resolutions**
+  (or a genuinely different scaling approach this note hasn't identified yet), not one sprite sheet
+  sized for a 400×600 test box.
+- **This shifts the file-weight math that partly won the case for CSS over GSAP** (100.1KB sprite
+  vs. 269KB individual PNGs + 132.7KB GSAP+Lenis). That comparison was measured at 400×600 —
+  multiple resolutions multiply the sprite side of that comparison, not the dependency side. This
+  does **not** overturn the decision — frame accuracy was a measured tie and the dependency
+  argument (versioning, CDN/self-hosting, build-step drift) stands regardless of sprite file size —
+  but the decision was made on incomplete numbers, and that should be stated rather than left
+  implied.
+- **This must be solved before Thread 3 starts.** It changes what frame generation actually has to
+  output (one sprite sheet per client, several at different resolutions, or something else
+  entirely). Recording this as an explicit Thread 3 input/prerequisite, not an open question Thread
+  3 would otherwise discover on its own partway through.
+- **Resolved 2026-08-05, see above — kept here unedited for the record, not because it's still open.**
+
+### RESOLVED (2026-08-05): scroll-track rendering gap — real fix for print/PDF, real mitigation elsewhere
+
+**Investigated and fixed directly in `C:\Jarvis\spikes\scroll-track\`** (throwaway, reused the
+sprite sheet and static fallback frame from `flipbook-scrub` unmodified). Full record and evidence:
+`C:\Jarvis\spikes\scroll-track\FINDINGS.md`. Original problem statement kept below for the record.
+
+**Which contexts actually break — established concretely, not assumed.** Built a before/after
+comparison and tested three distinct contexts:
+1. **Full-page screenshot** (the CDP `captureBeyondViewport` composite most headless screenshot
+   tools use): confirmed broken — header, hero at frame 0, then ~3000px of blank white, then content.
+2. **Print / PDF export**: confirmed broken, identical defect (Chromium's PDF path uses the same
+   full-document render, and no `@media print` rules existed to change that).
+3. **Normal single-viewport render** (a plain screenshot, most crawlers, and the actual
+   first-impression view): **confirmed NOT broken** — renders a completely normal hero at frame 0.
+   **The real risk is specifically full-page/"capture entire page" tools and print/PDF — not normal
+   browsing, and not most crawlers**, which render at a fixed viewport height like case 3.
+
+**Print/PDF: fully fixed, verified.** Added `@media print` rules that collapse `.hero-track` to a
+normal `100vh`, switch the sticky element to `position: static`, and swap the sprite to the same
+static fully-assembled frame already used for the Firefox/mobile fallback — the existing convention,
+not a new one. Verified: print-media document height dropped from 4837px to 1237px in the test page,
+and the resulting screenshot/PDF show a clean hero → content → footer with zero blank space.
+
+**General case (screenshot tools, full-page crawlers): no complete fix exists, and that's stated
+plainly, not glossed over.** There is no CSS media feature, and no reliable signal at all, that
+distinguishes "a real user about to scroll" from "a tool compositing the whole document in one
+non-scrolling pass" — Playwright's full-page mode specifically renders with no scroll events firing,
+indistinguishable at the CSS level from a page that simply hasn't been scrolled yet. **What IS
+fixed: the failure mode changed from "looks broken" to "static, no motion."** Giving `.hero-track`
+itself a `background-color` matching the hero's own dark backdrop means a flattened composite now
+shows a smooth continuation of the hero's theme below the (still top-anchored, unchanged) sticky
+element, instead of a jarring blank-white void breaking the page in two. Verified by direct
+before/after screenshot comparison.
+
+**The honest constraint that remains, stated precisely:** no fix scoped to this page can make a
+full-page-composite tool show the *animation* — that requires the tool itself to emulate real
+scrolling, which is a property of the capturing tool, not something the page can force. This isn't
+unique to this project's implementation; it's true of any scroll-driven design captured by a
+non-scroll-emulating tool. What remains after this fix is a reasonable, unsurprising degradation —
+a static, correctly-themed hero at its initial frame, no visible defect, just no motion — not a bug.
+
+**Adopted for the real generator template:** both pieces — the `@media print` collapse, and
+`.hero-track { background-color: <token color> }` matching the hero's backdrop — verified and ready
+to carry into the real build whenever the template is written.
+
+### Original problem statement (2026-08-05, kept for the record)
+
+**Found in the same walking-skeleton run, a distinct problem from the sprite-scaling caveat above.**
+The adopted technique's `.hero-track { height: 500vh }` with a `position: sticky` element pinned
+inside it only *looks* like a normal-height hero because a live, scrolling viewport continuously
+repaints it — the container is, structurally, actually 500vh tall the whole time. A plain full-page
+screenshot in the walking skeleton (which renders the whole document at once rather than emulating
+scroll) showed exactly that: **~400vh of blank white space** between the hero and the rest of the
+page.
+
+This will affect **any tool that renders the full page without emulating a real scroll loop** —
+screenshot tools, PDF export, print stylesheets, and some SEO/preview crawlers. Mobile happens to
+avoid it, but only because Thread 2's mobile decision already routes mobile to the static fallback,
+which never sets the 500vh height at all — an accidental save, not a designed one.
+
+**Resolved 2026-08-05, see above — kept here unedited for the record, not because it's still open.**
 
 ## Sources (Visual Richness)
 - [Best Three.js Websites 2026: 8 Sites + Techniques | Utsubo](https://www.utsubo.com/blog/best-threejs-websites-2026) — "one confident centerpiece" principle, Awwwards examples (Oryzo, Hubtown)

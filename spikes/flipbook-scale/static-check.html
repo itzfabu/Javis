@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html><head><style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#04141a; display:flex; gap:16px; padding:16px; flex-wrap:wrap; }
+  .box { width:200px; height:300px; background-image:url('../flipbook-scrub/spritesheet.png');
+    background-repeat:no-repeat; outline:1px solid lime; }
+  .b0   { background-size: 9600% 100%; background-position-x: 0%; }
+  .b25  { background-size: 9600% 100%; background-position-x: 25%; }
+  .b50  { background-size: 9600% 100%; background-position-x: 50%; }
+  .b100 { background-size: 9600% 100%; background-position-x: 100%; }
+  /* control: same frame 95 but via PIXEL positioning, known-good from the original spike */
+  .bControlPx { width:400px; height:600px; background-image:url('../flipbook-scrub/spritesheet.png');
+    background-repeat:no-repeat; background-size: 38400px 600px; background-position-x: -38000px; outline:1px solid red; }
+</style></head>
+<body>
+  <div class="box b0"></div>
+  <div class="box b25"></div>
+  <div class="box b50"></div>
+  <div class="box b100"></div>
+  <div class="bControlPx"></div>
+</body></html>

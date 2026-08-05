@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AFTER: fixed scroll-track pattern</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: system-ui, sans-serif; background:#fff; }
+  header { background:#1a2634; color:#fff; padding:16px 24px; font-weight:700; }
+
+  /* FIX 1 (general case - screenshot tools, crawlers, "capture full page"
+     extensions - none of which are reliably detectable via CSS): give the
+     track itself the hero's own backdrop color. A flattened, non-scrolling
+     composite render still shows the sticky sprite in its normal top-of-flow
+     position (unchanged), but the space below it is now a smooth colored
+     panel continuing the hero's theme, not a jarring blank-white void. Doesn't
+     restore the animation in these contexts - nothing can, short of the tool
+     actually emulating scroll - but changes the failure mode from "looks
+     broken" to "static hero panel, no motion." */
+  .hero-track { height: 500vh; position: relative; background-color: #0a1a22; }
+  .hero-sticky {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .sprite-box {
+    height: min(78vh, 720px);
+    aspect-ratio: 2 / 3;
+    background-image: url('../flipbook-scrub/spritesheet.png');
+    background-repeat: no-repeat;
+    background-size: 9600% 100%;
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  @keyframes scrub-frames { from { background-position-x: 0%; } to { background-position-x: 100%; } }
+  @supports not (animation-timeline: scroll()) {
+    .sprite-box { background-image: url('../flipbook-scrub/frames/frame-095.png'); background-size: cover; animation: none; }
+  }
+
+  /* FIX 2 (print - the one context that IS reliably detectable): collapse
+     entirely to a normal-height, single static hero. Print/PDF is a one-shot,
+     non-interactive document - there is no "scroll" for this page to preserve
+     space for, so don't try to. Same static frame as the Firefox/mobile
+     fallback (the fully-assembled shot), per the existing convention. */
+  @media print {
+    .hero-track { height: 100vh !important; }
+    .hero-sticky { position: static !important; }
+    .sprite-box {
+      width: 100% !important; height: 100% !important; aspect-ratio: unset !important;
+      background-image: url('../flipbook-scrub/frames/frame-095.png') !important;
+      background-size: cover !important; background-position: center !important;
+      animation: none !important; box-shadow: none !important;
+    }
+  }
+
+  main { padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+  .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+  .card { background:#f4f5f7; border:1px solid #ddd; border-radius:8px; padding:20px; font-weight:700; }
+  footer { background:#16181d; color:#fff; padding:24px; text-align:center; }
+</style>
+</head>
+<body>
+<header>Ironclad Construction Co.</header>
+<div class="hero-track">
+  <div class="hero-sticky"><div class="sprite-box"></div></div>
+</div>
+<main>
+  <h2>What We Do</h2>
+  <div class="service-grid">
+    <div class="card">Additions</div>
+    <div class="card">Remodels</div>
+    <div class="card">Deck Rebuilds</div>
+  </div>
+</main>
+<footer>Ironclad Construction Co. — (555) 019-2847</footer>
+</body>
+</html>

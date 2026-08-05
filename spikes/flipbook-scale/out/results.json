@@ -1,0 +1,602 @@
+[
+  {
+    "page": "contained",
+    "viewport": "1920",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "1920",
+    "t": 0.25,
+    "scrollY": 2160,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "1920",
+    "t": 0.5,
+    "scrollY": 4320,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "1920",
+    "t": 1,
+    "scrollY": 8640,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "1440",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 468
+  },
+  {
+    "page": "contained",
+    "viewport": "1440",
+    "t": 0.25,
+    "scrollY": 1800,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 468
+  },
+  {
+    "page": "contained",
+    "viewport": "1440",
+    "t": 0.5,
+    "scrollY": 3600,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 468
+  },
+  {
+    "page": "contained",
+    "viewport": "1440",
+    "t": 1,
+    "scrollY": 7200,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 468
+  },
+  {
+    "page": "contained",
+    "viewport": "1024",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 399.34375
+  },
+  {
+    "page": "contained",
+    "viewport": "1024",
+    "t": 0.25,
+    "scrollY": 1536,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 399.34375
+  },
+  {
+    "page": "contained",
+    "viewport": "1024",
+    "t": 0.5,
+    "scrollY": 3072,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 399.34375
+  },
+  {
+    "page": "contained",
+    "viewport": "1024",
+    "t": 1,
+    "scrollY": 6144,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 399.34375
+  },
+  {
+    "page": "contained",
+    "viewport": "768",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "768",
+    "t": 0.25,
+    "scrollY": 2048,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "768",
+    "t": 0.5,
+    "scrollY": 4096,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "768",
+    "t": 1,
+    "scrollY": 8192,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 480
+  },
+  {
+    "page": "contained",
+    "viewport": "390",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 438.875
+  },
+  {
+    "page": "contained",
+    "viewport": "390",
+    "t": 0.25,
+    "scrollY": 1688,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 438.875
+  },
+  {
+    "page": "contained",
+    "viewport": "390",
+    "t": 0.5,
+    "scrollY": 3376,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 438.875
+  },
+  {
+    "page": "contained",
+    "viewport": "390",
+    "t": 1,
+    "scrollY": 6752,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 438.875
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1920",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 1920
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1920",
+    "t": 0.25,
+    "scrollY": 2160,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 1920
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1920",
+    "t": 0.5,
+    "scrollY": 4320,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 1920
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1920",
+    "t": 1,
+    "scrollY": 8640,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 1920
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1440",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 1440
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1440",
+    "t": 0.25,
+    "scrollY": 1800,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 1440
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1440",
+    "t": 0.5,
+    "scrollY": 3600,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 1440
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1440",
+    "t": 1,
+    "scrollY": 7200,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 1440
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1024",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 1024
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1024",
+    "t": 0.25,
+    "scrollY": 1536,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 1024
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1024",
+    "t": 0.5,
+    "scrollY": 3072,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 1024
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "1024",
+    "t": 1,
+    "scrollY": 6144,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 1024
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "768",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 768
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "768",
+    "t": 0.25,
+    "scrollY": 2048,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 768
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "768",
+    "t": 0.5,
+    "scrollY": 4096,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 768
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "768",
+    "t": 1,
+    "scrollY": 8192,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 768
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "390",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 390
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "390",
+    "t": 0.25,
+    "scrollY": 1688,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 390
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "390",
+    "t": 0.5,
+    "scrollY": 3376,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 390
+  },
+  {
+    "page": "fullbleed",
+    "viewport": "390",
+    "t": 1,
+    "scrollY": 6752,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 390
+  },
+  {
+    "page": "vertical",
+    "viewport": "1920",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "1920",
+    "t": 0.25,
+    "scrollY": 2160,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "1920",
+    "t": 0.5,
+    "scrollY": 4320,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "1920",
+    "t": 1,
+    "scrollY": 8640,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "1440",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 702
+  },
+  {
+    "page": "vertical",
+    "viewport": "1440",
+    "t": 0.25,
+    "scrollY": 1800,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 702
+  },
+  {
+    "page": "vertical",
+    "viewport": "1440",
+    "t": 0.5,
+    "scrollY": 3600,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 702
+  },
+  {
+    "page": "vertical",
+    "viewport": "1440",
+    "t": 1,
+    "scrollY": 7200,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 702
+  },
+  {
+    "page": "vertical",
+    "viewport": "1024",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 599.03125
+  },
+  {
+    "page": "vertical",
+    "viewport": "1024",
+    "t": 0.25,
+    "scrollY": 1536,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 599.03125
+  },
+  {
+    "page": "vertical",
+    "viewport": "1024",
+    "t": 0.5,
+    "scrollY": 3072,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 599.03125
+  },
+  {
+    "page": "vertical",
+    "viewport": "1024",
+    "t": 1,
+    "scrollY": 6144,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 599.03125
+  },
+  {
+    "page": "vertical",
+    "viewport": "768",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "768",
+    "t": 0.25,
+    "scrollY": 2048,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "768",
+    "t": 0.5,
+    "scrollY": 4096,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "768",
+    "t": 1,
+    "scrollY": 8192,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 720
+  },
+  {
+    "page": "vertical",
+    "viewport": "390",
+    "t": 0,
+    "scrollY": 0,
+    "expectedFrame": 0,
+    "actualFrame": 0,
+    "match": true,
+    "boxWidth": 658.3125
+  },
+  {
+    "page": "vertical",
+    "viewport": "390",
+    "t": 0.25,
+    "scrollY": 1688,
+    "expectedFrame": 23,
+    "actualFrame": 23,
+    "match": true,
+    "boxWidth": 658.3125
+  },
+  {
+    "page": "vertical",
+    "viewport": "390",
+    "t": 0.5,
+    "scrollY": 3376,
+    "expectedFrame": 47,
+    "actualFrame": 48,
+    "match": false,
+    "boxWidth": 658.3125
+  },
+  {
+    "page": "vertical",
+    "viewport": "390",
+    "t": 1,
+    "scrollY": 6752,
+    "expectedFrame": 95,
+    "actualFrame": 95,
+    "match": true,
+    "boxWidth": 658.3125
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "business_name": "Ironclad Construction Co.",
+  "slug": "ironclad-construction-co",
+  "prompt_used": "Full-service general contractor handling framing, additions, remodels, decks, and foundation repair for homeowners across the Ridgeview metro area. Family-run, licensed and insured, known for finishing on the timeline we quote.",
+  "reviews_used": 3,
+  "created_date": "2026-08-05",
+  "status": "draft",
+  "client_contact": "contact@ironcladconstructionco.com",
+  "price": null,
+  "license_type": null,
+  "_spike_note": "Walking-skeleton output, C:\\Jarvis\\spikes\\generator-e2e - throwaway, not a real client deliverable."
+}

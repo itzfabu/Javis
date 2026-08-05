@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BEFORE: current adopted scroll-track pattern, no fix</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: system-ui, sans-serif; background:#fff; }
+  header { background:#1a2634; color:#fff; padding:16px 24px; font-weight:700; }
+
+  /* Current adopted pattern, unchanged: 500vh empty track + sticky contained
+     sprite box using the RESOLVED percentage-based technique from flipbook-scale.
+     No fix applied here - this is the baseline to demonstrate the defect. */
+  .hero-track { height: 500vh; position: relative; }
+  .hero-sticky {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a1a22; overflow: hidden;
+  }
+  .sprite-box {
+    height: min(78vh, 720px);
+    aspect-ratio: 2 / 3;
+    background-image: url('../flipbook-scrub/spritesheet.png');
+    background-repeat: no-repeat;
+    background-size: 9600% 100%;
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  @keyframes scrub-frames { from { background-position-x: 0%; } to { background-position-x: 100%; } }
+  @supports not (animation-timeline: scroll()) {
+    .sprite-box { background-image: url('../flipbook-scrub/frames/frame-095.png'); background-size: cover; animation: none; }
+  }
+
+  main { padding: 48px 24px; max-width: 900px; margin: 0 auto; }
+  .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+  .card { background:#f4f5f7; border:1px solid #ddd; border-radius:8px; padding:20px; font-weight:700; }
+  footer { background:#16181d; color:#fff; padding:24px; text-align:center; }
+</style>
+</head>
+<body>
+<header>Ironclad Construction Co.</header>
+<div class="hero-track">
+  <div class="hero-sticky"><div class="sprite-box"></div></div>
+</div>
+<main>
+  <h2>What We Do</h2>
+  <div class="service-grid">
+    <div class="card">Additions</div>
+    <div class="card">Remodels</div>
+    <div class="card">Deck Rebuilds</div>
+  </div>
+</main>
+<footer>Ironclad Construction Co. — (555) 019-2847</footer>
+</body>
+</html>

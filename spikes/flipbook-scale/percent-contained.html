@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Percent-based sprite, aspect-locked contained box (option a+d)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #04141a; color: #baffef; font-family: monospace; }
+  .info { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 10px 16px;
+    background: rgba(0,0,0,0.8); font-size: 13px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .scroll-track { height: 900vh; position: relative; }
+  .sticky-viewport { position: sticky; top: 0; height: 100vh; display: flex;
+    align-items: center; justify-content: center; overflow: hidden; background: #0a1a22; }
+
+  /* THE TECHNIQUE UNDER TEST: percentage-based background-size/position instead
+     of pixel-based. Container is aspect-ratio-locked to the sprite's native
+     frame aspect (2:3, i.e. 400x600) - height driven by viewport, width follows.
+     No media queries, no multiple sprite sheets - one sheet, fluid at any size,
+     AS LONG AS the box keeps the frame's native aspect ratio. */
+  .sprite-box {
+    height: min(78vh, 720px);
+    aspect-ratio: 2 / 3;
+    background-image: url('../flipbook-scrub/spritesheet.png');
+    background-repeat: no-repeat;
+    background-size: 9600% 100%;   /* 96 frames wide, 100% = exactly 1 frame tall */
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+    outline: 2px solid rgba(90,255,230,0.4);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  @keyframes scrub-frames {
+    from { background-position-x: 0%; }
+    to   { background-position-x: 100%; }
+  }
+  .marker { position: absolute; left: 16px; font-size: 11px; opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="info">
+  <span>PERCENT-CONTAINED (aspect-locked 2:3 box, percentage background-size/position)</span>
+  <span id="dbgViewport"></span>
+  <span id="dbgBoxSize"></span>
+  <span id="dbgScrollY">scrollY: 0</span>
+  <span id="dbgFrame">frame: -</span>
+  <span id="dbgBgPos">bgPosX: -</span>
+</div>
+<div class="scroll-track">
+  <div class="marker" style="top: 0;">start</div>
+  <div class="marker" style="top: 50%;">mid</div>
+  <div class="marker" style="top: 100%; transform: translateY(-100%);">end</div>
+  <div class="sticky-viewport">
+    <div class="sprite-box" id="sprite"></div>
+  </div>
+</div>
+<script>
+const sprite = document.getElementById('sprite');
+const dbgViewport = document.getElementById('dbgViewport');
+const dbgBoxSize = document.getElementById('dbgBoxSize');
+const dbgScrollY = document.getElementById('dbgScrollY');
+const dbgFrame = document.getElementById('dbgFrame');
+const dbgBgPos = document.getElementById('dbgBgPos');
+const N_FRAMES = 96;
+
+function currentFrameFromBgPosPercent() {
+  const cs = getComputedStyle(sprite);
+  // FOUND DURING THIS INVESTIGATION: getComputedStyle returns the PERCENTAGE
+  // STRING itself for an animated percentage background-position (e.g. "48%"),
+  // not a resolved pixel value - unlike pixel-valued keyframes, which resolve
+  // to px. Confirmed via debug.js. Convert correctly: percent P corresponds to
+  // frame k where P = 100*k/(N_FRAMES-1), i.e. k = round(P/100 * (N_FRAMES-1)).
+  const percentStr = cs.backgroundPositionX;
+  const percent = parseFloat(percentStr) || 0;
+  const boxW = sprite.getBoundingClientRect().width;
+  const frame = Math.round((percent / 100) * (N_FRAMES - 1));
+  return { percent, frame, boxW };
+}
+
+function tick() {
+  const rect = sprite.getBoundingClientRect();
+  dbgViewport.textContent = 'viewport: ' + window.innerWidth + 'x' + window.innerHeight;
+  dbgBoxSize.textContent = 'box: ' + rect.width.toFixed(2) + 'x' + rect.height.toFixed(2);
+  dbgScrollY.textContent = 'scrollY: ' + Math.round(window.scrollY);
+  const { px, frame } = currentFrameFromBgPosPercent();
+  dbgFrame.textContent = 'frame: ' + frame;
+  dbgBgPos.textContent = 'bgPosX(px): ' + px.toFixed(2);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+window.__maxScroll = () => document.documentElement.scrollHeight - window.innerHeight;
+window.__currentFrame = () => currentFrameFromBgPosPercent();
+window.__boxRect = () => sprite.getBoundingClientRect();
+</script>
+</body>
+</html>

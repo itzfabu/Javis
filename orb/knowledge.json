@@ -45,11 +45,7 @@
                       "project":  "jarvis-system"
                   },
                   {
-                      "text":  "Research brand extraction: pull a client\u0027s real colors/fonts/logo from an existing site or brand input, feed as tokens into hero frames + page (Thread 1 of 3, do first - everything downstream depends on it) | priority: high | #website-generator",
-                      "project":  "website-generator"
-                  },
-                  {
-                      "text":  "Research the conversion skeleton: proven page structure below the hero (services, social proof, contact/lead flow) that turns visitors into leads (Thread 2 of 3, do after brand extraction) | priority: medium | #website-generator",
+                      "text":  "Small Thread 1 schema addition: promote `category` to a first-class token field (e.g. \"category\": \"food-beverage\") instead of leaving it inside archetype.reason free text | priority: low | #website-generator",
                       "project":  "website-generator"
                   },
                   {

@@ -1,11 +1,10 @@
 ﻿{
-    "audioToken":  1785852147116,
+    "audioToken":  1785929971165,
     "status":  "idle",
     "tasks":  [
                   "Write up \"Claude Flowstate\" idea as a note | priority: low",
                   "Research how to improve the Jarvis system further (architecture, tools, capabilities, possible new dashboards e.g. a finance dashboard for project income once there\u0027s income to track) | priority: medium | #jarvis-system",
-                  "Research brand extraction: pull a client\u0027s real colors/fonts/logo from an existing site or brand input, feed as tokens into hero frames + page (Thread 1 of 3, do first - everything downstream depends on it) | priority: high | #website-generator",
-                  "Research the conversion skeleton: proven page structure below the hero (services, social proof, contact/lead flow) that turns visitors into leads (Thread 2 of 3, do after brand extraction) | priority: medium | #website-generator",
+                  "Small Thread 1 schema addition: promote `category` to a first-class token field (e.g. \"category\": \"food-beverage\") instead of leaving it inside archetype.reason free text | priority: low | #website-generator",
                   "Research frame generation for the flipbook archetypes: evaluate AI text-to-video-\u003eframes vs. real 3D render-\u003eexport vs. hybrid template scenes; accuracy is non-negotiable for clients wanting their actual building/product (Thread 3 of 3, do last - depends on brand tokens being locked) | priority: medium | #website-generator",
                   "Package for end customers (clean file + setup guide, no dev/diag mode visible) | priority: high | #streamer-hud",
                   "Write customer-facing setup instructions (OBS flag + one-time mic click) | priority: medium | #streamer-hud",
@@ -19,5 +18,5 @@
                   "âŒ Scope a productization checklist (auth, config isolation, docs) before quoting client work | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service",
                   "âŒ Build v1 static demo site (screen-recording hero, no live backend) once the recording exists | priority: medium | cancelled: 2026-07-29 | #jarvis-as-a-service"
               ],
-    "lastMessage":  "Here\u0027s the prioritized punch list, per the standing rule (due date â†’ priority â†’ goal-linkage):\n\n1. Thread 1 approval â€” this one\u0027s yours, not mine. The brand-extraction proposal is written up and validated (spike run twice on 9 real sites), but nothing downstream should get built until you decide. Three options:\n- (a) Approve/reject as-is â€” a token pipeline gets built next\n- (b) One more spike round â€” known gaps remain: wrong logo on 2/9 sites, CTA tie-breaking fails when a page has multiple real buttons, 2 sites still have zero header signal\n- (c) Shelve further polish â€” start Thread 2 (conversion skeleton) in parallel, since Thread 1\u0027s core viability question is already answered even if imperfect\n\n2. Streamer HUD â€” package for end customers. High priority, goal-linked, no blockers, ready to just do.\n\n3. Jarvis system improvement research. Medium priority, cheap to start â€” two vault Ideas notes already sitting ready as input.\n\nDeliberately not next: Thread 3 (blocked on Thread 1), the other Streamer HUD tasks (sequenced after packaging, to avoid rework), and the Claude Flowstate note (low priority, no goal link).\n\nOne side note surfaced again: the Jarvis System project\u0027s goal link is still marked tentative in PROJECTS.md â€” not urgent, but worth a real decision whenever you\u0027re doing goal housekeeping.\n\nWhich way do you want to take Thread 1?"
+    "lastMessage":  "Already handled â€” the sign-off for tonight is already proposed, approved, and queued (4 items, from a few minutes ago). No need to renegotiate; that stands as-is and the SessionEnd hook will pick it up once this session closes.\n\nGood night."
 }

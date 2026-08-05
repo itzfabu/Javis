@@ -1,0 +1,36 @@
+{
+  "business_name": "Ironclad Construction Co.",
+  "category": "construction-trades",
+  "description": "Full-service general contractor handling framing, additions, remodels, decks, and foundation repair for homeowners across the Ridgeview metro area. Family-run, licensed and insured, known for finishing on the timeline we quote.",
+  "phone": "(555) 019-2847",
+  "phone_tel": "+15550192847",
+  "email": "contact@ironcladconstructionco.com",
+  "address": "4210 Foundry Row, Ridgeview, ST 00000",
+  "hours": [
+    "Mon-Fri: 7:00 AM - 5:00 PM",
+    "Sat: By appointment",
+    "Sun: Closed"
+  ],
+  "service_area": "Greater Ridgeview Metro Area",
+  "years_in_business": 18,
+  "license_number": "GC-00000-RVX",
+  "reviews": [
+    {
+      "author": "Maria D.",
+      "rating": 5,
+      "text": "Ironclad reframed our sagging back porch and added a full second-story addition. Crew showed up on time every single day and the final walkthrough had zero surprises."
+    },
+    {
+      "author": "Tom H.",
+      "rating": 5,
+      "text": "Got three quotes for a deck rebuild. Ironclad wasn't the cheapest but they were the only ones who explained exactly what the old framing problem was instead of just quoting a number."
+    },
+    {
+      "author": "Priya S.",
+      "rating": 4,
+      "text": "Foundation repair took a week longer than the original estimate because of a permit delay, but they communicated it clearly and the work itself is solid. Would hire again."
+    }
+  ],
+  "brand_source_url": "https://gfryork.com",
+  "_brand_source_note": "Real, live trades site reused from the Thread 1 validation spike (spikes/brand-extract/out/09-grace-family-roofing.json) so extraction has something real to chew on. This is a different real business (Grace Family Roofing) than the fake client above (Ironclad Construction Co.) - the identity mismatch this creates (extracted logo says 'GFR', not 'Ironclad') is deliberate and flagged in the breakage report, not hidden."
+}

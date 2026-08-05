@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Percent-based sprite, forced full-bleed (aspect-mismatched, deliberate)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #04141a; color: #baffef; font-family: monospace; }
+  .info { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 10px 16px;
+    background: rgba(0,0,0,0.8); font-size: 13px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .scroll-track { height: 900vh; position: relative; }
+  .sticky-viewport { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+
+  /* SAME percentage technique as percent-contained.html, but the box is forced
+     to fill the FULL viewport (100vw x 100vh) regardless of the sprite's native
+     2:3 aspect ratio - this is what the walking skeleton's original hero
+     actually did. Purpose: isolate whether the remaining problem (if any) is
+     the CSS mechanism itself, or the aspect-ratio mismatch. */
+  .sprite-box {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../flipbook-scrub/spritesheet.png');
+    background-repeat: no-repeat;
+    background-size: 9600% 100%;
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+  }
+  @keyframes scrub-frames {
+    from { background-position-x: 0%; }
+    to   { background-position-x: 100%; }
+  }
+  .marker { position: absolute; left: 16px; font-size: 11px; opacity: 0.5; z-index: 5; }
+</style>
+</head>
+<body>
+<div class="info">
+  <span>PERCENT-FULLBLEED (100vw x 100vh, aspect NOT locked - deliberate mismatch test)</span>
+  <span id="dbgViewport"></span>
+  <span id="dbgScrollY">scrollY: 0</span>
+  <span id="dbgBgPos">bgPosX: -</span>
+</div>
+<div class="scroll-track">
+  <div class="marker" style="top: 0;">start</div>
+  <div class="marker" style="top: 50%;">mid</div>
+  <div class="marker" style="top: 100%; transform: translateY(-100%);">end</div>
+  <div class="sticky-viewport">
+    <div class="sprite-box" id="sprite"></div>
+  </div>
+</div>
+<script>
+const sprite = document.getElementById('sprite');
+const dbgViewport = document.getElementById('dbgViewport');
+const dbgScrollY = document.getElementById('dbgScrollY');
+const dbgBgPos = document.getElementById('dbgBgPos');
+const N_FRAMES = 96;
+function currentFrameFromBgPosPercent() {
+  const cs = getComputedStyle(sprite);
+  const percent = parseFloat(cs.backgroundPositionX) || 0; // returns "%" string, see percent-contained.html note
+  const boxW = sprite.getBoundingClientRect().width;
+  const frame = Math.round((percent / 100) * (N_FRAMES - 1));
+  return { percent, frame, boxW };
+}
+function tick() {
+  dbgViewport.textContent = 'viewport: ' + window.innerWidth + 'x' + window.innerHeight;
+  dbgScrollY.textContent = 'scrollY: ' + Math.round(window.scrollY);
+  const cs = getComputedStyle(sprite);
+  dbgBgPos.textContent = 'bgPosX(px): ' + cs.backgroundPositionX;
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+window.__currentFrame = () => currentFrameFromBgPosPercent();
+window.__boxRect = () => sprite.getBoundingClientRect();
+</script>
+</body>
+</html>

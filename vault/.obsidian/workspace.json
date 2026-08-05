@@ -45,7 +45,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -207,8 +207,11 @@
       "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "fe11249ba153ac0b",
+  "active": "27f6ed61f116ecbc",
   "lastOpenFiles": [
+    "Projects/Website Generator.md.tmp.41128.1535d522909a",
+    "Projects/Website Generator.md.tmp.41128.fa8f2efaf6b7",
+    "Projects/Website Generator.md.tmp.41128.0e8a2de120b7",
     "Projects/Website Generator.md.tmp.21812.ccc15c17b725",
     "Projects/Website Generator.md.tmp.21812.9c98d32b7528",
     "_gitignore-proof-dir/gitignore-proof.txt",
@@ -220,9 +223,6 @@
     "Resources/generational-wealth-billionaires.md",
     "Resources",
     "Neuer Ordner",
-    "Boards/Engineering.md.tmp.36376.5cde0bfc8940",
-    "Boards/Engineering.md.tmp.36376.27d848945b65",
-    "Projects/Website Generator.md.tmp.36376.c245b7f64e0b",
     "Projects/Website Generator.md",
     "Ideas/Website Generator (Landing Pages + Clone-and-Rebuild).md",
     "Ideas/AI Practitioner Knowledge + Token-Reduction Loops.md",

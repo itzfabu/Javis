@@ -1,0 +1,10 @@
+{
+  "name": "scroll-track",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Throwaway spike: fix the scroll-track blank-gap rendering defect (full-page screenshot/print/PDF show ~400vh of blank space). Reuses the sprite sheet from ../flipbook-scale unmodified. Not part of the real generator.",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

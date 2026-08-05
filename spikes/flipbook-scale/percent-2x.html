@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#04141a; }
+  .info { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 10px 16px;
+    background: rgba(0,0,0,0.8); color:#baffef; font-family:monospace; font-size: 13px; }
+  .scroll-track { height: 900vh; position: relative; }
+  .sticky-viewport { position: sticky; top: 0; height: 100vh; display: flex;
+    align-items: center; justify-content: center; overflow: hidden; }
+  .sprite-box {
+    height: min(78vh, 720px);
+    aspect-ratio: 2 / 3;
+    background-image: url('spritesheet-2x.png');  /* 76,800 x 1200 native source */
+    background-repeat: no-repeat;
+    background-size: 9600% 100%;
+    animation: scrub-frames steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+    outline: 2px solid rgba(90,255,230,0.4);
+  }
+  @keyframes scrub-frames { from { background-position-x: 0%; } to { background-position-x: 100%; } }
+</style></head>
+<body>
+<div class="info">2X SOURCE SHEET (76,800 x 1200px native) - testing decode/render at higher native resolution</div>
+<div class="scroll-track">
+  <div class="sticky-viewport"><div class="sprite-box" id="sprite"></div></div>
+</div>
+</body></html>
