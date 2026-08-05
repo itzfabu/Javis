@@ -1,57 +1,89 @@
 // Builds the CSS/HTML snippet + metadata JSON a generated site's page
 // template drops in directly, per the RESOLVED sprite-scaling output spec
-// in vault/Projects/Website Generator.md: percentage-based background-size/
-// background-position (never pixel-based - that's what caused the original
-// bleed bug), a contained/centered hero-object sized to the sprite's native
-// aspect ratio (never full-bleed), steps(frameCount-1, jump-none) driven by
-// animation-timeline: scroll(), wrapped in @supports with an unconditional
-// static-frame fallback (required for every Firefox visitor today, not an
-// edge case - per that same section), and prefers-reduced-motion respected
-// (per UI Craft > Motion Accessibility - a hard requirement, not optional).
+// in vault/Projects/Website Generator.md, as reworked by the GRID SPRITE
+// LAYOUT change: frames are laid out in a 2D grid (cols x rows), not a 1xN
+// horizontal strip - percentage-based background-size/background-position
+// still governs both axes (never pixel-based - that's what caused the
+// original bleed bug), a contained/centered hero-object sized to the
+// sprite's native aspect ratio (never full-bleed), and prefers-reduced-motion
+// is respected (per UI Craft > Motion Accessibility - a hard requirement).
 //
-// Display-cap axis (disclosed extension): only the portrait 2:3 case
-// (ASSEMBLE) was tested end-to-end with a height cap. Landscape archetypes
-// (TRANSFORM, FLYTHROUGH, INTERFACE) are capped by width instead here, since
-// a landscape hero composed with a height cap the same way a portrait one is
-// would run absurdly wide - not independently verified in a real page layout
-// the way ASSEMBLE's height cap was.
+// CSS mechanism change from the 1xN strip version: `steps(frameCount-1,
+// jump-none)` animating a single background-position-x axis doesn't
+// generalize to two axes (there's no such thing as "step through a 2D grid"
+// via a single steps() timing function on two independent properties without
+// them getting out of sync at row boundaries). Per-frame explicit
+// @keyframes stops are used instead: one stop per frame, each carrying its
+// own `animation-timing-function: steps(1, jump-end)` so the browser holds
+// that exact background-position for the whole segment and jumps
+// discretely to the next frame's position at the segment's end, rather than
+// smoothly interpolating (tweening) between grid cells - which is what
+// would happen with plain keyframes and no per-stop timing function, and
+// would look like the sprite sliding/smearing between frames instead of
+// stepping. Verbosity (one stop per frame) is an accepted tradeoff, not a
+// gap - this stylesheet is generated, not hand-authored.
+//
+// Display-cap axis (disclosed extension, unchanged from the 1xN version):
+// only the portrait 2:3 case (ASSEMBLE) was tested end-to-end with a height
+// cap. Landscape archetypes are capped by width instead.
 
-function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, spriteSheetRelPath }) {
+const { lastFrameCell } = require('./archetypes');
+
+function frameBackgroundPosition(index, grid) {
+  const col = index % grid.cols;
+  const row = Math.floor(index / grid.cols);
+  const x = grid.cols > 1 ? (col / (grid.cols - 1)) * 100 : 0;
+  const y = grid.rows > 1 ? (row / (grid.rows - 1)) * 100 : 0;
+  return { x: +x.toFixed(3), y: +y.toFixed(3) };
+}
+
+function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, grid, spriteSheetRelPath }) {
   const [w, h] = aspectRatio;
   const isLandscape = w > h;
   const capRule = isLandscape
     ? 'width: min(90vw, 1200px);\n  height: auto;'
     : 'height: min(78vh, 720px);\n  width: auto;';
-  const bgSizePercent = 100 * frameCount;
-  const stepsArg = Math.max(1, frameCount - 1);
+  const bgSizeXPercent = 100 * grid.cols;
+  const bgSizeYPercent = 100 * grid.rows;
 
-  const css = `/* Thread 3 hero sprite - archetype: ${archetypeKey}, ${frameCount} frames, native ratio ${w}:${h} */
+  const last = lastFrameCell(frameCount, grid);
+  const lastPos = frameBackgroundPosition(frameCount - 1, grid);
+  const animName = `hero-scrub-${archetypeKey.toLowerCase()}`;
+
+  const keyframeLines = [];
+  for (let i = 0; i < frameCount; i++) {
+    const percent = frameCount > 1 ? (i / (frameCount - 1)) * 100 : 0;
+    const pos = frameBackgroundPosition(i, grid);
+    const timingFn = i < frameCount - 1 ? ' animation-timing-function: steps(1, jump-end);' : '';
+    keyframeLines.push(`  ${percent.toFixed(3)}% { background-position: ${pos.x}% ${pos.y}%;${timingFn} }`);
+  }
+
+  const css = `/* Thread 3 hero sprite - archetype: ${archetypeKey}, ${frameCount} frames, ${grid.cols}x${grid.rows} grid, native ratio ${w}:${h} */
 .hero-sprite {
   aspect-ratio: ${w} / ${h};
   ${capRule}
   margin: 0 auto;
   background-image: url('${spriteSheetRelPath}');
   background-repeat: no-repeat;
-  background-size: ${bgSizePercent}% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+  background-size: ${bgSizeXPercent}% ${bgSizeYPercent}%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position: ${lastPos.x}% ${lastPos.y}%; /* unconditional base state: the actual last frame's grid cell (${last.col},${last.row}) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {
   .hero-sprite {
-    animation: hero-scrub-${archetypeKey.toLowerCase()} steps(${stepsArg}, jump-none) both;
+    animation: ${animName} linear both;
     animation-timeline: scroll(root block);
   }
 }
 
-@keyframes hero-scrub-${archetypeKey.toLowerCase()} {
-  from { background-position-x: 0%; }
-  to   { background-position-x: 100%; }
+@keyframes ${animName} {
+${keyframeLines.join('\n')}
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-sprite {
     animation: none !important;
-    background-position-x: 100%;
+    background-position: ${lastPos.x}% ${lastPos.y}%;
   }
 }
 `;
@@ -61,11 +93,12 @@ function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, spriteSheetRel
   return { css, html };
 }
 
-function buildMetadata({ archetype, capture, spriteSheet, cssRelPath, spriteSheetRelPath }) {
+function buildMetadata({ archetype, capture, spriteSheet, spriteSheetRelPath }) {
   const { css, html } = buildCssSnippet({
     archetypeKey: archetype.key,
     frameCount: capture.frameCount,
     aspectRatio: archetype.aspectRatio,
+    grid: archetype.grid,
     spriteSheetRelPath,
   });
 
@@ -76,8 +109,10 @@ function buildMetadata({ archetype, capture, spriteSheet, cssRelPath, spriteShee
     frameCount: capture.frameCount,
     aspectRatio: archetype.aspectRatio,
     frameDims: capture.dims,
+    grid: archetype.grid,
     spriteSheet: {
       path: spriteSheetRelPath,
+      format: 'webp',
       width: spriteSheet.width,
       height: spriteSheet.height,
       bytes: spriteSheet.bytes,
@@ -92,4 +127,4 @@ function buildMetadata({ archetype, capture, spriteSheet, cssRelPath, spriteShee
   };
 }
 
-module.exports = { buildCssSnippet, buildMetadata };
+module.exports = { buildCssSnippet, buildMetadata, frameBackgroundPosition };

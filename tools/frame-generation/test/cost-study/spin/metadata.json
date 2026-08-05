@@ -11,15 +11,22 @@
     "width": 1200,
     "height": 1200
   },
+  "grid": {
+    "cols": 5,
+    "rows": 5,
+    "sheetWidth": 6000,
+    "sheetHeight": 6000
+  },
   "spriteSheet": {
-    "path": "sprite.png",
-    "width": 28800,
-    "height": 1200,
-    "bytes": 557459
+    "path": "sprite.webp",
+    "format": "webp",
+    "width": 6000,
+    "height": 6000,
+    "bytes": 171676
   },
   "capture": {
-    "elapsedMs": 3155,
-    "msPerFrame": 131.46
+    "elapsedMs": 3539,
+    "msPerFrame": 147.46
   },
   "logo": {
     "logoText": "",
@@ -28,6 +35,6 @@
     "logoFraction": 1,
     "note": "SKIPPED: tokens.logo is an extracted asset (C:\\Jarvis\\tools\\brand-extraction\\test\\out\\03-hiut-denim.logo.svg) but tokens.meta.reviewStatus is \"pending\", not \"approved\" - per Thread 3 Recommendation #4, an unreviewed extracted logo is never composited. Run the Thread 1 review gate first."
   },
-  "css": "/* Thread 3 hero sprite - archetype: SPIN, 24 frames, native ratio 1:1 */\n.hero-sprite {\n  aspect-ratio: 1 / 1;\n  height: min(78vh, 720px);\n  width: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 2400% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-spin steps(23, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-spin {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "css": "/* Thread 3 hero sprite - archetype: SPIN, 24 frames, 5x5 grid, native ratio 1:1 */\n.hero-sprite {\n  aspect-ratio: 1 / 1;\n  height: min(78vh, 720px);\n  width: auto;\n  margin: 0 auto;\n  background-image: url('sprite.webp');\n  background-repeat: no-repeat;\n  background-size: 500% 500%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position: 75% 100%; /* unconditional base state: the actual last frame's grid cell (3,4) - NOT always \"100% 100%\", since frameCount doesn't always fill the grid exactly */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-spin linear both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-spin {\n  0.000% { background-position: 0% 0%; animation-timing-function: steps(1, jump-end); }\n  4.348% { background-position: 25% 0%; animation-timing-function: steps(1, jump-end); }\n  8.696% { background-position: 50% 0%; animation-timing-function: steps(1, jump-end); }\n  13.043% { background-position: 75% 0%; animation-timing-function: steps(1, jump-end); }\n  17.391% { background-position: 100% 0%; animation-timing-function: steps(1, jump-end); }\n  21.739% { background-position: 0% 25%; animation-timing-function: steps(1, jump-end); }\n  26.087% { background-position: 25% 25%; animation-timing-function: steps(1, jump-end); }\n  30.435% { background-position: 50% 25%; animation-timing-function: steps(1, jump-end); }\n  34.783% { background-position: 75% 25%; animation-timing-function: steps(1, jump-end); }\n  39.130% { background-position: 100% 25%; animation-timing-function: steps(1, jump-end); }\n  43.478% { background-position: 0% 50%; animation-timing-function: steps(1, jump-end); }\n  47.826% { background-position: 25% 50%; animation-timing-function: steps(1, jump-end); }\n  52.174% { background-position: 50% 50%; animation-timing-function: steps(1, jump-end); }\n  56.522% { background-position: 75% 50%; animation-timing-function: steps(1, jump-end); }\n  60.870% { background-position: 100% 50%; animation-timing-function: steps(1, jump-end); }\n  65.217% { background-position: 0% 75%; animation-timing-function: steps(1, jump-end); }\n  69.565% { background-position: 25% 75%; animation-timing-function: steps(1, jump-end); }\n  73.913% { background-position: 50% 75%; animation-timing-function: steps(1, jump-end); }\n  78.261% { background-position: 75% 75%; animation-timing-function: steps(1, jump-end); }\n  82.609% { background-position: 100% 75%; animation-timing-function: steps(1, jump-end); }\n  86.957% { background-position: 0% 100%; animation-timing-function: steps(1, jump-end); }\n  91.304% { background-position: 25% 100%; animation-timing-function: steps(1, jump-end); }\n  95.652% { background-position: 50% 100%; animation-timing-function: steps(1, jump-end); }\n  100.000% { background-position: 75% 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position: 75% 100%;\n  }\n}\n",
   "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"SPIN hero animation\"></div>"
 }

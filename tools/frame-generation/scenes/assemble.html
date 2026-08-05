@@ -56,6 +56,7 @@ const signboard = FrameScene.makeLogoPlane(P, 0.9, 0.4);
 signboard.position.set(0, 1.15, 0.75); // in front of the block face at this height (half-width ~0.61 here), not behind it - see BUILD note on the occlusion regression this caught
 scene.add(signboard);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, signboard, opts);
 
 camera.position.set(2.6, 1.4, 4.4);
 camera.lookAt(0, 0.3, 0);

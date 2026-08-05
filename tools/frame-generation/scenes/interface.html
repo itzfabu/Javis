@@ -74,6 +74,7 @@ const signboard = FrameScene.makeLogoPlane(P, 0.75, 0.35);
 signboard.position.set(0, 0.85, 0.05); // within camera frustum, verified via the frustum-check guard, not just eyeballed
 scene.add(signboard);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, signboard, opts);
 
 function ease(x) { return 1 - Math.pow(1 - x, 3); }
 

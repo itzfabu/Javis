@@ -45,6 +45,7 @@ group.add(label);
 
 scene.add(group);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, label);
+window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, label, opts);
 
 window.__renderFrame = function (t) {
   group.rotation.y = t * Math.PI * 2;

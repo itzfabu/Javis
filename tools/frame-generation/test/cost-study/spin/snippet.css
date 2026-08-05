@@ -1,30 +1,52 @@
-/* Thread 3 hero sprite - archetype: SPIN, 24 frames, native ratio 1:1 */
+/* Thread 3 hero sprite - archetype: SPIN, 24 frames, 5x5 grid, native ratio 1:1 */
 .hero-sprite {
   aspect-ratio: 1 / 1;
   height: min(78vh, 720px);
   width: auto;
   margin: 0 auto;
-  background-image: url('sprite.png');
+  background-image: url('sprite.webp');
   background-repeat: no-repeat;
-  background-size: 2400% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+  background-size: 500% 500%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position: 75% 100%; /* unconditional base state: the actual last frame's grid cell (3,4) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {
   .hero-sprite {
-    animation: hero-scrub-spin steps(23, jump-none) both;
+    animation: hero-scrub-spin linear both;
     animation-timeline: scroll(root block);
   }
 }
 
 @keyframes hero-scrub-spin {
-  from { background-position-x: 0%; }
-  to   { background-position-x: 100%; }
+  0.000% { background-position: 0% 0%; animation-timing-function: steps(1, jump-end); }
+  4.348% { background-position: 25% 0%; animation-timing-function: steps(1, jump-end); }
+  8.696% { background-position: 50% 0%; animation-timing-function: steps(1, jump-end); }
+  13.043% { background-position: 75% 0%; animation-timing-function: steps(1, jump-end); }
+  17.391% { background-position: 100% 0%; animation-timing-function: steps(1, jump-end); }
+  21.739% { background-position: 0% 25%; animation-timing-function: steps(1, jump-end); }
+  26.087% { background-position: 25% 25%; animation-timing-function: steps(1, jump-end); }
+  30.435% { background-position: 50% 25%; animation-timing-function: steps(1, jump-end); }
+  34.783% { background-position: 75% 25%; animation-timing-function: steps(1, jump-end); }
+  39.130% { background-position: 100% 25%; animation-timing-function: steps(1, jump-end); }
+  43.478% { background-position: 0% 50%; animation-timing-function: steps(1, jump-end); }
+  47.826% { background-position: 25% 50%; animation-timing-function: steps(1, jump-end); }
+  52.174% { background-position: 50% 50%; animation-timing-function: steps(1, jump-end); }
+  56.522% { background-position: 75% 50%; animation-timing-function: steps(1, jump-end); }
+  60.870% { background-position: 100% 50%; animation-timing-function: steps(1, jump-end); }
+  65.217% { background-position: 0% 75%; animation-timing-function: steps(1, jump-end); }
+  69.565% { background-position: 25% 75%; animation-timing-function: steps(1, jump-end); }
+  73.913% { background-position: 50% 75%; animation-timing-function: steps(1, jump-end); }
+  78.261% { background-position: 75% 75%; animation-timing-function: steps(1, jump-end); }
+  82.609% { background-position: 100% 75%; animation-timing-function: steps(1, jump-end); }
+  86.957% { background-position: 0% 100%; animation-timing-function: steps(1, jump-end); }
+  91.304% { background-position: 25% 100%; animation-timing-function: steps(1, jump-end); }
+  95.652% { background-position: 50% 100%; animation-timing-function: steps(1, jump-end); }
+  100.000% { background-position: 75% 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-sprite {
     animation: none !important;
-    background-position-x: 100%;
+    background-position: 75% 100%;
   }
 }

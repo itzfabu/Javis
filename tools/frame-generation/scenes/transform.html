@@ -65,6 +65,7 @@ const signboard = FrameScene.makeLogoPlane(P, 0.75, 0.35);
 signboard.position.set(0, 0.55, 0.03); // within camera frustum, verified via the frustum-check guard, not just eyeballed
 scene.add(signboard);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, signboard, opts);
 
 window.__renderFrame = function (t) {
   // normal=(-1,0,0): a point is visible (not clipped) where -point.x + constant >= 0,

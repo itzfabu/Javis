@@ -2518,6 +2518,165 @@ every case, including ASSEMBLE - but the ASSEMBLE occlusion trap above is record
 it's the reason a *second* check (visual, not just numeric) mattered, and because an occlusion guard
 remains a real, unimplemented gap this specific guard does not cover.
 
+### GRID SPRITE LAYOUT + WEBP (2026-08-06) — rework, re-measured against real fixtures
+
+**What changed:** `src/archetypes.js` now computes a 2D grid (`cols x rows`) per archetype instead
+of a 1xN horizontal strip - a near-square grid sized so both axes stay under libwebp's 16,383px
+limit (`computeGrid`), with `lastFrameCell` locating the actual final frame's cell (not always the
+bottom-right corner, since frame counts don't always fill the grid exactly - e.g. SPIN's 24 frames
+in a 5x5=25-cell grid). `compose/composite.html` lays frames out left-to-right, top-to-bottom,
+wrapping every `cols` frames, and encodes the result via the browser's own
+`canvas.toDataURL('image/webp', 0.8)` - no new image-processing dependency, same Playwright/
+Chromium footprint already used for capture. The CSS mechanism changed to match: `steps()` animating
+a single axis doesn't generalize to two, so `src/metadata.js` now emits one explicit `@keyframes`
+stop per frame, each carrying its own `animation-timing-function: steps(1, jump-end)` so the browser
+holds that frame's exact `background-position` and jumps discretely to the next rather than smoothly
+interpolating between grid cells (which would look like the sprite sliding, not stepping). The
+unconditional static-frame fallback and the `prefers-reduced-motion` state both use the *actual* last
+frame's grid-cell position (via `lastFrameCell`), not a hardcoded `100% 100%` - verified this
+distinction actually matters (SPIN's last frame sits at (3,4) in its 5x5 grid, not (4,4)). Verified
+the whole mechanism end-to-end, not just by construction: rendered a specific frame index through the
+real generated CSS and confirmed pixel-for-pixel it matches the same frame captured directly from
+three.js - no row/column swap, no Y-axis flip.
+
+**Full re-measurement, same method as before (4x CPU throttle, Slow-4G download estimate, 9 real
+Thread 1 fixtures), now run in both the no-logo state and an approved-logo state** (a copy of each
+fixture with `reviewStatus` flipped to `"approved"`, since compositing a real logo texture into the
+final ~12% of frames changes the numbers and the original study only measured the floor):
+
+| Archetype | Frames | Grid | Sprite (no-logo) | Sprite (approved-logo) | renderTime (no-logo, median) | Est. LCP (no-logo) | Verdict (no-logo) | Verdict (old 1xN PNG) |
+|---|---|---|---|---|---|---|---|---|
+| ASSEMBLE | 96 | 12x8 | 822.4 KB | 866.4 KB | 556ms | **4.67s** | **Poor** | was Good (1.83s) |
+| REVEAL | 48 | 8x6 | 506.7 KB | 532.6 KB | 372ms | **2.91s** | Needs Improvement | was Poor (31.3s) |
+| SPIN | 24 | 5x5 | 167.7 KB | 166.6 KB | 496ms | 1.34s | Good | was Needs Improvement (2.98s) |
+| TRANSFORM | 32 | 5x7 | 81.2 KB | 87.5 KB | 468ms | 0.87s | Good | was Good (0.85s) |
+| FLYTHROUGH | 72 | 6x12 | 1319.0 KB | 1384.1 KB | 480ms | **7.08s** | **Poor** | was Good (1.17s) |
+| INTERFACE | 48 | 5x10 | 113.2 KB | 126.8 KB* | 532ms | 1.10s | Good | was Good (1.55s) |
+
+*INTERFACE's approved-logo run substitutes Franklin BBQ's PNG logo for Family Law in Partnership's
+own asset - that fixture's real logo is a pre-existing broken SVG (a `<symbol>`-only file with no
+root width/height, already flagged as a known rough edge in Thread 1's REBUILD section) that fails
+to load as a texture at all. Fixing that SVG is a Thread 1 (brand-extraction) problem, out of this
+task's scope - substituted a known-good asset so INTERFACE still gets a real approved-logo byte
+measurement. Confirmed genuinely broken, not a pipeline bug: this run is exactly what surfaced a
+real robustness gap in `makeLogoPlane` (no `onError`/zero-size handling, so a failed load hung for
+the full 30s `waitForFunction` timeout with no diagnostic) - fixed alongside this rework: a failed or
+zero-size texture load now sets `window.__logoReady = 'error'` with a specific message, and
+`capture.js` fails in ~2s with that message instead of an opaque timeout.
+
+**Does REVEAL clear the LCP threshold? No - close, but no.** 2.91s (no-logo) / 3.03s
+(approved-logo), both landing in "Needs Improvement," about 0.4-0.5s (16-20%) over the 2.5s "Good"
+line. That is a **10.8x improvement** from the original 31.3s finding - format and layout alone
+closed the overwhelming majority of the original gap - but it does not fully close it. **Per the
+instruction this was run under: REVEAL's materials are not touched.** The glossy specular shading is
+what reads as premium on a product hero and stays as-is unless format/layout genuinely can't close
+the gap - and format/layout hasn't been shown to fail here, it's landed 84% of the way from the
+original problem to "Good," not exhausted its options. Two legitimate, untested next levers exist
+before materials would need to be reconsidered: WebP quality tuning (0.8 was reused from the earlier
+per-frame comparison for a fair before/after read, not re-optimized), and frame-count reduction -
+which is a *viable lever again* now, unlike under PNG: WebP's size scales with frame count roughly
+linearly (REVEAL's 506.7KB sheet is within 1% of the 503.0KB per-frame-WebP-total measured in the
+prior cost study), where PNG's cross-frame delta compression made that relationship unpredictable
+and this project's own earlier frame-count experiments (48->16->8) found no relief. Neither lever
+was tried here - not requested, and reporting the gap precisely was the ask, not closing it.
+
+**A second, unrequested but important finding: ASSEMBLE and FLYTHROUGH got WORSE, not better - both
+moved from comfortably Good to clearly Poor.** Not a measurement artifact - confirmed by cross-
+checking against the prior cost study's own per-frame-WebP totals: FLYTHROUGH's new grid sheet
+(1319.0KB) lands within 1% of that study's already-measured 1309.2KB per-frame-WebP-total, and
+ASSEMBLE's (822.4KB) is in the same range as its 806.5KB figure. **The old 1xN PNG strips for these
+two archetypes weren't good because PNG is generally efficient for this content - they were good
+because PNG's row-based delta filter coincidentally exploited the *specific* redundancy of a long
+strip of near-identical, slowly-changing frames** (ASSEMBLE's mostly-static-until-triggered blocks;
+FLYTHROUGH's repeating ring geometry) - a redundancy that only exists in a 1D strip's own scanline
+structure, and that WebP's block-based encoding doesn't reproduce, grid layout or not. **This is not
+something this task asked to be fixed, and it has not been fixed here** - flagging it prominently
+because shipping it silently would mean two archetypes that worked fine now don't, as a side effect
+of solving REVEAL and the WebP dimension-limit problem. Live options, not decided: keep PNG
+specifically for ASSEMBLE and FLYTHROUGH (a per-archetype format choice, contradicting "one format
+for all six" but matching what the data actually supports); investigate whether a different WebP
+quality/method setting closes some of the gap for exactly these two (not tried); or accept the
+regression as the cost of a uniform format across all six. **Needs Fabio's call, not resolved by this
+pass.**
+
+**SPIN's earlier borderline problem (2.98s) is resolved by the format change alone, at the frame
+count it already had.** The prior cost study's SPIN 24->16 frame-count recommendation was left
+pending Fabio's sign-off; under grid+WebP, SPIN is comfortably Good (1.34s) at 24 frames without
+that cut, so the tradeoff it was weighing (smoother 24-frame rotation vs. a faster 16-frame one) may
+no longer need deciding for cost reasons - **left at 24 frames, per instruction; not changed.**
+
+**A genuinely new bug this rework surfaced, unrelated to format/layout:** the occlusion guard (next
+section) initially returned a false positive against ASSEMBLE's real approved logo (Grace Family
+Roofing's actual PNG) - full detail in that section, since it's really a finding about the guard,
+not the sprite format.
+
+### OCCLUSION REGRESSION GUARD (2026-08-06)
+
+**Extends the frustum guard above, which had already proven it could pass numerically while the
+real problem (an invisible, occluded wordmark) was still there.** Added
+`FrameScene.checkOcclusion(renderer, scene, camera, mesh, opts)` (`scenes/shared.js`), wired as
+`window.__occlusionCheck` into all six scenes, and enforced in `src/capture.js` right after the
+frustum check, at the same logo frame. Method, per the task's own spec: render twice at the
+identical camera/geometry state - once normally, once with every other scene object hidden
+(`hideAllExcept`, which correctly keeps a mesh's own ancestor chain visible, e.g. SPIN's label
+inside its rotating group) - and compare the logo's own pixel footprint between the two.
+
+**What actually decides "is this a logo pixel," after a real bug in the first version:** the first
+implementation classified a pixel as "logo" if its isolated-render color differed enough from a
+reference background color. That reference was corrected once already, mid-build, from the nominal
+`bgHex` string to a color sampled from the isolated render's own bbox corners (measured directly
+that the two disagree by 20-30+ Manhattan distance - almost certainly three.js's color-management
+pipeline shifting the raw hex before it reaches `canvas.getImageData`) - a real, disclosed fix, but
+not the one that mattered most. **The color-distance approach itself failed outright the first time
+it ran against a real logo asset, not a synthetic test placeholder:** Grace Family Roofing's real
+approved logo (white text on a transparent PNG) composited over that scene's white background made
+the logo's own solid-white pixels indistinguishable from the isolated render's white background by
+color alone - the guard reported 0% visible on a logo confirmed, by direct screenshot, to be fully
+and correctly visible. **Fixed properly, not patched around:** "is this a logo pixel" now reads the
+texture's own alpha channel directly, by nulling the scene background (not just color-matching it)
+for the isolated pass, so nothing but the logo mesh can produce non-zero alpha there at all - no
+color-guessing, no reference color to disagree with.
+
+**Calibrating the resulting alpha threshold surfaced a second, more fundamental finding: this
+comparison is only mathematically valid for fully-opaque pixels, not a threshold to tune for noise.**
+Sweeping the alpha cutoff against the real Grace Family Roofing logo showed the visible ratio stuck
+near 0 up to alpha~240, then jumping to a clean 1.0 only at alpha>=245. This isn't sensor noise to
+average out - it's how alpha compositing works: a partially-transparent pixel (anti-aliased edge, by
+design) shows a genuinely different color depending on what's behind it, over nothing (the isolated
+pass) versus over a real block color (the normal pass), with zero occlusion involved either way.
+Only `alpha=255` satisfies `output = textureColor` regardless of backdrop, making full opacity the
+only pixel class this technique can validly compare. `OCCLUSION_ALPHA_TOL = 250` is the practical
+implementation of that requirement (a few units of headroom under 255), not a looseness dial -
+raising it further would reintroduce exactly the blend-dependent noise just measured, and lowering it
+would just resurrect the false positive. The remaining `OCCLUSION_COLOR_TOL = 24` (Manhattan
+distance) only governs the *second* question - does an already-confirmed-opaque logo pixel still
+match between the two renders - where a color-distance comparison is legitimate, since opaque pixels
+render identically regardless of backdrop.
+
+**`OCCLUSION_VISIBLE_RATIO_THRESHOLD = 0.9`:** a real occlusion event (ASSEMBLE's wordmark fully
+hidden behind a block) hid effectively 100% of the logo, not a partial sliver - there's no legitimate
+reason a correctly-placed logo should be more than ~10% covered by adjoining geometry, so anything
+worse is treated as the same class of bug already found, not a borderline case to tune around.
+
+**Verified against all six archetypes' current (correct) placements: all pass, 0.997-1.0 visible
+ratio** - not just theoretically, against both the synthetic text-logo placeholder used for fast
+iteration and, separately, the real Grace Family Roofing PNG once the alpha fix landed (1.0, exactly
+matching the direct-screenshot confirmation).
+
+**Verified against the original ASSEMBLE failure specifically, per the task's own instruction - not
+assumed fixed by construction.** Temporarily reverted `assemble.html`'s signboard `z` from 0.75 back
+to 0.55 (the exact placement that passed the frustum check while being fully occluded, found earlier
+this session) and re-ran the occlusion check two ways: with the synthetic text logo (visibleRatio
+0.085, fails) and with the real Grace Family Roofing PNG logo (visibleRatio 0, fails) - both
+decisively below the 0.9 threshold, both confirmed by a direct screenshot showing the wordmark
+completely invisible behind the block. Reverted back to `z=0.75` immediately after, re-confirmed
+both checks pass again (0.99, 1.0). The guard would have caught the original bug.
+
+**Net result: the occlusion guard is now enforced on every capture run, alongside the frustum
+guard, and both a genuine detection (the false positive against a real logo, mid-build) and a
+genuine verification (the reconstructed ASSEMBLE failure) happened during this build, not just a
+clean pass reported without having tried to break it.**
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

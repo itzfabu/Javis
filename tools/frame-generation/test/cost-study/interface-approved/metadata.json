@@ -1,0 +1,40 @@
+{
+  "archetype": "INTERFACE",
+  "stylized": false,
+  "stylizedNote": null,
+  "frameCount": 48,
+  "aspectRatio": [
+    16,
+    9
+  ],
+  "frameDims": {
+    "width": 1200,
+    "height": 675
+  },
+  "grid": {
+    "cols": 5,
+    "rows": 10,
+    "sheetWidth": 6000,
+    "sheetHeight": 6750
+  },
+  "spriteSheet": {
+    "path": "sprite.webp",
+    "format": "webp",
+    "width": 6000,
+    "height": 6750,
+    "bytes": 129802
+  },
+  "capture": {
+    "elapsedMs": 4568,
+    "msPerFrame": 95.17
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "/asset/logo.png",
+    "assetDir": "test\\cost-study\\interface-approved\\assets",
+    "logoFraction": 1,
+    "note": "reviewed logo asset composited"
+  },
+  "css": "/* Thread 3 hero sprite - archetype: INTERFACE, 48 frames, 5x10 grid, native ratio 16:9 */\n.hero-sprite {\n  aspect-ratio: 16 / 9;\n  width: min(90vw, 1200px);\n  height: auto;\n  margin: 0 auto;\n  background-image: url('sprite.webp');\n  background-repeat: no-repeat;\n  background-size: 500% 1000%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position: 50% 100%; /* unconditional base state: the actual last frame's grid cell (2,9) - NOT always \"100% 100%\", since frameCount doesn't always fill the grid exactly */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-interface linear both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-interface {\n  0.000% { background-position: 0% 0%; animation-timing-function: steps(1, jump-end); }\n  2.128% { background-position: 25% 0%; animation-timing-function: steps(1, jump-end); }\n  4.255% { background-position: 50% 0%; animation-timing-function: steps(1, jump-end); }\n  6.383% { background-position: 75% 0%; animation-timing-function: steps(1, jump-end); }\n  8.511% { background-position: 100% 0%; animation-timing-function: steps(1, jump-end); }\n  10.638% { background-position: 0% 11.111%; animation-timing-function: steps(1, jump-end); }\n  12.766% { background-position: 25% 11.111%; animation-timing-function: steps(1, jump-end); }\n  14.894% { background-position: 50% 11.111%; animation-timing-function: steps(1, jump-end); }\n  17.021% { background-position: 75% 11.111%; animation-timing-function: steps(1, jump-end); }\n  19.149% { background-position: 100% 11.111%; animation-timing-function: steps(1, jump-end); }\n  21.277% { background-position: 0% 22.222%; animation-timing-function: steps(1, jump-end); }\n  23.404% { background-position: 25% 22.222%; animation-timing-function: steps(1, jump-end); }\n  25.532% { background-position: 50% 22.222%; animation-timing-function: steps(1, jump-end); }\n  27.660% { background-position: 75% 22.222%; animation-timing-function: steps(1, jump-end); }\n  29.787% { background-position: 100% 22.222%; animation-timing-function: steps(1, jump-end); }\n  31.915% { background-position: 0% 33.333%; animation-timing-function: steps(1, jump-end); }\n  34.043% { background-position: 25% 33.333%; animation-timing-function: steps(1, jump-end); }\n  36.170% { background-position: 50% 33.333%; animation-timing-function: steps(1, jump-end); }\n  38.298% { background-position: 75% 33.333%; animation-timing-function: steps(1, jump-end); }\n  40.426% { background-position: 100% 33.333%; animation-timing-function: steps(1, jump-end); }\n  42.553% { background-position: 0% 44.444%; animation-timing-function: steps(1, jump-end); }\n  44.681% { background-position: 25% 44.444%; animation-timing-function: steps(1, jump-end); }\n  46.809% { background-position: 50% 44.444%; animation-timing-function: steps(1, jump-end); }\n  48.936% { background-position: 75% 44.444%; animation-timing-function: steps(1, jump-end); }\n  51.064% { background-position: 100% 44.444%; animation-timing-function: steps(1, jump-end); }\n  53.191% { background-position: 0% 55.556%; animation-timing-function: steps(1, jump-end); }\n  55.319% { background-position: 25% 55.556%; animation-timing-function: steps(1, jump-end); }\n  57.447% { background-position: 50% 55.556%; animation-timing-function: steps(1, jump-end); }\n  59.574% { background-position: 75% 55.556%; animation-timing-function: steps(1, jump-end); }\n  61.702% { background-position: 100% 55.556%; animation-timing-function: steps(1, jump-end); }\n  63.830% { background-position: 0% 66.667%; animation-timing-function: steps(1, jump-end); }\n  65.957% { background-position: 25% 66.667%; animation-timing-function: steps(1, jump-end); }\n  68.085% { background-position: 50% 66.667%; animation-timing-function: steps(1, jump-end); }\n  70.213% { background-position: 75% 66.667%; animation-timing-function: steps(1, jump-end); }\n  72.340% { background-position: 100% 66.667%; animation-timing-function: steps(1, jump-end); }\n  74.468% { background-position: 0% 77.778%; animation-timing-function: steps(1, jump-end); }\n  76.596% { background-position: 25% 77.778%; animation-timing-function: steps(1, jump-end); }\n  78.723% { background-position: 50% 77.778%; animation-timing-function: steps(1, jump-end); }\n  80.851% { background-position: 75% 77.778%; animation-timing-function: steps(1, jump-end); }\n  82.979% { background-position: 100% 77.778%; animation-timing-function: steps(1, jump-end); }\n  85.106% { background-position: 0% 88.889%; animation-timing-function: steps(1, jump-end); }\n  87.234% { background-position: 25% 88.889%; animation-timing-function: steps(1, jump-end); }\n  89.362% { background-position: 50% 88.889%; animation-timing-function: steps(1, jump-end); }\n  91.489% { background-position: 75% 88.889%; animation-timing-function: steps(1, jump-end); }\n  93.617% { background-position: 100% 88.889%; animation-timing-function: steps(1, jump-end); }\n  95.745% { background-position: 0% 100%; animation-timing-function: steps(1, jump-end); }\n  97.872% { background-position: 25% 100%; animation-timing-function: steps(1, jump-end); }\n  100.000% { background-position: 50% 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position: 50% 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"INTERFACE hero animation\"></div>"
+}

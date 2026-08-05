@@ -19,6 +19,10 @@
 // safe to tune later without touching capture/composite logic.
 
 const LONG_EDGE_2X = 1200;
+const WEBP_MAX_DIM = 16383; // libwebp's hard per-dimension limit - the reason a 1xN horizontal
+                            // strip is impossible at these frame counts/resolutions (every
+                            // archetype's old strip width exceeded this), and the reason the grid
+                            // layout below exists at all.
 
 function dimsFromRatio(wRatio, hRatio) {
   if (wRatio >= hRatio) {
@@ -31,12 +35,50 @@ function dimsFromRatio(wRatio, hRatio) {
   return { width: w, height: h };
 }
 
+// Grid layout replacing the old 1xN horizontal strip (see vault note, Thread 3 > GRID SPRITE
+// LAYOUT). Picks the near-square cols x rows that fits frameCount frames, preferring the smallest
+// grid whose row/col counts keep both axes comfortably under WEBP_MAX_DIM - not just "a" grid that
+// fits, since a near-square grid keeps both axes away from the limit rather than trading one axis
+// down to the wire while leaving slack on the other.
+function computeGrid(frameCount, dims) {
+  const maxCols = Math.floor(WEBP_MAX_DIM / dims.width);
+  const maxRows = Math.floor(WEBP_MAX_DIM / dims.height);
+  let cols = Math.max(1, Math.min(maxCols, Math.round(Math.sqrt((frameCount * dims.height) / dims.width))));
+  let rows = Math.ceil(frameCount / cols);
+  while (rows > maxRows && cols < maxCols) {
+    cols++;
+    rows = Math.ceil(frameCount / cols);
+  }
+  if (rows > maxRows || cols > maxCols) {
+    throw new Error(
+      `Cannot fit ${frameCount} frames of ${dims.width}x${dims.height} into a grid under ` +
+      `${WEBP_MAX_DIM}px per axis (maxCols=${maxCols}, maxRows=${maxRows}).`
+    );
+  }
+  return {
+    cols,
+    rows,
+    sheetWidth: cols * dims.width,
+    sheetHeight: rows * dims.height,
+  };
+}
+
+// The last real frame's (col, row) - not necessarily (cols-1, rows-1), since frameCount doesn't
+// always divide the grid evenly (e.g. SPIN: 24 frames in a 5x5=25-cell grid leaves one empty
+// trailing cell). CSS needs this exact cell for the unconditional static-frame fallback and the
+// final @keyframes stop - "100% 100%" would be wrong whenever the grid isn't perfectly filled.
+function lastFrameCell(frameCount, grid) {
+  const lastIndex = frameCount - 1;
+  return { col: lastIndex % grid.cols, row: Math.floor(lastIndex / grid.cols) };
+}
+
 const ARCHETYPES = {
   ASSEMBLE: {
     scene: 'assemble.html',
     frameCount: 96,
     aspectRatio: [2, 3],
     dims: dimsFromRatio(2, 3), // 800x1200 - matches the tested/recommended figure exactly
+    grid: computeGrid(96, dimsFromRatio(2, 3)),
     stylized: true, // per Recommendation #2: ships generic/disclosed-as-stylized by default; real capture is a paid add-on, out of this pipeline's scope
     stylizedNote: 'Template shows a generic assembling structure, not the client\'s actual building. Disclose to the client as a stylized representation; real photogrammetry capture is a separate, manually-scoped paid add-on (not produced by this pipeline).',
   },
@@ -45,6 +87,7 @@ const ARCHETYPES = {
     frameCount: 48,
     aspectRatio: [4, 5],
     dims: dimsFromRatio(4, 5),
+    grid: computeGrid(48, dimsFromRatio(4, 5)),
     stylized: false,
   },
   SPIN: {
@@ -52,6 +95,7 @@ const ARCHETYPES = {
     frameCount: 24,
     aspectRatio: [1, 1],
     dims: dimsFromRatio(1, 1),
+    grid: computeGrid(24, dimsFromRatio(1, 1)),
     stylized: false,
   },
   TRANSFORM: {
@@ -59,6 +103,7 @@ const ARCHETYPES = {
     frameCount: 32,
     aspectRatio: [3, 2],
     dims: dimsFromRatio(3, 2),
+    grid: computeGrid(32, dimsFromRatio(3, 2)),
     stylized: false,
   },
   FLYTHROUGH: {
@@ -66,6 +111,7 @@ const ARCHETYPES = {
     frameCount: 72,
     aspectRatio: [16, 9],
     dims: dimsFromRatio(16, 9),
+    grid: computeGrid(72, dimsFromRatio(16, 9)),
     stylized: true, // per Recommendation #2: same disclosed-stylized default as ASSEMBLE
     stylizedNote: 'Template shows a generic environment glide, not the client\'s actual space. Disclose to the client as a stylized representation; real photogrammetry capture is a separate, manually-scoped paid add-on (not produced by this pipeline).',
   },
@@ -74,6 +120,7 @@ const ARCHETYPES = {
     frameCount: 48,
     aspectRatio: [16, 9],
     dims: dimsFromRatio(16, 9),
+    grid: computeGrid(48, dimsFromRatio(16, 9)),
     stylized: false,
   },
 };
@@ -89,4 +136,4 @@ function getArchetype(name) {
   return { key, ...entry };
 }
 
-module.exports = { ARCHETYPES, getArchetype, LONG_EDGE_2X };
+module.exports = { ARCHETYPES, getArchetype, LONG_EDGE_2X, WEBP_MAX_DIM, computeGrid, lastFrameCell };

@@ -15,9 +15,10 @@
 //
 // Writes into --out:
 //   frames/frame-NNNN.png   - individually captured frames (debugging/audit)
-//   sprite.png              - the composited horizontal sprite sheet
-//   metadata.json           - frame count, aspect ratio, sprite dims, the
-//                              CSS/HTML snippet, and the logo-compositing
+//   sprite.webp             - the composited grid sprite sheet (cols x rows,
+//                              WebP - see src/archetypes.js's computeGrid)
+//   metadata.json           - frame count, grid, aspect ratio, sprite dims,
+//                              the CSS/HTML snippet, and the logo-compositing
 //                              decision that was actually made
 //   snippet.css, snippet.html - the same CSS/HTML pulled out as plain files
 
@@ -70,12 +71,13 @@ async function main() {
   console.log(`  ${capture.frameCount} frames, ${capture.dims.width}x${capture.dims.height}, ${capture.elapsedMs}ms (${capture.msPerFrame.toFixed(1)}ms/frame)`);
   console.log(`  logo: ${capture.logoPlan.note}`);
 
-  const spriteSheetPath = path.join(outDir, 'sprite.png');
-  console.log('Compositing sprite sheet ...');
+  const spriteSheetPath = path.join(outDir, 'sprite.webp');
+  console.log(`Compositing ${capture.archetype.grid.cols}x${capture.archetype.grid.rows} grid sprite sheet ...`);
   const spriteSheet = await compositeSpriteSheet({
     framesDir: capture.framesDir,
     frameCount: capture.frameCount,
     dims: capture.dims,
+    grid: capture.archetype.grid,
     outPath: spriteSheetPath,
   });
   console.log(`  wrote ${spriteSheetPath} (${spriteSheet.width}x${spriteSheet.height}, ${(spriteSheet.bytes / 1024).toFixed(1)}KB)`);
@@ -84,7 +86,7 @@ async function main() {
     archetype: capture.archetype,
     capture,
     spriteSheet,
-    spriteSheetRelPath: 'sprite.png',
+    spriteSheetRelPath: 'sprite.webp',
   });
   fs.writeFileSync(path.join(outDir, 'metadata.json'), JSON.stringify(metadata, null, 2));
   fs.writeFileSync(path.join(outDir, 'snippet.css'), metadata.css);

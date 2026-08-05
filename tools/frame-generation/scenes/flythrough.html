@@ -54,6 +54,7 @@ const signboard = FrameScene.makeLogoPlane(P, 0.6, 0.3);
 signboard.position.set(0, 0.35, -(N_ARCHES - 0.6) * SPACING); // within camera frustum, verified via the frustum-check guard AND checked for occlusion by the floor strips (see BUILD note)
 scene.add(signboard);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, signboard, opts);
 
 camera.position.set(0, 0.1, 1.5);
 camera.lookAt(0, 0, -1);

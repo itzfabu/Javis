@@ -1,0 +1,124 @@
+/* Thread 3 hero sprite - archetype: ASSEMBLE, 96 frames, 12x8 grid, native ratio 2:3 */
+.hero-sprite {
+  aspect-ratio: 2 / 3;
+  height: min(78vh, 720px);
+  width: auto;
+  margin: 0 auto;
+  background-image: url('sprite.webp');
+  background-repeat: no-repeat;
+  background-size: 1200% 800%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position: 100% 100%; /* unconditional base state: the actual last frame's grid cell (11,7) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-sprite {
+    animation: hero-scrub-assemble linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes hero-scrub-assemble {
+  0.000% { background-position: 0% 0%; animation-timing-function: steps(1, jump-end); }
+  1.053% { background-position: 9.091% 0%; animation-timing-function: steps(1, jump-end); }
+  2.105% { background-position: 18.182% 0%; animation-timing-function: steps(1, jump-end); }
+  3.158% { background-position: 27.273% 0%; animation-timing-function: steps(1, jump-end); }
+  4.211% { background-position: 36.364% 0%; animation-timing-function: steps(1, jump-end); }
+  5.263% { background-position: 45.455% 0%; animation-timing-function: steps(1, jump-end); }
+  6.316% { background-position: 54.545% 0%; animation-timing-function: steps(1, jump-end); }
+  7.368% { background-position: 63.636% 0%; animation-timing-function: steps(1, jump-end); }
+  8.421% { background-position: 72.727% 0%; animation-timing-function: steps(1, jump-end); }
+  9.474% { background-position: 81.818% 0%; animation-timing-function: steps(1, jump-end); }
+  10.526% { background-position: 90.909% 0%; animation-timing-function: steps(1, jump-end); }
+  11.579% { background-position: 100% 0%; animation-timing-function: steps(1, jump-end); }
+  12.632% { background-position: 0% 14.286%; animation-timing-function: steps(1, jump-end); }
+  13.684% { background-position: 9.091% 14.286%; animation-timing-function: steps(1, jump-end); }
+  14.737% { background-position: 18.182% 14.286%; animation-timing-function: steps(1, jump-end); }
+  15.789% { background-position: 27.273% 14.286%; animation-timing-function: steps(1, jump-end); }
+  16.842% { background-position: 36.364% 14.286%; animation-timing-function: steps(1, jump-end); }
+  17.895% { background-position: 45.455% 14.286%; animation-timing-function: steps(1, jump-end); }
+  18.947% { background-position: 54.545% 14.286%; animation-timing-function: steps(1, jump-end); }
+  20.000% { background-position: 63.636% 14.286%; animation-timing-function: steps(1, jump-end); }
+  21.053% { background-position: 72.727% 14.286%; animation-timing-function: steps(1, jump-end); }
+  22.105% { background-position: 81.818% 14.286%; animation-timing-function: steps(1, jump-end); }
+  23.158% { background-position: 90.909% 14.286%; animation-timing-function: steps(1, jump-end); }
+  24.211% { background-position: 100% 14.286%; animation-timing-function: steps(1, jump-end); }
+  25.263% { background-position: 0% 28.571%; animation-timing-function: steps(1, jump-end); }
+  26.316% { background-position: 9.091% 28.571%; animation-timing-function: steps(1, jump-end); }
+  27.368% { background-position: 18.182% 28.571%; animation-timing-function: steps(1, jump-end); }
+  28.421% { background-position: 27.273% 28.571%; animation-timing-function: steps(1, jump-end); }
+  29.474% { background-position: 36.364% 28.571%; animation-timing-function: steps(1, jump-end); }
+  30.526% { background-position: 45.455% 28.571%; animation-timing-function: steps(1, jump-end); }
+  31.579% { background-position: 54.545% 28.571%; animation-timing-function: steps(1, jump-end); }
+  32.632% { background-position: 63.636% 28.571%; animation-timing-function: steps(1, jump-end); }
+  33.684% { background-position: 72.727% 28.571%; animation-timing-function: steps(1, jump-end); }
+  34.737% { background-position: 81.818% 28.571%; animation-timing-function: steps(1, jump-end); }
+  35.789% { background-position: 90.909% 28.571%; animation-timing-function: steps(1, jump-end); }
+  36.842% { background-position: 100% 28.571%; animation-timing-function: steps(1, jump-end); }
+  37.895% { background-position: 0% 42.857%; animation-timing-function: steps(1, jump-end); }
+  38.947% { background-position: 9.091% 42.857%; animation-timing-function: steps(1, jump-end); }
+  40.000% { background-position: 18.182% 42.857%; animation-timing-function: steps(1, jump-end); }
+  41.053% { background-position: 27.273% 42.857%; animation-timing-function: steps(1, jump-end); }
+  42.105% { background-position: 36.364% 42.857%; animation-timing-function: steps(1, jump-end); }
+  43.158% { background-position: 45.455% 42.857%; animation-timing-function: steps(1, jump-end); }
+  44.211% { background-position: 54.545% 42.857%; animation-timing-function: steps(1, jump-end); }
+  45.263% { background-position: 63.636% 42.857%; animation-timing-function: steps(1, jump-end); }
+  46.316% { background-position: 72.727% 42.857%; animation-timing-function: steps(1, jump-end); }
+  47.368% { background-position: 81.818% 42.857%; animation-timing-function: steps(1, jump-end); }
+  48.421% { background-position: 90.909% 42.857%; animation-timing-function: steps(1, jump-end); }
+  49.474% { background-position: 100% 42.857%; animation-timing-function: steps(1, jump-end); }
+  50.526% { background-position: 0% 57.143%; animation-timing-function: steps(1, jump-end); }
+  51.579% { background-position: 9.091% 57.143%; animation-timing-function: steps(1, jump-end); }
+  52.632% { background-position: 18.182% 57.143%; animation-timing-function: steps(1, jump-end); }
+  53.684% { background-position: 27.273% 57.143%; animation-timing-function: steps(1, jump-end); }
+  54.737% { background-position: 36.364% 57.143%; animation-timing-function: steps(1, jump-end); }
+  55.789% { background-position: 45.455% 57.143%; animation-timing-function: steps(1, jump-end); }
+  56.842% { background-position: 54.545% 57.143%; animation-timing-function: steps(1, jump-end); }
+  57.895% { background-position: 63.636% 57.143%; animation-timing-function: steps(1, jump-end); }
+  58.947% { background-position: 72.727% 57.143%; animation-timing-function: steps(1, jump-end); }
+  60.000% { background-position: 81.818% 57.143%; animation-timing-function: steps(1, jump-end); }
+  61.053% { background-position: 90.909% 57.143%; animation-timing-function: steps(1, jump-end); }
+  62.105% { background-position: 100% 57.143%; animation-timing-function: steps(1, jump-end); }
+  63.158% { background-position: 0% 71.429%; animation-timing-function: steps(1, jump-end); }
+  64.211% { background-position: 9.091% 71.429%; animation-timing-function: steps(1, jump-end); }
+  65.263% { background-position: 18.182% 71.429%; animation-timing-function: steps(1, jump-end); }
+  66.316% { background-position: 27.273% 71.429%; animation-timing-function: steps(1, jump-end); }
+  67.368% { background-position: 36.364% 71.429%; animation-timing-function: steps(1, jump-end); }
+  68.421% { background-position: 45.455% 71.429%; animation-timing-function: steps(1, jump-end); }
+  69.474% { background-position: 54.545% 71.429%; animation-timing-function: steps(1, jump-end); }
+  70.526% { background-position: 63.636% 71.429%; animation-timing-function: steps(1, jump-end); }
+  71.579% { background-position: 72.727% 71.429%; animation-timing-function: steps(1, jump-end); }
+  72.632% { background-position: 81.818% 71.429%; animation-timing-function: steps(1, jump-end); }
+  73.684% { background-position: 90.909% 71.429%; animation-timing-function: steps(1, jump-end); }
+  74.737% { background-position: 100% 71.429%; animation-timing-function: steps(1, jump-end); }
+  75.789% { background-position: 0% 85.714%; animation-timing-function: steps(1, jump-end); }
+  76.842% { background-position: 9.091% 85.714%; animation-timing-function: steps(1, jump-end); }
+  77.895% { background-position: 18.182% 85.714%; animation-timing-function: steps(1, jump-end); }
+  78.947% { background-position: 27.273% 85.714%; animation-timing-function: steps(1, jump-end); }
+  80.000% { background-position: 36.364% 85.714%; animation-timing-function: steps(1, jump-end); }
+  81.053% { background-position: 45.455% 85.714%; animation-timing-function: steps(1, jump-end); }
+  82.105% { background-position: 54.545% 85.714%; animation-timing-function: steps(1, jump-end); }
+  83.158% { background-position: 63.636% 85.714%; animation-timing-function: steps(1, jump-end); }
+  84.211% { background-position: 72.727% 85.714%; animation-timing-function: steps(1, jump-end); }
+  85.263% { background-position: 81.818% 85.714%; animation-timing-function: steps(1, jump-end); }
+  86.316% { background-position: 90.909% 85.714%; animation-timing-function: steps(1, jump-end); }
+  87.368% { background-position: 100% 85.714%; animation-timing-function: steps(1, jump-end); }
+  88.421% { background-position: 0% 100%; animation-timing-function: steps(1, jump-end); }
+  89.474% { background-position: 9.091% 100%; animation-timing-function: steps(1, jump-end); }
+  90.526% { background-position: 18.182% 100%; animation-timing-function: steps(1, jump-end); }
+  91.579% { background-position: 27.273% 100%; animation-timing-function: steps(1, jump-end); }
+  92.632% { background-position: 36.364% 100%; animation-timing-function: steps(1, jump-end); }
+  93.684% { background-position: 45.455% 100%; animation-timing-function: steps(1, jump-end); }
+  94.737% { background-position: 54.545% 100%; animation-timing-function: steps(1, jump-end); }
+  95.789% { background-position: 63.636% 100%; animation-timing-function: steps(1, jump-end); }
+  96.842% { background-position: 72.727% 100%; animation-timing-function: steps(1, jump-end); }
+  97.895% { background-position: 81.818% 100%; animation-timing-function: steps(1, jump-end); }
+  98.947% { background-position: 90.909% 100%; animation-timing-function: steps(1, jump-end); }
+  100.000% { background-position: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sprite {
+    animation: none !important;
+    background-position: 100% 100%;
+  }
+}

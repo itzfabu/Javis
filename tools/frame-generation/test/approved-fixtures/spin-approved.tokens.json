@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Hiut Denim",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://hiutdenim.co.uk",
+    "extractedAt": "2026-08-05T13:14:44.469Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "approved",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "retail-product",
+  "color": {
+    "primary": {
+      "value": "#1A1A1A",
+      "source": "derived: no header/nav element, no custom property, and no image-sample fallback found anything usable; fixed dark neutral fallback per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "secondary": {
+      "value": "#F5F4F0",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "accent": {
+      "value": "#000000",
+      "source": "CTA button background, computed (\"Sign up\", score 14.9)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#000000",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#F5F4F0",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#DDDCD8",
+      "source": "derived: tint/shade of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#DDDCD8",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 19.08,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 15.81,
+        "passesAA": true
+      },
+      "accentTextOverride": {
+        "reason": "accent #000000 - text contrast resolved directly",
+        "resolution": "use #FFFFFF text on accent surfaces",
+        "ratio": 21,
+        "passesAA": true,
+        "textColor": "#FFFFFF",
+        "accentForText": "#000000"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "Founders Grotesk",
+      "resolved": "Work Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;700&display=swap",
+      "fallbackStack": "'Work Sans', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "body": {
+      "detected": "Founders Grotesk",
+      "resolved": "Work Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap",
+      "fallbackStack": "'Work Sans', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "svg",
+    "source": "favicon",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\03-hiut-denim.logo.svg",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "low",
+    "confidenceNote": "last resort, usually a small icon mark only",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "SPIN",
+    "reason": "category: retail-product, per Thread 3 archetype-to-category mapping (Retail & Product (boutique, manufacturer))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#1A1A1A",
+      "#000000",
+      "#F5F4F0"
+    ],
+    "backgroundForFrames": "#F5F4F0",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\03-hiut-denim.logo.svg",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

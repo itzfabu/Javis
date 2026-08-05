@@ -1,0 +1,104 @@
+[
+  {
+    "archetype": "assemble-approved",
+    "spriteBytes": 887186,
+    "frameCount": 96,
+    "trials": [
+      640,
+      568,
+      1016,
+      580,
+      568
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 580,
+    "renderTimeMinMs": 568,
+    "renderTimeMaxMs": 1016,
+    "wallClockMedianMs": 609
+  },
+  {
+    "archetype": "reveal-approved",
+    "spriteBytes": 545346,
+    "frameCount": 48,
+    "trials": [
+      372,
+      368,
+      352,
+      368,
+      360
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 368,
+    "renderTimeMinMs": 352,
+    "renderTimeMaxMs": 372,
+    "wallClockMedianMs": 394
+  },
+  {
+    "archetype": "spin-approved",
+    "spriteBytes": 170626,
+    "frameCount": 24,
+    "trials": [
+      500,
+      504,
+      644,
+      504,
+      524
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 504,
+    "renderTimeMinMs": 500,
+    "renderTimeMaxMs": 644,
+    "wallClockMedianMs": 523
+  },
+  {
+    "archetype": "transform-approved",
+    "spriteBytes": 89608,
+    "frameCount": 32,
+    "trials": [
+      464,
+      656,
+      440,
+      484,
+      476
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 476,
+    "renderTimeMinMs": 440,
+    "renderTimeMaxMs": 656,
+    "wallClockMedianMs": 495
+  },
+  {
+    "archetype": "flythrough-approved",
+    "spriteBytes": 1417324,
+    "frameCount": 72,
+    "trials": [
+      472,
+      456,
+      696,
+      652,
+      512
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 512,
+    "renderTimeMinMs": 456,
+    "renderTimeMaxMs": 696,
+    "wallClockMedianMs": 551
+  },
+  {
+    "archetype": "interface-approved",
+    "spriteBytes": 129802,
+    "frameCount": 48,
+    "trials": [
+      668,
+      508,
+      500,
+      544,
+      588
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 544,
+    "renderTimeMinMs": 500,
+    "renderTimeMaxMs": 668,
+    "wallClockMedianMs": 584
+  }
+]

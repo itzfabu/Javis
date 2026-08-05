@@ -1,104 +1,104 @@
 [
   {
     "archetype": "assemble",
-    "spriteBytes": 271406,
+    "spriteBytes": 842106,
     "frameCount": 96,
     "trials": [
-      508,
-      980,
-      488,
-      524,
-      456
+      568,
+      552,
+      544,
+      556,
+      600
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 508,
-    "renderTimeMinMs": 456,
-    "renderTimeMaxMs": 980,
-    "wallClockMedianMs": 538
+    "renderTimeMedianMs": 556,
+    "renderTimeMinMs": 544,
+    "renderTimeMaxMs": 600,
+    "wallClockMedianMs": 575
   },
   {
     "archetype": "reveal",
-    "spriteBytes": 6300883,
+    "spriteBytes": 518874,
     "frameCount": 48,
     "trials": [
-      692,
-      568,
-      572,
-      540,
-      568
+      388,
+      348,
+      372,
+      364,
+      432
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 568,
-    "renderTimeMinMs": 540,
-    "renderTimeMaxMs": 692,
-    "wallClockMedianMs": 589
+    "renderTimeMedianMs": 372,
+    "renderTimeMinMs": 348,
+    "renderTimeMaxMs": 432,
+    "wallClockMedianMs": 391
   },
   {
     "archetype": "spin",
-    "spriteBytes": 557459,
+    "spriteBytes": 171676,
     "frameCount": 24,
     "trials": [
-      256,
-      268,
-      248,
-      260,
-      284
+      496,
+      484,
+      484,
+      500,
+      500
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 260,
-    "renderTimeMinMs": 248,
-    "renderTimeMaxMs": 284,
-    "wallClockMedianMs": 287
+    "renderTimeMedianMs": 496,
+    "renderTimeMinMs": 484,
+    "renderTimeMaxMs": 500,
+    "wallClockMedianMs": 516
   },
   {
     "archetype": "transform",
-    "spriteBytes": 126492,
+    "spriteBytes": 83116,
     "frameCount": 32,
     "trials": [
-      232,
-      216,
-      248,
-      216,
-      240
+      468,
+      436,
+      484,
+      444,
+      472
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 232,
-    "renderTimeMinMs": 216,
-    "renderTimeMaxMs": 248,
-    "wallClockMedianMs": 257
+    "renderTimeMedianMs": 468,
+    "renderTimeMinMs": 436,
+    "renderTimeMaxMs": 484,
+    "wallClockMedianMs": 478
   },
   {
     "archetype": "flythrough",
-    "spriteBytes": 172078,
+    "spriteBytes": 1350632,
     "frameCount": 72,
     "trials": [
-      332,
-      524,
-      376,
-      316,
-      328
+      480,
+      488,
+      452,
+      472,
+      636
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 332,
-    "renderTimeMinMs": 316,
-    "renderTimeMaxMs": 524,
-    "wallClockMedianMs": 355
+    "renderTimeMedianMs": 480,
+    "renderTimeMinMs": 452,
+    "renderTimeMaxMs": 636,
+    "wallClockMedianMs": 493
   },
   {
     "archetype": "interface",
-    "spriteBytes": 255969,
+    "spriteBytes": 115958,
     "frameCount": 48,
     "trials": [
-      296,
-      424,
-      284,
-      292,
-      296
+      536,
+      512,
+      548,
+      528,
+      532
     ],
     "validTrials": 5,
-    "renderTimeMedianMs": 296,
-    "renderTimeMinMs": 284,
-    "renderTimeMaxMs": 424,
-    "wallClockMedianMs": 315
+    "renderTimeMedianMs": 532,
+    "renderTimeMinMs": 512,
+    "renderTimeMaxMs": 548,
+    "wallClockMedianMs": 556
   }
 ]

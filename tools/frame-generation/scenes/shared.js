@@ -24,7 +24,10 @@ window.FrameScene = (function () {
     const canvas = document.getElementById('c');
     canvas.width = P.w;
     canvas.height = P.h;
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+    // alpha:true doesn't change normal rendering (scene.background stays opaque, so the canvas's
+    // alpha channel is 255 everywhere during a real capture) - it only makes a transparent clear
+    // available, which the occlusion guard's isolated-render pass below needs.
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true, alpha: true });
     renderer.setSize(P.w, P.h, false);
     renderer.setPixelRatio(1);
     renderer.localClippingEnabled = true;
@@ -68,12 +71,30 @@ window.FrameScene = (function () {
     if (P.logoAsset) {
       window.__logoReady = false; // capture.js waits on this before screenshotting any frame
       const loader = new THREE.TextureLoader();
-      loader.load(P.logoAsset, (tex) => {
-        mat.map = tex;
-        mat.needsUpdate = true;
-        mesh.userData.ready = true;
-        window.__logoReady = true;
-      });
+      loader.load(
+        P.logoAsset,
+        (tex) => {
+          const img = tex.image;
+          if (!img || !img.naturalWidth || !img.naturalHeight) {
+            // Loads "successfully" (onLoad fires) but decodes to zero pixels - the known failure
+            // mode for an SVG whose root element has no width/height/viewBox and whose only
+            // content is a <symbol> (which never renders outside a <use> reference). Treat this
+            // the same as a hard load error rather than silently shipping a blank texture.
+            window.__logoReady = 'error';
+            window.__logoError = `logo asset decoded to zero size (${P.logoAsset}) - likely an SVG with no root width/height/viewBox, or a <symbol>-only SVG with no <use> reference`;
+            return;
+          }
+          mat.map = tex;
+          mat.needsUpdate = true;
+          mesh.userData.ready = true;
+          window.__logoReady = true;
+        },
+        undefined,
+        (err) => {
+          window.__logoReady = 'error';
+          window.__logoError = `logo asset failed to load (${P.logoAsset}): ${err && err.message ? err.message : err}`;
+        }
+      );
     } else if (P.logoText) {
       const c = document.createElement('canvas');
       c.width = 512; c.height = 256;
@@ -140,5 +161,186 @@ window.FrameScene = (function () {
     return { ok, margin, bound, corners: projected };
   }
 
-  return { parseParams, setupBasic, addThreeLightRig, makeLogoPlane, updateLogoOpacity, checkFrustum, FRUSTUM_MARGIN_NDC };
+  // Occlusion regression guard. The frustum check above proved the ASSEMBLE
+  // bug once already: it passed numerically while the wordmark was fully
+  // hidden behind a block, because a frustum check only asks "is this mesh's
+  // geometry inside the camera's view," never "is anything else drawn in
+  // front of it." This check asks the second question directly.
+  //
+  // Method: project the logo mesh's bounding-box corners to get a pixel-space
+  // region (reusing the same projection math as checkFrustum), then render
+  // that region TWICE at the identical camera/geometry state (t already
+  // fixed by the caller) - once normally (whatever else is in the scene),
+  // once with every other object hidden (`hideAllExcept`). Since the logo
+  // material is MeshBasicMaterial (unlit - see makeLogoPlane), hiding lights
+  // and every other mesh does not change how the logo itself renders; the
+  // ONLY thing hiding everything else can change is whether something else
+  // was drawn ON TOP of it. So: any isolated-render pixel that differs from
+  // the flat scene-background color is a real logo pixel (nothing else is
+  // there to produce it). For each such pixel, compare the normal render's
+  // color at the same coordinate - if they match (within tolerance), that
+  // logo pixel is actually visible in the real scene; if they don't match,
+  // something else is drawn there instead (occlusion). The ratio of
+  // "visible in normal" to "visible in isolated" is the metric to threshold.
+  function projectPixelBBox(camera, mesh, canvasW, canvasH, padPx) {
+    camera.updateMatrixWorld(true);
+    mesh.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(mesh);
+    const corners = [
+      [box.min.x, box.min.y, box.min.z], [box.min.x, box.min.y, box.max.z],
+      [box.min.x, box.max.y, box.min.z], [box.min.x, box.max.y, box.max.z],
+      [box.max.x, box.min.y, box.min.z], [box.max.x, box.min.y, box.max.z],
+      [box.max.x, box.max.y, box.min.z], [box.max.x, box.max.y, box.max.z],
+    ].map((c) => new THREE.Vector3(c[0], c[1], c[2]));
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    corners.forEach((c) => {
+      const p = c.clone().project(camera);
+      const px = ((p.x + 1) / 2) * canvasW;
+      const py = ((1 - p.y) / 2) * canvasH; // NDC y-up -> screen y-down
+      minX = Math.min(minX, px); maxX = Math.max(maxX, px);
+      minY = Math.min(minY, py); maxY = Math.max(maxY, py);
+    });
+    const pad = padPx != null ? padPx : 10; // must stay bigger than any real AA bleed so the padded rect's own corners are guaranteed background, not logo edge
+    const x = Math.max(0, Math.floor(minX) - pad);
+    const y = Math.max(0, Math.floor(minY) - pad);
+    const w = Math.min(canvasW, Math.ceil(maxX) + pad) - x;
+    const h = Math.min(canvasH, Math.ceil(maxY) + pad) - y;
+    return { x, y, w: Math.max(1, w), h: Math.max(1, h) };
+  }
+
+  function getCanvasRegionPixels(canvas, x, y, w, h) {
+    const tmp = document.createElement('canvas');
+    tmp.width = w; tmp.height = h;
+    const ctx = tmp.getContext('2d');
+    ctx.drawImage(canvas, x, y, w, h, 0, 0, w, h);
+    return ctx.getImageData(0, 0, w, h).data; // Uint8ClampedArray RGBA
+  }
+
+  // Hides every object in `scene` except `keepMesh` and keepMesh's own
+  // ancestor chain (so a mesh nested inside a group, like SPIN's label
+  // inside its rotating group, doesn't get hidden along with its parent).
+  // Returns a restore function.
+  function hideAllExcept(scene, keepMesh) {
+    const keepChain = new Set();
+    for (let n = keepMesh; n; n = n.parent) keepChain.add(n);
+    const hidden = [];
+    scene.traverse((obj) => {
+      if (obj === scene || keepChain.has(obj)) return;
+      let p = obj.parent, isDescendant = false;
+      for (; p; p = p.parent) { if (p === keepMesh) { isDescendant = true; break; } }
+      if (isDescendant) return;
+      if (obj.visible !== false) { hidden.push(obj); obj.visible = false; }
+    });
+    return () => hidden.forEach((o) => { o.visible = true; });
+  }
+
+  // First version of this check used color-distance-from-background to
+  // decide which pixels ARE the logo. Broke the first time it ran against a
+  // real asset: Grace Family Roofing's real logo is white text on a
+  // transparent PNG, composited over a scene whose background is also
+  // white - the logo's own solid-white pixels were indistinguishable from
+  // the isolated render's white background by color alone, producing a
+  // false 0%-visible failure on a logo confirmed, by direct screenshot,
+  // fully visible. Fixed by using the texture's own ALPHA channel as ground
+  // truth for "is this a logo pixel" instead (see checkOcclusion) - alpha
+  // has no such ambiguity, since the isolated pass nulls the scene
+  // background entirely (not just color-matches it), so nothing but the
+  // logo mesh can produce non-zero alpha there.
+  //
+  // ALPHA_TOL had to be measured, not guessed, and the number that fell out
+  // is a mathematical floor, not a noise-calibration choice: sweeping it
+  // against that same real logo showed visibleRatio staying near 0 all the
+  // way up to alpha~240, then jumping to a clean 1.0 only at alpha>=245.
+  // The reason isn't noise - it's how alpha blending works. A pixel with
+  // partial alpha (anti-aliased edge, semi-transparent by design) shows a
+  // DIFFERENT composited color depending on what's behind it: over nothing
+  // (the isolated pass's nulled background) versus over a real block color
+  // (the normal pass) are, by the alpha-compositing equation itself,
+  // legitimately different colors - with zero occlusion involved either
+  // way. Only a fully-opaque pixel (alpha=255) satisfies output=textureColor
+  // regardless of what's behind it, making it the only pixel class this
+  // comparison can validly use. 250 (out of 255) is the practical
+  // implementation of "fully opaque," with a few units of headroom for
+  // rounding - not a threshold to loosen, since anything looser reintroduces
+  // exactly the blend-dependent noise just measured.
+  const OCCLUSION_COLOR_TOL = 24; // used only for the (already-opaque) visibility comparison itself - see checkOcclusion
+  const OCCLUSION_ALPHA_TOL = 250;
+  // VISIBLE_RATIO_THRESHOLD: fraction of the logo's own isolated-render
+  // alpha silhouette that must still match in the normal render. Set to
+  // 0.9, not 0.5 or lower: a real occlusion event found in this project's
+  // own testing (ASSEMBLE's wordmark fully hidden behind a block) hid
+  // effectively 100% of the logo, not a partial sliver - there is no
+  // legitimate reason a correctly-placed logo should be more than ~10%
+  // covered by other scene geometry (a sliver at one edge from an
+  // adjoining object, say), so anything worse is treated as the same class
+  // of bug already found once, not a borderline case to tune around.
+  const OCCLUSION_VISIBLE_RATIO_THRESHOLD = 0.9;
+
+  function checkOcclusion(renderer, scene, camera, mesh, opts) {
+    opts = opts || {};
+    const colorTol = opts.colorTol != null ? opts.colorTol : OCCLUSION_COLOR_TOL;
+    const alphaTol = opts.alphaTol != null ? opts.alphaTol : OCCLUSION_ALPHA_TOL;
+    const threshold = opts.threshold != null ? opts.threshold : OCCLUSION_VISIBLE_RATIO_THRESHOLD;
+    const canvas = renderer.domElement;
+    const bbox = projectPixelBBox(camera, mesh, canvas.width, canvas.height);
+
+    renderer.render(scene, camera);
+    const normalPixels = getCanvasRegionPixels(canvas, bbox.x, bbox.y, bbox.w, bbox.h);
+
+    // Isolated pass: hide every other object AND null the scene background
+    // (not just hide objects - background is a flat fill, not an object,
+    // and would otherwise still show through) so the only thing that can
+    // produce non-zero alpha anywhere in this render is the logo mesh's own
+    // texture. This is what makes "is this a logo pixel" a direct alpha
+    // readout instead of a color-distance guess against a reference that
+    // can coincidentally match the logo's own color (exactly what broke the
+    // first version of this check against a real white-on-transparent PNG
+    // logo composited over a white scene background).
+    const restoreVisibility = hideAllExcept(scene, mesh);
+    const savedBackground = scene.background;
+    scene.background = null;
+    const savedClearAlpha = renderer.getClearAlpha();
+    renderer.setClearAlpha(0);
+    renderer.render(scene, camera);
+    const isolatedPixels = getCanvasRegionPixels(canvas, bbox.x, bbox.y, bbox.w, bbox.h);
+    scene.background = savedBackground;
+    renderer.setClearAlpha(savedClearAlpha);
+    restoreVisibility();
+    renderer.render(scene, camera); // leave the renderer/canvas back in the normal state
+
+    let isolatedCount = 0, visibleCount = 0;
+    const mismatchSamples = [];
+    for (let i = 0; i < isolatedPixels.length; i += 4) {
+      const ia = isolatedPixels[i + 3];
+      if (ia < alphaTol) continue; // no logo content here - the true test, not a color guess
+      isolatedCount++;
+      const ir = isolatedPixels[i], ig = isolatedPixels[i + 1], ib = isolatedPixels[i + 2];
+      const nr = normalPixels[i], ng = normalPixels[i + 1], nb = normalPixels[i + 2];
+      const distMatch = Math.abs(ir - nr) + Math.abs(ig - ng) + Math.abs(ib - nb);
+      if (distMatch <= colorTol) {
+        visibleCount++;
+      } else if (opts.debug && mismatchSamples.length < 5) {
+        mismatchSamples.push({ i: i / 4, isolatedAlpha: ia, isolated: [ir, ig, ib], normal: [nr, ng, nb], distMatch });
+      }
+    }
+    const visibleRatio = isolatedCount > 0 ? visibleCount / isolatedCount : 1;
+    return {
+      ok: visibleRatio >= threshold,
+      visibleRatio: +visibleRatio.toFixed(3),
+      isolatedLogoPixelCount: isolatedCount,
+      visibleLogoPixelCount: visibleCount,
+      threshold,
+      colorTol,
+      alphaTol,
+      bbox,
+      mismatchSamples: opts.debug ? mismatchSamples : undefined,
+    };
+  }
+
+  return {
+    parseParams, setupBasic, addThreeLightRig, makeLogoPlane, updateLogoOpacity,
+    checkFrustum, FRUSTUM_MARGIN_NDC,
+    checkOcclusion, hideAllExcept, OCCLUSION_COLOR_TOL, OCCLUSION_VISIBLE_RATIO_THRESHOLD,
+  };
 })();

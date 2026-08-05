@@ -91,9 +91,10 @@ async function main() {
   const base = path.join(__dirname, 'cost-study');
   const browser = await chromium.launch();
   const results = [];
+  const dirNames = process.argv.length > 2 ? process.argv.slice(2) : ARCHETYPES;
 
   try {
-    for (const arch of ARCHETYPES) {
+    for (const arch of dirNames) {
       const archDir = path.join(base, arch);
       const metadata = JSON.parse(fs.readFileSync(path.join(archDir, 'metadata.json'), 'utf8'));
 
@@ -114,7 +115,7 @@ async function main() {
       const valid = renderTimes.filter((v) => v !== null);
       const row = {
         archetype: arch,
-        spriteBytes: fs.statSync(path.join(archDir, 'sprite.png')).size,
+        spriteBytes: fs.statSync(path.join(archDir, metadata.spriteSheet.path)).size,
         frameCount: metadata.frameCount,
         trials: renderTimes,
         validTrials: valid.length,
@@ -134,7 +135,8 @@ async function main() {
     await browser.close();
   }
 
-  fs.writeFileSync(path.join(base, 'decode-paint-results.json'), JSON.stringify(results, null, 2));
+  const outName = dirNames === ARCHETYPES ? 'decode-paint-results.json' : `decode-paint-results-${dirNames[0].includes('-') ? dirNames[0].split('-')[1] : 'custom'}.json`;
+  fs.writeFileSync(path.join(base, outName), JSON.stringify(results, null, 2));
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

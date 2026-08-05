@@ -1,30 +1,76 @@
-/* Thread 3 hero sprite - archetype: REVEAL, 48 frames, native ratio 4:5 */
+/* Thread 3 hero sprite - archetype: REVEAL, 48 frames, 8x6 grid, native ratio 4:5 */
 .hero-sprite {
   aspect-ratio: 4 / 5;
   height: min(78vh, 720px);
   width: auto;
   margin: 0 auto;
-  background-image: url('sprite.png');
+  background-image: url('sprite.webp');
   background-repeat: no-repeat;
-  background-size: 4800% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+  background-size: 800% 600%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position: 100% 100%; /* unconditional base state: the actual last frame's grid cell (7,5) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {
   .hero-sprite {
-    animation: hero-scrub-reveal steps(47, jump-none) both;
+    animation: hero-scrub-reveal linear both;
     animation-timeline: scroll(root block);
   }
 }
 
 @keyframes hero-scrub-reveal {
-  from { background-position-x: 0%; }
-  to   { background-position-x: 100%; }
+  0.000% { background-position: 0% 0%; animation-timing-function: steps(1, jump-end); }
+  2.128% { background-position: 14.286% 0%; animation-timing-function: steps(1, jump-end); }
+  4.255% { background-position: 28.571% 0%; animation-timing-function: steps(1, jump-end); }
+  6.383% { background-position: 42.857% 0%; animation-timing-function: steps(1, jump-end); }
+  8.511% { background-position: 57.143% 0%; animation-timing-function: steps(1, jump-end); }
+  10.638% { background-position: 71.429% 0%; animation-timing-function: steps(1, jump-end); }
+  12.766% { background-position: 85.714% 0%; animation-timing-function: steps(1, jump-end); }
+  14.894% { background-position: 100% 0%; animation-timing-function: steps(1, jump-end); }
+  17.021% { background-position: 0% 20%; animation-timing-function: steps(1, jump-end); }
+  19.149% { background-position: 14.286% 20%; animation-timing-function: steps(1, jump-end); }
+  21.277% { background-position: 28.571% 20%; animation-timing-function: steps(1, jump-end); }
+  23.404% { background-position: 42.857% 20%; animation-timing-function: steps(1, jump-end); }
+  25.532% { background-position: 57.143% 20%; animation-timing-function: steps(1, jump-end); }
+  27.660% { background-position: 71.429% 20%; animation-timing-function: steps(1, jump-end); }
+  29.787% { background-position: 85.714% 20%; animation-timing-function: steps(1, jump-end); }
+  31.915% { background-position: 100% 20%; animation-timing-function: steps(1, jump-end); }
+  34.043% { background-position: 0% 40%; animation-timing-function: steps(1, jump-end); }
+  36.170% { background-position: 14.286% 40%; animation-timing-function: steps(1, jump-end); }
+  38.298% { background-position: 28.571% 40%; animation-timing-function: steps(1, jump-end); }
+  40.426% { background-position: 42.857% 40%; animation-timing-function: steps(1, jump-end); }
+  42.553% { background-position: 57.143% 40%; animation-timing-function: steps(1, jump-end); }
+  44.681% { background-position: 71.429% 40%; animation-timing-function: steps(1, jump-end); }
+  46.809% { background-position: 85.714% 40%; animation-timing-function: steps(1, jump-end); }
+  48.936% { background-position: 100% 40%; animation-timing-function: steps(1, jump-end); }
+  51.064% { background-position: 0% 60%; animation-timing-function: steps(1, jump-end); }
+  53.191% { background-position: 14.286% 60%; animation-timing-function: steps(1, jump-end); }
+  55.319% { background-position: 28.571% 60%; animation-timing-function: steps(1, jump-end); }
+  57.447% { background-position: 42.857% 60%; animation-timing-function: steps(1, jump-end); }
+  59.574% { background-position: 57.143% 60%; animation-timing-function: steps(1, jump-end); }
+  61.702% { background-position: 71.429% 60%; animation-timing-function: steps(1, jump-end); }
+  63.830% { background-position: 85.714% 60%; animation-timing-function: steps(1, jump-end); }
+  65.957% { background-position: 100% 60%; animation-timing-function: steps(1, jump-end); }
+  68.085% { background-position: 0% 80%; animation-timing-function: steps(1, jump-end); }
+  70.213% { background-position: 14.286% 80%; animation-timing-function: steps(1, jump-end); }
+  72.340% { background-position: 28.571% 80%; animation-timing-function: steps(1, jump-end); }
+  74.468% { background-position: 42.857% 80%; animation-timing-function: steps(1, jump-end); }
+  76.596% { background-position: 57.143% 80%; animation-timing-function: steps(1, jump-end); }
+  78.723% { background-position: 71.429% 80%; animation-timing-function: steps(1, jump-end); }
+  80.851% { background-position: 85.714% 80%; animation-timing-function: steps(1, jump-end); }
+  82.979% { background-position: 100% 80%; animation-timing-function: steps(1, jump-end); }
+  85.106% { background-position: 0% 100%; animation-timing-function: steps(1, jump-end); }
+  87.234% { background-position: 14.286% 100%; animation-timing-function: steps(1, jump-end); }
+  89.362% { background-position: 28.571% 100%; animation-timing-function: steps(1, jump-end); }
+  91.489% { background-position: 42.857% 100%; animation-timing-function: steps(1, jump-end); }
+  93.617% { background-position: 57.143% 100%; animation-timing-function: steps(1, jump-end); }
+  95.745% { background-position: 71.429% 100%; animation-timing-function: steps(1, jump-end); }
+  97.872% { background-position: 85.714% 100%; animation-timing-function: steps(1, jump-end); }
+  100.000% { background-position: 100% 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-sprite {
     animation: none !important;
-    background-position-x: 100%;
+    background-position: 100% 100%;
   }
 }

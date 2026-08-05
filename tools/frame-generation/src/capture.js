@@ -115,7 +115,11 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
 
     const t0 = Date.now();
     await page.goto(url);
-    await page.waitForFunction('window.__ready === true && window.__logoReady !== false');
+    await page.waitForFunction("window.__ready === true && window.__logoReady !== false", null, { timeout: 15000 });
+    const logoError = await page.evaluate(() => (window.__logoReady === 'error' ? window.__logoError : null));
+    if (logoError) {
+      throw new Error(`LOGO ASSET FAILED for archetype ${archetype.key}: ${logoError}`);
+    }
 
     // Frustum regression guard: move to the frame where the logo is actually
     // supposed to be visible (its appearsAtFrameFraction - for FLYTHROUGH
@@ -136,6 +140,24 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
         `bound ${frustumResult.bound}). ${failing.length}/${frustumResult.corners.length} corners ` +
         `out of bounds: ${JSON.stringify(failing)}. Retune the camera or signboard placement in ` +
         `scenes/${archetype.scene} - do not loosen the margin to make this pass.`
+      );
+    }
+
+    // Occlusion regression guard: the frustum check above only proves the
+    // logo mesh's geometry is inside the camera's view - it says nothing
+    // about whether some OTHER opaque object in the scene is drawn in front
+    // of it. Found exactly that bug once already (ASSEMBLE's wordmark fully
+    // hidden behind a tower block while the frustum check passed cleanly) -
+    // see vault note for the full account and how this guard was calibrated.
+    const occlusionResult = await page.evaluate(() => (window.__occlusionCheck ? window.__occlusionCheck() : null));
+    if (occlusionResult && !occlusionResult.ok) {
+      throw new Error(
+        `OCCLUSION CHECK FAILED for archetype ${archetype.key}: only ${(occlusionResult.visibleRatio * 100).toFixed(1)}% ` +
+        `of the logo's own pixels (measured in isolation) are still visible in the normal render ` +
+        `(threshold ${(occlusionResult.threshold * 100).toFixed(0)}%) at t=${checkT} - something else in the scene is ` +
+        `drawn in front of it. ${occlusionResult.visibleLogoPixelCount}/${occlusionResult.isolatedLogoPixelCount} logo ` +
+        `pixels visible. Move the signboard in front of whatever is occluding it in scenes/${archetype.scene} - ` +
+        `do not lower the threshold to make this pass.`
       );
     }
     await page.evaluate(() => window.__renderFrame(0)); // reset before the real capture loop below
