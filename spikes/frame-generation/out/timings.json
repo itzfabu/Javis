@@ -1,0 +1,12 @@
+[
+  {
+    "client": "clientA-roastery",
+    "frames": 24,
+    "elapsedMs": 2118
+  },
+  {
+    "client": "clientB-tech",
+    "frames": 24,
+    "elapsedMs": 2013
+  }
+]
