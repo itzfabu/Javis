@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * FLYTHROUGH archetype template scene.
+ * Real estate/hotels/gyms/venues + general/family dental & medical: the
+ * camera glides forward through a receding sequence of frames (a generic
+ * "space", not a specific room-by-room capture of a client's actual
+ * interior - per Recommendation #2, this ships disclosed-as-stylized by
+ * default; a real multi-room walkthrough is the paid add-on, out of this
+ * pipeline's scope). Fixed geometry/camera path; color/logo/background
+ * parametrized per client.
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+const N_ARCHES = 6;
+const SPACING = 2.2;
+const palette = [P.primary, P.accent, P.tertiary];
+
+for (let i = 0; i < N_ARCHES; i++) {
+  const geo = new THREE.TorusGeometry(1.15, 0.09, 16, 48);
+  const mat = new THREE.MeshStandardMaterial({
+    color: palette[i % palette.length],
+    roughness: 0.5,
+    metalness: 0.15,
+  });
+  const arch = new THREE.Mesh(geo, mat);
+  arch.position.z = -i * SPACING;
+  scene.add(arch);
+
+  // A floor strip per bay reinforces the sense of moving through a space,
+  // not just past floating rings.
+  const floorGeo = new THREE.BoxGeometry(2.6, 0.06, SPACING);
+  const floorMat = new THREE.MeshStandardMaterial({ color: P.bg, roughness: 0.85 });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.position.set(0, -1.1, -i * SPACING - SPACING / 2);
+  scene.add(floor);
+}
+
+const signboard = FrameScene.makeLogoPlane(P, 0.6, 0.3);
+signboard.position.set(0, 0.35, -(N_ARCHES - 0.6) * SPACING); // within camera frustum, verified via the frustum-check guard AND checked for occlusion by the floor strips (see BUILD note)
+scene.add(signboard);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+
+camera.position.set(0, 0.1, 1.5);
+camera.lookAt(0, 0, -1);
+
+const totalDepth = (N_ARCHES - 1) * SPACING;
+
+window.__renderFrame = function (t) {
+  camera.position.z = 1.5 - totalDepth * t;
+  // Small, slow lateral drift reads as a handheld/gimbal glide rather than a
+  // perfectly rigid dolly - a deliberate, cheap touch of "camera operator"
+  // realism, not required for the mechanism to work.
+  camera.position.x = Math.sin(t * Math.PI * 2) * 0.08;
+  camera.lookAt(camera.position.x * 0.5, 0, camera.position.z - 1);
+  FrameScene.updateLogoOpacity(signboard, P, t);
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

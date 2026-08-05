@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * INTERFACE archetype template scene.
+ * SaaS/fintech/agencies/consultants - businesses with nothing physical to
+ * photograph/render: dashboard panels slide in and a headline number counts
+ * up, standing in for "data coming alive". Fixed geometry/camera; color/
+ * logo/background parametrized per client.
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+camera.position.set(0, 0, 4.2);
+camera.lookAt(0, 0, 0);
+
+const palette = [P.primary, P.accent, P.tertiary];
+const PANELS = [
+  { w: 1.5, h: 1.9, restX: -1.35, restY: 0, from: { x: -1.35, y: -3.2 }, delay: 0.0 },
+  { w: 1.7, h: 0.9, restX: 0.55, restY: 0.65, from: { x: 3.4, y: 0.65 }, delay: 0.15 },
+  { w: 1.7, h: 0.8, restX: 0.55, restY: -0.65, from: { x: 3.4, y: -0.65 }, delay: 0.3 },
+];
+
+const panelMeshes = [];
+for (let i = 0; i < PANELS.length; i++) {
+  const spec = PANELS[i];
+  const geo = new THREE.PlaneGeometry(spec.w, spec.h);
+  const mat = new THREE.MeshStandardMaterial({
+    color: i === 0 ? P.bg : palette[i % palette.length],
+    roughness: 0.6,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData = spec;
+  scene.add(mesh);
+  panelMeshes.push(mesh);
+}
+
+// Headline counter: a canvas texture redrawn per frame (deterministic,
+// same __renderFrame(t) contract as every other archetype - no setInterval,
+// no animation loop) showing a number ticking up on the first panel.
+const counterCanvas = document.createElement('canvas');
+counterCanvas.width = 512; counterCanvas.height = 220;
+const counterCtx = counterCanvas.getContext('2d');
+const counterTex = new THREE.CanvasTexture(counterCanvas);
+const counterMat = new THREE.MeshBasicMaterial({ map: counterTex, transparent: true });
+const counterMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.55), counterMat);
+counterMesh.position.set(PANELS[0].restX, PANELS[0].restY - 0.2, 0.01);
+scene.add(counterMesh);
+
+function drawCounter(t) {
+  const value = Math.round(t * 128); // arbitrary target; the counting-up motion is the point, not the specific number
+  counterCtx.clearRect(0, 0, 512, 220);
+  counterCtx.fillStyle = P.primary;
+  counterCtx.font = 'bold 96px sans-serif';
+  counterCtx.textAlign = 'center';
+  counterCtx.textBaseline = 'middle';
+  counterCtx.fillText('+' + value + '%', 256, 110);
+  counterTex.needsUpdate = true;
+}
+
+const signboard = FrameScene.makeLogoPlane(P, 0.75, 0.35);
+signboard.position.set(0, 0.85, 0.05); // within camera frustum, verified via the frustum-check guard, not just eyeballed
+scene.add(signboard);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+
+function ease(x) { return 1 - Math.pow(1 - x, 3); }
+
+window.__renderFrame = function (t) {
+  for (const m of panelMeshes) {
+    const spec = m.userData;
+    let localT = (t - spec.delay) / (1 - spec.delay);
+    localT = Math.max(0, Math.min(1, localT));
+    const e = ease(localT);
+    m.position.x = spec.from.x + (spec.restX - spec.from.x) * e;
+    m.position.y = spec.from.y + (spec.restY - spec.from.y) * e;
+    m.position.z = -0.02;
+  }
+  drawCounter(Math.max(0, Math.min(1, (t - PANELS[0].delay) / (1 - PANELS[0].delay))));
+  FrameScene.updateLogoOpacity(signboard, P, t);
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

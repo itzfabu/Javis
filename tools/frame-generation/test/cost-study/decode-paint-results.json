@@ -1,0 +1,104 @@
+[
+  {
+    "archetype": "assemble",
+    "spriteBytes": 271406,
+    "frameCount": 96,
+    "trials": [
+      508,
+      980,
+      488,
+      524,
+      456
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 508,
+    "renderTimeMinMs": 456,
+    "renderTimeMaxMs": 980,
+    "wallClockMedianMs": 538
+  },
+  {
+    "archetype": "reveal",
+    "spriteBytes": 6300883,
+    "frameCount": 48,
+    "trials": [
+      692,
+      568,
+      572,
+      540,
+      568
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 568,
+    "renderTimeMinMs": 540,
+    "renderTimeMaxMs": 692,
+    "wallClockMedianMs": 589
+  },
+  {
+    "archetype": "spin",
+    "spriteBytes": 557459,
+    "frameCount": 24,
+    "trials": [
+      256,
+      268,
+      248,
+      260,
+      284
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 260,
+    "renderTimeMinMs": 248,
+    "renderTimeMaxMs": 284,
+    "wallClockMedianMs": 287
+  },
+  {
+    "archetype": "transform",
+    "spriteBytes": 126492,
+    "frameCount": 32,
+    "trials": [
+      232,
+      216,
+      248,
+      216,
+      240
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 232,
+    "renderTimeMinMs": 216,
+    "renderTimeMaxMs": 248,
+    "wallClockMedianMs": 257
+  },
+  {
+    "archetype": "flythrough",
+    "spriteBytes": 172078,
+    "frameCount": 72,
+    "trials": [
+      332,
+      524,
+      376,
+      316,
+      328
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 332,
+    "renderTimeMinMs": 316,
+    "renderTimeMaxMs": 524,
+    "wallClockMedianMs": 355
+  },
+  {
+    "archetype": "interface",
+    "spriteBytes": 255969,
+    "frameCount": 48,
+    "trials": [
+      296,
+      424,
+      284,
+      292,
+      296
+    ],
+    "validTrials": 5,
+    "renderTimeMedianMs": 296,
+    "renderTimeMinMs": 284,
+    "renderTimeMaxMs": 424,
+    "wallClockMedianMs": 315
+  }
+]

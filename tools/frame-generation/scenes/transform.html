@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * TRANSFORM archetype template scene.
+ * Renovation/fitness/beauty (+ cosmetic dental/medical): a before/after
+ * wipe. Two overlapping planes ("before": rougher/duller material in the
+ * accent color; "after": polished material in the primary color) with the
+ * "after" plane clipped by a moving THREE.Plane that sweeps left-to-right
+ * as t goes 0-1, revealing it over the "before" plane underneath. Uses
+ * three.js's native clipping-plane support (r128) rather than a custom
+ * shader - no new technique to hand-roll.
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+camera.position.set(0, 0, 3.4);
+camera.lookAt(0, 0, 0);
+
+const PLANE_W = 2.6, PLANE_H = 1.7;
+
+const beforeGeo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
+const beforeMat = new THREE.MeshStandardMaterial({ color: P.accent, roughness: 0.95, metalness: 0 });
+const beforePlane = new THREE.Mesh(beforeGeo, beforeMat);
+beforePlane.position.z = -0.01;
+scene.add(beforePlane);
+
+// The clip plane's normal points in -X; a point is clipped (hidden) when
+// plane.constant + normal.dot(point) < 0. Sweeping constant from -PLANE_W/2
+// to +PLANE_W/2 moves the reveal edge from fully-hidden to fully-shown.
+const clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -PLANE_W / 2);
+
+const afterGeo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
+const afterMat = new THREE.MeshStandardMaterial({
+  color: P.primary,
+  roughness: 0.25,
+  metalness: 0.15,
+  clippingPlanes: [clipPlane],
+  clipShadows: true,
+});
+const afterPlane = new THREE.Mesh(afterGeo, afterMat);
+scene.add(afterPlane);
+
+// A thin bar marks the moving wipe edge itself - makes the transition line
+// legible as a deliberate wipe, not just an ambiguous color change.
+const edgeGeo = new THREE.BoxGeometry(0.03, PLANE_H, 0.05);
+const edgeMat = new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: 0.4 });
+const edge = new THREE.Mesh(edgeGeo, edgeMat);
+edge.position.z = 0.02;
+scene.add(edge);
+
+const signboard = FrameScene.makeLogoPlane(P, 0.75, 0.35);
+signboard.position.set(0, 0.55, 0.03); // within camera frustum, verified via the frustum-check guard, not just eyeballed
+scene.add(signboard);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+
+window.__renderFrame = function (t) {
+  // normal=(-1,0,0): a point is visible (not clipped) where -point.x + constant >= 0,
+  // i.e. point.x <= constant - so sweeping constant left-to-right sweeps the reveal edge the same way.
+  const threshold = -PLANE_W / 2 + PLANE_W * t;
+  clipPlane.constant = threshold;
+  edge.position.x = threshold;
+  FrameScene.updateLogoOpacity(signboard, P, t);
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+[
+  {
+    "archetype": "assemble",
+    "sheet_png_bytes": 271406,
+    "sheet_webp": {
+      "possible": false,
+      "width": 76800,
+      "height": 1200,
+      "limit": 16383,
+      "overBy": 4.69
+    },
+    "n_frames": 96,
+    "frames_png_total_bytes": 2554888,
+    "frames_webp_total_bytes": 825812,
+    "frames_webp_pct_of_png": 32.3
+  },
+  {
+    "archetype": "reveal",
+    "sheet_png_bytes": 6300883,
+    "sheet_webp": {
+      "possible": false,
+      "width": 46080,
+      "height": 1200,
+      "limit": 16383,
+      "overBy": 2.81
+    },
+    "n_frames": 48,
+    "frames_png_total_bytes": 5467341,
+    "frames_webp_total_bytes": 515040,
+    "frames_webp_pct_of_png": 9.4
+  },
+  {
+    "archetype": "spin",
+    "sheet_png_bytes": 557459,
+    "sheet_webp": {
+      "possible": false,
+      "width": 28800,
+      "height": 1200,
+      "limit": 16383,
+      "overBy": 1.76
+    },
+    "n_frames": 24,
+    "frames_png_total_bytes": 661063,
+    "frames_webp_total_bytes": 166650,
+    "frames_webp_pct_of_png": 25.2
+  },
+  {
+    "archetype": "transform",
+    "sheet_png_bytes": 126492,
+    "sheet_webp": {
+      "possible": false,
+      "width": 38400,
+      "height": 800,
+      "limit": 16383,
+      "overBy": 2.34
+    },
+    "n_frames": 32,
+    "frames_png_total_bytes": 199330,
+    "frames_webp_total_bytes": 74866,
+    "frames_webp_pct_of_png": 37.6
+  },
+  {
+    "archetype": "flythrough",
+    "sheet_png_bytes": 172078,
+    "sheet_webp": {
+      "possible": false,
+      "width": 86400,
+      "height": 675,
+      "limit": 16383,
+      "overBy": 5.27
+    },
+    "n_frames": 72,
+    "frames_png_total_bytes": 9552934,
+    "frames_webp_total_bytes": 1340610,
+    "frames_webp_pct_of_png": 14.0
+  },
+  {
+    "archetype": "interface",
+    "sheet_png_bytes": 255969,
+    "sheet_webp": {
+      "possible": false,
+      "width": 57600,
+      "height": 675,
+      "limit": 16383,
+      "overBy": 3.52
+    },
+    "n_frames": 48,
+    "frames_png_total_bytes": 506551,
+    "frames_webp_total_bytes": 110948,
+    "frames_webp_pct_of_png": 21.9
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "archetype": "FLYTHROUGH",
+  "stylized": true,
+  "stylizedNote": "Template shows a generic environment glide, not the client's actual space. Disclose to the client as a stylized representation; real photogrammetry capture is a separate, manually-scoped paid add-on (not produced by this pipeline).",
+  "frameCount": 72,
+  "aspectRatio": [
+    16,
+    9
+  ],
+  "frameDims": {
+    "width": 1200,
+    "height": 675
+  },
+  "spriteSheet": {
+    "path": "sprite.png",
+    "width": 86400,
+    "height": 675,
+    "bytes": 172078
+  },
+  "capture": {
+    "elapsedMs": 9572,
+    "msPerFrame": 132.94
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "",
+    "assetDir": null,
+    "logoFraction": 1,
+    "note": "SKIPPED: tokens.logo is an extracted asset (C:\\Jarvis\\tools\\brand-extraction\\test\\out\\05-mark-fisher-fitness.logo.webp) but tokens.meta.reviewStatus is \"pending\", not \"approved\" - per Thread 3 Recommendation #4, an unreviewed extracted logo is never composited. Run the Thread 1 review gate first."
+  },
+  "css": "/* Thread 3 hero sprite - archetype: FLYTHROUGH, 72 frames, native ratio 16:9 */\n.hero-sprite {\n  aspect-ratio: 16 / 9;\n  width: min(90vw, 1200px);\n  height: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 7200% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-flythrough steps(71, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-flythrough {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"FLYTHROUGH hero animation\"></div>"
+}

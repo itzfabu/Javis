@@ -1,0 +1,33 @@
+{
+  "archetype": "SPIN",
+  "stylized": false,
+  "stylizedNote": null,
+  "frameCount": 24,
+  "aspectRatio": [
+    1,
+    1
+  ],
+  "frameDims": {
+    "width": 1200,
+    "height": 1200
+  },
+  "spriteSheet": {
+    "path": "sprite.png",
+    "width": 28800,
+    "height": 1200,
+    "bytes": 557459
+  },
+  "capture": {
+    "elapsedMs": 3155,
+    "msPerFrame": 131.46
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "",
+    "assetDir": null,
+    "logoFraction": 1,
+    "note": "SKIPPED: tokens.logo is an extracted asset (C:\\Jarvis\\tools\\brand-extraction\\test\\out\\03-hiut-denim.logo.svg) but tokens.meta.reviewStatus is \"pending\", not \"approved\" - per Thread 3 Recommendation #4, an unreviewed extracted logo is never composited. Run the Thread 1 review gate first."
+  },
+  "css": "/* Thread 3 hero sprite - archetype: SPIN, 24 frames, native ratio 1:1 */\n.hero-sprite {\n  aspect-ratio: 1 / 1;\n  height: min(78vh, 720px);\n  width: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 2400% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-spin steps(23, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-spin {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"SPIN hero animation\"></div>"
+}

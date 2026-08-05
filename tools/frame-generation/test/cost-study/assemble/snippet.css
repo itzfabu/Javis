@@ -1,0 +1,30 @@
+/* Thread 3 hero sprite - archetype: ASSEMBLE, 96 frames, native ratio 2:3 */
+.hero-sprite {
+  aspect-ratio: 2 / 3;
+  height: min(78vh, 720px);
+  width: auto;
+  margin: 0 auto;
+  background-image: url('sprite.png');
+  background-repeat: no-repeat;
+  background-size: 9600% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-sprite {
+    animation: hero-scrub-assemble steps(95, jump-none) both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes hero-scrub-assemble {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sprite {
+    animation: none !important;
+    background-position-x: 100%;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "frame-generation",
+  "version": "1.0.0",
+  "description": "Thread 3 frame generation pipeline (Website Generator project) - hybrid template scenes (three.js r128, headless Playwright capture) producing per-client hero sprite sheets for the six archetypes, per vault/Projects/Website Generator.md Thread 3 (APPROVED 2026-08-05).",
+  "main": "src/archetypes.js",
+  "bin": {
+    "generate-frames": "bin/generate-frames.js"
+  },
+  "scripts": {
+    "generate": "node bin/generate-frames.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

@@ -1,0 +1,30 @@
+/* Thread 3 hero sprite - archetype: TRANSFORM, 32 frames, native ratio 3:2 */
+.hero-sprite {
+  aspect-ratio: 3 / 2;
+  width: min(90vw, 1200px);
+  height: auto;
+  margin: 0 auto;
+  background-image: url('sprite.png');
+  background-repeat: no-repeat;
+  background-size: 3200% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-sprite {
+    animation: hero-scrub-transform steps(31, jump-none) both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes hero-scrub-transform {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sprite {
+    animation: none !important;
+    background-position-x: 100%;
+  }
+}

@@ -1,0 +1,30 @@
+/* Thread 3 hero sprite - archetype: FLYTHROUGH, 72 frames, native ratio 16:9 */
+.hero-sprite {
+  aspect-ratio: 16 / 9;
+  width: min(90vw, 1200px);
+  height: auto;
+  margin: 0 auto;
+  background-image: url('sprite.png');
+  background-repeat: no-repeat;
+  background-size: 7200% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */
+  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-sprite {
+    animation: hero-scrub-flythrough steps(71, jump-none) both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes hero-scrub-flythrough {
+  from { background-position-x: 0%; }
+  to   { background-position-x: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sprite {
+    animation: none !important;
+    background-position-x: 100%;
+  }
+}

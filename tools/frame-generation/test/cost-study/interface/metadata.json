@@ -1,0 +1,33 @@
+{
+  "archetype": "INTERFACE",
+  "stylized": false,
+  "stylizedNote": null,
+  "frameCount": 48,
+  "aspectRatio": [
+    16,
+    9
+  ],
+  "frameDims": {
+    "width": 1200,
+    "height": 675
+  },
+  "spriteSheet": {
+    "path": "sprite.png",
+    "width": 57600,
+    "height": 675,
+    "bytes": 255969
+  },
+  "capture": {
+    "elapsedMs": 4397,
+    "msPerFrame": 91.6
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "",
+    "assetDir": null,
+    "logoFraction": 1,
+    "note": "SKIPPED: tokens.logo is an extracted asset (C:\\Jarvis\\tools\\brand-extraction\\test\\out\\07-family-law-partnership.logo.svg) but tokens.meta.reviewStatus is \"pending\", not \"approved\" - per Thread 3 Recommendation #4, an unreviewed extracted logo is never composited. Run the Thread 1 review gate first."
+  },
+  "css": "/* Thread 3 hero sprite - archetype: INTERFACE, 48 frames, native ratio 16:9 */\n.hero-sprite {\n  aspect-ratio: 16 / 9;\n  width: min(90vw, 1200px);\n  height: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 4800% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-interface steps(47, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-interface {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"INTERFACE hero animation\"></div>"
+}

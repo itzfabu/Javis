@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * SPIN archetype template scene.
+ * Retail/tech/automotive: a hero product rotates a full 360 degrees in
+ * place. Ported from this project's original hybrid-template spike
+ * (spikes/frame-generation/scene.html) into the real pipeline, using the
+ * shared setup/lighting/logo helpers instead of duplicating them inline.
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+camera.position.set(0, 0.15, 3.2);
+camera.lookAt(0, 0, 0);
+
+const group = new THREE.Group();
+
+const bodyGeo = new THREE.CylinderGeometry(0.55, 0.62, 1.7, 32);
+const bodyMat = new THREE.MeshStandardMaterial({ color: P.primary, roughness: 0.35, metalness: 0.1 });
+group.add(new THREE.Mesh(bodyGeo, bodyMat));
+
+const capGeo = new THREE.CylinderGeometry(0.3, 0.35, 0.35, 32);
+const capMat = new THREE.MeshStandardMaterial({ color: P.accent, roughness: 0.3, metalness: 0.2 });
+const cap = new THREE.Mesh(capGeo, capMat);
+cap.position.y = 1.02;
+group.add(cap);
+
+const label = FrameScene.makeLogoPlane(P, 0.9, 0.5);
+label.position.set(0, 0.05, 0.621);
+label.material.opacity = 1; // SPIN's label is part of the product itself, always visible - not a fade-in reveal like the other archetypes' signboards
+group.add(label);
+
+scene.add(group);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, label);
+
+window.__renderFrame = function (t) {
+  group.rotation.y = t * Math.PI * 2;
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

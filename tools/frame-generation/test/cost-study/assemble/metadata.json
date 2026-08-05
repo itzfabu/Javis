@@ -1,0 +1,33 @@
+{
+  "archetype": "ASSEMBLE",
+  "stylized": true,
+  "stylizedNote": "Template shows a generic assembling structure, not the client's actual building. Disclose to the client as a stylized representation; real photogrammetry capture is a separate, manually-scoped paid add-on (not produced by this pipeline).",
+  "frameCount": 96,
+  "aspectRatio": [
+    2,
+    3
+  ],
+  "frameDims": {
+    "width": 800,
+    "height": 1200
+  },
+  "spriteSheet": {
+    "path": "sprite.png",
+    "width": 76800,
+    "height": 1200,
+    "bytes": 271406
+  },
+  "capture": {
+    "elapsedMs": 9419,
+    "msPerFrame": 98.11
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "",
+    "assetDir": null,
+    "logoFraction": 1,
+    "note": "SKIPPED: tokens.logo is an extracted asset (C:\\Jarvis\\tools\\brand-extraction\\test\\out\\09-grace-family-roofing.logo.png) but tokens.meta.reviewStatus is \"pending\", not \"approved\" - per Thread 3 Recommendation #4, an unreviewed extracted logo is never composited. Run the Thread 1 review gate first."
+  },
+  "css": "/* Thread 3 hero sprite - archetype: ASSEMBLE, 96 frames, native ratio 2:3 */\n.hero-sprite {\n  aspect-ratio: 2 / 3;\n  height: min(78vh, 720px);\n  width: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 9600% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-assemble steps(95, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-assemble {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"ASSEMBLE hero animation\"></div>"
+}

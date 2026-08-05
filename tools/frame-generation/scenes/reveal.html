@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * REVEAL archetype template scene.
+ * Food/beverage, cosmetics, product/CPG: a small cluster of items falls
+ * from above and settles into an arranged tableau on a table plane, with a
+ * slight settle-overshoot rather than a hard stop. Fixed geometry/camera;
+ * color/logo/background parametrized per client.
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+const tableGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.12, 48);
+const tableMat = new THREE.MeshStandardMaterial({ color: P.bg, roughness: 0.9 });
+const table = new THREE.Mesh(tableGeo, tableMat);
+table.position.y = -0.06;
+scene.add(table);
+
+const N_ITEMS = 6;
+const palette = [P.primary, P.accent, P.tertiary];
+const items = [];
+for (let i = 0; i < N_ITEMS; i++) {
+  const r = 0.32 + (i % 3) * 0.05;
+  const geo = new THREE.SphereGeometry(r, 24, 24);
+  const mat = new THREE.MeshStandardMaterial({
+    color: palette[i % palette.length],
+    roughness: 0.4,
+    metalness: 0.12,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  const angle = (i / N_ITEMS) * Math.PI * 2;
+  const radius = 1.05;
+  const restX = Math.cos(angle) * radius;
+  const restZ = Math.sin(angle) * radius;
+  const restY = r;
+  mesh.userData.rest = { x: restX, y: restY, z: restZ };
+  mesh.userData.start = { x: restX * 0.4, y: restY + 3.4 + i * 0.2, z: restZ * 0.4 };
+  mesh.userData.delay = i * 0.06; // slight stagger, items don't all land at once
+  scene.add(mesh);
+  items.push(mesh);
+}
+
+const signboard = FrameScene.makeLogoPlane(P, 0.85, 0.4);
+signboard.position.set(0, 0.85, -0.6); // within camera frustum, verified via the frustum-check guard, not just eyeballed
+scene.add(signboard);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+
+camera.position.set(1.8, 2.4, 3.6);
+camera.lookAt(0, 0.2, 0);
+
+// easeOutBack: overshoots slightly past the rest position then settles back -
+// reads as a soft physical "landing", not a hard mechanical stop.
+function easeOutBack(x) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+}
+
+window.__renderFrame = function (t) {
+  for (const m of items) {
+    let localT = (t - m.userData.delay) / (1 - m.userData.delay);
+    localT = Math.max(0, Math.min(1, localT));
+    const eased = easeOutBack(localT);
+    const s = m.userData.start, r = m.userData.rest;
+    m.position.set(
+      s.x + (r.x - s.x) * eased,
+      s.y + (r.y - s.y) * eased,
+      s.z + (r.z - s.z) * eased
+    );
+  }
+  FrameScene.updateLogoOpacity(signboard, P, t);
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

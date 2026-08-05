@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="/vendor/three.min.js"></script>
+<script src="/scenes/shared.js"></script>
+<script>
+/*
+ * ASSEMBLE archetype template scene.
+ * Construction/architecture/trades/craft: a tower of blocks assembles
+ * itself, one block dropping into place at a time. Geometry and camera are
+ * FIXED template content (deliberately generic/abstract, per Thread 3's
+ * ASSEMBLE/FLYTHROUGH disclosure - see vault note); only color/logo/
+ * background are parametrized per client via query string.
+ *
+ * Query params: w, h (canvas px), primary, accent, bg (hex, no #),
+ * logoText, logoAsset (optional image URL), logoFraction (0-1, default 1.0).
+ */
+const P = FrameScene.parseParams();
+const { renderer, scene, camera } = FrameScene.setupBasic(P);
+FrameScene.addThreeLightRig(scene);
+
+const N_BLOCKS = 8; // matches Thread 3's "8 discrete block-drop beats" for ASSEMBLE
+const BLOCK_H = 0.5;
+const BLOCK_W = 1.6;
+const palette = [P.primary, P.accent, P.tertiary];
+
+const group = new THREE.Group();
+const blocks = [];
+for (let i = 0; i < N_BLOCKS; i++) {
+  const w = BLOCK_W * (1 - i * 0.04); // slight taper, reads as a tower not a plain stack
+  const geo = new THREE.BoxGeometry(w, BLOCK_H * 0.92, w);
+  const mat = new THREE.MeshStandardMaterial({
+    color: palette[i % palette.length],
+    roughness: 0.55,
+    metalness: 0.08,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  const restY = i * BLOCK_H + BLOCK_H / 2;
+  mesh.userData.restY = restY;
+  mesh.userData.dropFromY = restY + 3.2 + i * 0.15;
+  group.add(mesh);
+  blocks.push(mesh);
+}
+group.position.y = -(N_BLOCKS * BLOCK_H) / 2;
+scene.add(group);
+
+const signboard = FrameScene.makeLogoPlane(P, 0.9, 0.4);
+signboard.position.set(0, 1.15, 0.75); // in front of the block face at this height (half-width ~0.61 here), not behind it - see BUILD note on the occlusion regression this caught
+scene.add(signboard);
+window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
+
+camera.position.set(2.6, 1.4, 4.4);
+camera.lookAt(0, 0.3, 0);
+
+function ease(x) { return 1 - Math.pow(1 - x, 3); } // easeOutCubic - settling drop, not linear fall
+
+window.__renderFrame = function (t) {
+  for (let i = 0; i < N_BLOCKS; i++) {
+    const beatStart = i / N_BLOCKS;
+    const beatEnd = (i + 1) / N_BLOCKS;
+    let localT;
+    if (t <= beatStart) localT = 0;
+    else if (t >= beatEnd) localT = 1;
+    else localT = (t - beatStart) / (beatEnd - beatStart);
+    const eased = ease(localT);
+    const m = blocks[i];
+    m.position.y = m.userData.dropFromY + (m.userData.restY - m.userData.dropFromY) * eased;
+  }
+  FrameScene.updateLogoOpacity(signboard, P, t);
+  renderer.render(scene, camera);
+};
+window.__renderFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

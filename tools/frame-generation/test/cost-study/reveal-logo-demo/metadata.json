@@ -1,0 +1,33 @@
+{
+  "archetype": "REVEAL",
+  "stylized": false,
+  "stylizedNote": null,
+  "frameCount": 48,
+  "aspectRatio": [
+    4,
+    5
+  ],
+  "frameDims": {
+    "width": 960,
+    "height": 1200
+  },
+  "spriteSheet": {
+    "path": "sprite.png",
+    "width": 46080,
+    "height": 1200,
+    "bytes": 6493697
+  },
+  "capture": {
+    "elapsedMs": 7838,
+    "msPerFrame": 163.29
+  },
+  "logo": {
+    "logoText": "",
+    "logoAssetUrl": "/asset/logo.png",
+    "assetDir": "test\\frustum-check\\reveal-approved\\assets",
+    "logoFraction": 1,
+    "note": "reviewed logo asset composited"
+  },
+  "css": "/* Thread 3 hero sprite - archetype: REVEAL, 48 frames, native ratio 4:5 */\n.hero-sprite {\n  aspect-ratio: 4 / 5;\n  height: min(78vh, 720px);\n  width: auto;\n  margin: 0 auto;\n  background-image: url('sprite.png');\n  background-repeat: no-repeat;\n  background-size: 4800% 100%; /* percentage, not px - required, see this project's own bleed-bug finding */\n  background-position-x: 100%; /* unconditional base state: settled/final frame, shown to every visitor before any animation applies */\n}\n\n@supports (animation-timeline: scroll()) {\n  .hero-sprite {\n    animation: hero-scrub-reveal steps(47, jump-none) both;\n    animation-timeline: scroll(root block);\n  }\n}\n\n@keyframes hero-scrub-reveal {\n  from { background-position-x: 0%; }\n  to   { background-position-x: 100%; }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .hero-sprite {\n    animation: none !important;\n    background-position-x: 100%;\n  }\n}\n",
+  "html": "<div class=\"hero-sprite\" role=\"img\" aria-label=\"REVEAL hero animation\"></div>"
+}

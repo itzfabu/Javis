@@ -2061,10 +2061,28 @@ which never sets the 500vh height at all — an accidental save, not a designed 
 - [Web Design Trends 2026: What Actually Held Up After Six Months | Studio Meyer](https://studiomeyer.io/en/blog/webdesign-trends-2026-reality-check) — performance cost of 3D hero elements, "brand is the experience" scoping
 - [Self-hosting third-party resources: the good, the bad and the ugly | Web Performance Calendar](https://calendar.perfplanet.com/2019/self-hosting-third-party-resources-the-good-the-bad-and-the-ugly/) — self-hosting vs CDN reliability reasoning
 
-## Thread 3: Frame Generation — PROPOSAL (2026-08-05), research only, not adopted
+## Thread 3: Frame Generation — APPROVED (2026-08-05)
 
-**PROPOSAL, not a decision — unlike Thread 1 and Thread 2, this has not gone through Fabio's
-approval step yet.** Recommendation: **hybrid template scenes (option c) as the default mechanism
+**APPROVED by Fabio (2026-08-05, evening).** The proposal below is adopted as architecture: hybrid
+template scenes as the default mechanism for four of six archetypes, real capture as a paid add-on
+for ASSEMBLE/FLYTHROUGH, AI text-to-video rejected as the mechanism. Same status Thread 1 and
+Thread 2 already reached. Next step: build the actual pipeline (the spike at
+`spikes/frame-generation/template_spin.py` validated the approach but is throwaway, same as Thread
+1's spike-then-rebuild pattern) — not started yet, tracked as a new task in TASKS.md.
+
+**Post-approval attempt to hands-on test option (a) (AI text-to-video), same evening:** tried to
+run one geometry-consistency test via the Higgsfield MCP tools (a static building with a fixed
+window/floor count under a scripted camera orbit, checking whether the geometry holds across the
+clip) to move option (a)'s rejection from "researched, not tested" to verified. Blocked before it
+could run: `seedance_2_0_mini` returned `403 job_minimum_basic_plan_required` — video generation is
+gated behind a paid plan tier on the current free Higgsfield account, independent of the 10 credits
+available. Not attempted further — upgrading the plan is a recurring paid commitment, a separate
+decision from authorizing one test. Option (a)'s rejection above stands on researched-not-tested
+grounds, unchanged.
+
+**Original proposal below, unchanged by approval:**
+
+Recommendation: **hybrid template scenes (option c) as the default mechanism
 for four of the six archetypes (SPIN, REVEAL, TRANSFORM, INTERFACE); real capture (option b),
 scoped as a manual paid add-on rather than the default pipeline, for the two archetypes whose
 entire premise is showing the client's own specific building/space (ASSEMBLE, FLYTHROUGH) if a
@@ -2277,6 +2295,228 @@ no correctness risk is expected — but none of these four have been run through
 - **The ASSEMBLE/FLYTHROUGH default-vs-paid-tier split is a product proposal, not validated with any
   actual client** — untested whether clients will accept a disclosed-as-stylized default or will
   reliably reach for the paid add-on when it matters to them.
+
+### BUILD (2026-08-05, evening) — the real (non-spike) pipeline, tools/frame-generation/
+
+**Not a spike.** `C:\Jarvis\tools\frame-generation\` — mirrors `tools/brand-extraction/`'s shape
+(package.json, `src/`, `bin/`, `test/fixtures/`). `src/archetypes.js` (the six-archetype registry:
+scene file, frame count, aspect ratio, resolution, stylized flag), `src/capture.js` (headless
+Playwright capture + the logo-compositing review-gate enforcement), `src/composite.js` (sprite-sheet
+stitching), `src/metadata.js` (the CSS/HTML snippet per the RESOLVED sprite-scaling output spec
+above), `src/static-server.js` (a same-origin local HTTP server for the capture/composite browser),
+six template scenes in `scenes/` (one per archetype, three.js r128, vendored — same version already
+accepted elsewhere in this doc), and `bin/generate-frames.js` (the CLI: `node bin/generate-frames.js
+<tokens.json> --out <dir>`). Tested end-to-end against all 9 real Thread 1 fixtures
+(`tools/brand-extraction/test/out/*.tokens.json`, covering all six archetypes across real sites),
+not synthetic data.
+
+**Divergences from the proposal above, disclosed rather than silently decided:**
+
+- **All six archetypes now have a real three.js scene, not just SPIN.** The proposal above only had
+  SPIN validated in three.js (this project's original hybrid-template spike); ASSEMBLE existed only
+  as a *different* placeholder (a block-tower, tested for the CSS scrubbing/scaling mechanism, not
+  this pipeline's actual renderer) and REVEAL/TRANSFORM/FLYTHROUGH/INTERFACE had zero prior
+  implementation at all. Their geometry/camera-path designs here are new, reasoned directly from
+  this document's own archetype descriptions (Visual Richness > Archetype library) - ASSEMBLE:
+  8 blocks dropping in sequence per the "8 discrete block-drop beats" language; REVEAL: 6 items
+  falling with an overshoot-settle onto a table; TRANSFORM: a clip-plane wipe between a rough
+  "before" and polished "after" plane; FLYTHROUGH: camera dollying through receding ring frames;
+  INTERFACE: sliding panels plus a canvas-texture counting-up number. None of these five were
+  independently spiked before this build - this build *is* their first test, not a re-verification.
+- **Frame counts for REVEAL (48), TRANSFORM (32), FLYTHROUGH (72), and INTERFACE (48) are this
+  build's own reasoned defaults, not independently tested.** Only ASSEMBLE (96) and SPIN (24) trace
+  to prior spikes. Plain config in `src/archetypes.js`, trivial to retune later without touching
+  capture/composite logic.
+- **Resolution rule generalized from the one validated number, not re-measured per archetype.** The
+  sprite-scaling resolution above only concretely tested ASSEMBLE's 800×1200 (2:3, 2x). This build's
+  rule - fix the long edge at 1200px, derive the short edge from each archetype's aspect ratio -
+  reproduces that exact number for ASSEMBLE and generalizes it cleanly to the other five, but only
+  ASSEMBLE's figure was independently measured.
+- **Display-cap axis extended to landscape archetypes, not verified in a real page layout.** The
+  sprite-scaling spike only tested a height cap (portrait 2:3). TRANSFORM/FLYTHROUGH/INTERFACE
+  (landscape) are capped by width instead here (`width: min(90vw, 1200px)`) - a reasoned mirror of
+  the tested rule, not independently confirmed the way ASSEMBLE's height cap was.
+- **Lighting recipe does not include the HDRI + PBR + EffectComposer bloom chain described elsewhere
+  in Visual Richness for the live interactive 3D hero.** All six scenes reuse the simpler 3-light rig
+  (hemisphere + key + rim) from the original SPIN spike. No HDRI asset exists anywhere in this repo;
+  sourcing/vendoring one is a separate task from the pipeline plumbing this build delivers. This is a
+  real visual-quality gap versus that fuller recipe, not hidden - flagged here as a disclosed scope
+  cut, worth a follow-up polish pass, not a silent downgrade.
+- **Logo compositing gate, operationalized precisely, not left as an intention.** Recommendation #4
+  above says compositing "waits on the human-reviewed asset" without specifying a mechanism. This
+  build enforces it concretely: a real extracted logo asset (`tokens.logo.wordmarkFallback: false`)
+  only composites when `tokens.meta.reviewStatus === "approved"` (the exact value
+  `tools/brand-extraction/src/review-gate.js` writes) - otherwise it's skipped with a logged reason,
+  never silently substituted. A text-wordmark fallback (`wordmarkFallback: true`) composites
+  regardless of review status, since it was never an extraction guess needing confirmation in the
+  first place - it's Thread 1's own designed fallback state. Verified end-to-end, not just read from
+  code: the Franklin BBQ fixture (`reviewStatus: "pending"`) correctly skipped its real logo; a copy
+  with `reviewStatus` flipped to `"approved"` correctly composited it (visually confirmed - the actual
+  "Franklin Barbecue" logo PNG appears on the REVEAL signboard); the Newman Roofing fixture
+  (`wordmarkFallback: true`, still `"pending"`) correctly composited "Newman Roofing" as text anyway.
+- **Sprite compositing uses a headless-browser canvas stitch, not a new image-processing dependency.**
+  `compose/composite.html` loads captured frames via `<img>`/`drawImage` in a same-origin page (served
+  by `src/static-server.js`, avoiding the canvas cross-origin-taint problem file:// URLs risk) and is
+  screenshotted whole. No `sharp`/Pillow/etc. added - stays inside the Playwright/Chromium dependency
+  footprint this project already accepted for capture itself.
+- **A real bug found and fixed during testing, not just assumed correct from the code.** The first
+  pass positioned each archetype's logo signboard by eyeballed offsets from the scene's other
+  geometry, without checking it against the camera's actual field of view. Visual inspection of
+  rendered frames caught it: ASSEMBLE's and REVEAL's signboards rendered completely outside the
+  frame in the first test run. Recomputed placements from each scene's actual FOV/distance and
+  re-verified visually - REVEAL's now clearly shows the composited logo; ASSEMBLE's wordmark is
+  visible but still partially clipped by the topmost block from this angle, a known rough edge, not
+  swept under "fixed" (further camera tuning would close it, not attempted here - diminishing return
+  on a placeholder geometry's exact framing).
+
+**Not done, by design or scope, stated rather than left implicit:**
+- **No live integration into a generated site's actual page template.** This build's output is the
+  sprite sheet + `metadata.json`/`snippet.css`/`snippet.html` artifacts Thread 2's page template would
+  consume - wiring that consumption into the real generator (`orb/app.py`'s `/generate-website` route)
+  is separate follow-on work, not attempted here. Thread 2 itself is still "approved as architecture,
+  nothing built" (TASKS.md) - there is no live page template to wire into yet.
+- **AI text-to-video (option a) was not reintroduced anywhere in this build**, per the binding
+  constraint - every archetype uses the three.js template mechanism, full stop.
+- **Single tier only, no Standard build** - all six archetypes get the same full template/lighting
+  treatment; nothing here produces a simplified fallback version.
+- **ASSEMBLE and FLYTHROUGH ship stylized-by-default**, exactly per Recommendation #2 - `metadata.json`
+  carries a `stylized: true` flag and a `stylizedNote` string for both, for the generator (or a human)
+  to surface to the client. Real photogrammetry capture remains a separate, manually-scoped paid
+  add-on this pipeline does not produce.
+- **No re-measurement of per-frame render cost at production scale** beyond what this test run showed
+  (94-158ms/frame across archetypes, all well under a throughput concern for one-off per-client
+  generation) - not benchmarked under concurrent/batch generation load.
+
+### COST STUDY (2026-08-05, later same evening) — sprite-sheet weight measured, not assumed
+
+**Measured first, decided after**, per the specific instruction this study was run under. All numbers
+below are real measurements against the 9 real Thread 1 fixtures (one representative fixture per
+archetype, all in the "no logo composited" state for a fair apples-to-apples comparison across
+archetypes), not estimates - methodology and scripts in `tools/frame-generation/test/`
+(`to-webp.py`, `measure-cost.js`, `debug-frustum.js`).
+
+| Archetype | Frames | Sprite PNG | Sprite WebP (1 sheet) | renderTime @ 4x CPU throttle (median) | Slow-4G download (est.) | Total LCP-relevant estimate | Verdict |
+|---|---|---|---|---|---|---|---|
+| ASSEMBLE | 96 | 0.259 MB | **impossible** (4.69x over) | 508ms | 1.33s | **1.83s** | Good |
+| REVEAL | 48 | **6.01 MB** | **impossible** (2.81x over) | 568ms | **30.8s** | **31.3s** | **Poor - by ~7.8x** |
+| SPIN | 24 | 0.532 MB | **impossible** (1.76x over) | 260ms | 2.72s | **2.98s** | Needs Improvement |
+| TRANSFORM | 32 | 0.121 MB | **impossible** (2.34x over) | 232ms | 0.62s | 0.85s | Good |
+| FLYTHROUGH | 72 | 0.164 MB | **impossible** (5.27x over) | 332ms | 0.84s | 1.17s | Good |
+| INTERFACE | 48 | 0.244 MB | **impossible** (3.52x over) | 296ms | 1.25s | 1.55s | Good |
+
+**Method, stated precisely so the numbers can be trusted:** `renderTime` is the real Element Timing
+API's `renderTime` for the actual `.hero-sprite` div (the real production `snippet.css`/`snippet.html`
+embedded unmodified, `elementtiming` attribute added) - the same underlying instrumentation family
+Chrome's own LCP metric uses, not a synthetic proxy - captured via Playwright + CDP
+`Emulation.setCPUThrottlingRate: 4` (Chrome DevTools' own mid-tier-mobile figure), fresh browser
+context per trial (cold HTTP cache each time), median of 5 trials. "Slow-4G download" is an *estimate*,
+not a measured network figure: file size ÷ 200KB/s (Lighthouse's own Slow 4G throttling profile,
+1.6Mbps/150ms RTT) - network throttling was not run in the same pass as CPU throttling (only CPU
+throttling was asked for), so the combined "Total LCP-relevant estimate" column is an additive
+approximation of this one asset's own weight, not a full-page LCP measurement - real LCP also depends
+on the preload scanner, resource priority, and everything else loading concurrently. Good/Needs
+Improvement/Poor bucket thresholds are Google's standard Core Web Vitals LCP thresholds (≤2.5s / 2.5-4s
+/ >4s).
+
+**Real, structural finding, not a measurement artifact: a single horizontal WebP sprite sheet is
+impossible for every archetype, not just the expensive ones.** WebP has a hard 16,383px
+per-dimension limit (libwebp). Every archetype's current sheet width (28,800-86,400px) exceeds it by
+1.76x (SPIN, the closest) to 5.27x (FLYTHROUGH, the worst). This isn't a REVEAL-specific problem -
+it rules out "just re-encode as WebP" as a drop-in fix for *any* archetype's sheet as currently
+laid out (a single 1×N horizontal strip). Per-frame WebP encoding (measured on the individual
+captured frames, summed) is dramatically smaller than PNG everywhere - 9.4% of PNG size for REVEAL,
+14-38% for the rest - so the *savings* are real and large, but capturing them requires changing the
+sheet's layout (e.g. a 2D grid staying under 16,383px per axis), which also means changing the CSS
+scrubbing mechanism (`background-size`/`background-position-x` stepping assumes a 1×N strip) - a
+real architecture change, not a format swap, and out of scope for this cost study to just do
+unilaterally.
+
+**REVEAL is a genuine, severe finding - not something frame-count reduction can fix, confirmed by
+directly testing it, not assumed.** At the shipped 48 frames it's 6.01MB, ~7.8x over the Poor
+threshold on this estimate. Two controlled experiments (temporarily changed `frameCount` in
+`src/archetypes.js`, measured, then reverted back to 48 - nothing shipped changed):
+- **16 frames (a 3x cut):** 2.09MB → still ~10.8s estimated, still deep in Poor territory.
+- **8 frames (a 6x cut - visibly choppy, a settle animation reduced to 8 discrete jumps):** 0.98MB →
+  still ~5.25s estimated, still over the Poor threshold even at this extreme.
+Size scales roughly linearly with frame count here (48→16 dropped to 34% of the size, close to the
+16/48=33% frame ratio; 48→8 dropped to 16% of size vs. an 8/48=17% frame ratio) - meaning **the
+problem is not frame count, it's per-frame content compressibility.** Confirmed by a second, more
+direct signal: REVEAL is the *only* archetype where the composited sheet (6153.2KB) is **larger**
+than the sum of its own individual frame PNGs (5339.2KB) - every other archetype's sheet is 12-98%
+*smaller* than its frame-sum (the whole reason sprite-sheet compositing was adopted over individual
+files in the first place, per the RESOLVED Flipbook Alternative section above). PNG's row-based
+delta filtering rewards redundancy between horizontally-adjacent pixels, including across frame
+boundaries in a strip - ASSEMBLE's mostly-static-until-triggered blocks and FLYTHROUGH's repeating
+ring geometry are highly redundant this way; REVEAL's glossy, specular-highlighted spheres moving
+independently per frame are not, and tiling many such frames side by side actively *defeats* PNG's
+compression instead of helping it. **Recommendation: do not ship REVEAL as currently designed.** The
+fix is a materials/rendering change (flatter shading, fewer or less glossy spheres) and/or the grid-
+layout format change noted above - not a frame-count cut, which this study directly tested and
+directly ruled out. This is a real, disclosed problem with the current REVEAL scene, not a gap
+papered over with a smaller number.
+
+**SPIN is borderline, and frame-count reduction is the correct, sufficient lever - also confirmed by
+direct measurement, not assumed.** At 24 frames it's 2.98s estimated, just over the 2.5s Good
+threshold. Cut to 16 frames (tested, then reverted - nothing shipped changed): 359.4KB, ~2.02s
+estimated - comfortably Good. **Tradeoff stated plainly:** SPIN is a continuous 360° rotation: 24
+frames is 15°/frame, 16 frames is 22.5°/frame - a real, visible increase in rotation "stepping,"
+not free. Whether that's an acceptable tradeoff for a background-scrub hero (which most visitors
+see while scrolling past, not studying frame-by-frame) is a call worth Fabio's sign-off, not decided
+unilaterally here - flagged as a recommendation, not applied to `src/archetypes.js`.
+
+**The other four archetypes (ASSEMBLE, TRANSFORM, FLYTHROUGH, INTERFACE) need no change on this
+axis.** All comfortably Good (0.85s-1.83s) even under 4x CPU throttling and a Slow-4G download
+estimate - this binding project constraint ("generated sites must actually convert") is satisfied
+for these four as shipped.
+
+### FRUSTUM REGRESSION GUARD (2026-08-05, later same evening)
+
+**Added `FrameScene.checkFrustum(camera, mesh, margin)`** (`scenes/shared.js`) and wired
+`window.__frustumCheck` into all six scenes: projects every corner of the logo mesh's world-space
+bounding box through the camera into NDC space and asserts each lands within `[-0.95, 0.95]` on
+x/y (a 5% margin) and `[-1, 1]` on z (in front of the camera). `src/capture.js` now calls this
+automatically on every capture run, at the frame fraction where the logo is actually supposed to be
+visible (`logoCompositing.appearsAtFrameFraction` - not frame 0, since FLYTHROUGH's camera has
+moved substantially by the time its logo fades in) - and **throws, failing the whole capture run**,
+if the check fails, rather than silently producing a sprite sheet with an invisible or clipped logo.
+
+**Running it for the first time found the guard was needed far more broadly than expected: 5 of 6
+archetypes failed, not just ASSEMBLE.** REVEAL, TRANSFORM, FLYTHROUGH, and INTERFACE all had their
+signboard's top edge poking just past the frustum boundary (NDC y up to 1.15, against a 0.95 bound) -
+a direct consequence of this session's earlier signboard-placement fixes being tuned to "just barely
+fits," not "comfortably fits with margin." Only SPIN passed as originally built.
+
+**Four of the five failures were genuinely fixed, not margin-adjusted to pass.** REVEAL, TRANSFORM,
+FLYTHROUGH, and INTERFACE were retuned (smaller signboard size and/or lower position - see each
+scene's own comment for the specific new placement) and re-verified two ways: the frustum check now
+passes with real margin (not by loosening it - `FRUSTUM_MARGIN_NDC` in `shared.js` stayed at 0.05
+throughout), and a real capture was re-run and the resulting frame visually inspected to confirm the
+logo actually renders correctly, not just numerically "within bounds."
+
+**ASSEMBLE needed two attempts, and the first attempt is the important finding here - not just the
+final fix.** The first retune (raising/repositioning the signboard) made the frustum check pass
+cleanly - but visually inspecting the resulting frame (not just trusting the passing check) showed
+the wordmark had become **completely invisible, occluded behind a tower block** - the signboard's
+front face (z=0.55) sat *behind* that block's actual front face (half-width ~0.61 at that height,
+due to the tower's per-level taper) at the height the sign had been moved to. **The frustum guard,
+exactly as designed, cannot detect this class of bug** - it only checks whether the mesh's corners
+project inside the camera's view, not whether some other opaque piece of scene geometry sits in
+front of it. This is a real, disclosed limitation of a *frustum* check specifically (an *occlusion*
+check would be a different, unimplemented guard) - stated here rather than glossed over, since it's
+exactly the kind of "check passes, real problem still there" trap the task's own instructions warned
+about. **Second attempt: pushed the signboard's z position in front of the block's actual face at
+that height (0.55 → 0.75)**, re-verified both the frustum check (still passes, real margin) and a
+real capture's rendered frame (the "Newman Roofing" wordmark is now fully visible, mounted cleanly
+on the block face, not clipped and not occluded) - this one is a genuine fix, confirmed visually, not
+a check gamed into passing.
+
+**Net result: all six archetypes now pass the frustum guard, and it is wired into every future
+capture run automatically - not something that needs a human to remember to eyeball.** No archetype
+was left in a "failing, reported as open" state this time; the task's fallback instruction (retune
+properly or leave failing and report it) didn't end up needed, because a genuine fix was found for
+every case, including ASSEMBLE - but the ASSEMBLE occlusion trap above is recorded in detail because
+it's the reason a *second* check (visual, not just numeric) mattered, and because an occlusion guard
+remains a real, unimplemented gap this specific guard does not cover.
 
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
