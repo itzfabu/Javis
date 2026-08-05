@@ -56,7 +56,16 @@ TASKS.md under #website-generator.
    Thread 3's two gating conditions is cleared. It remains blocked on Thread 1 (brand extraction),
    which has not started.**
 
-## Thread 1: Brand Extraction — APPROVED as architecture (2026-08-05), pipeline not yet built
+## Thread 1: Brand Extraction — APPROVED as architecture (2026-08-05), pipeline built (2026-08-05)
+
+**UPDATE (2026-08-05, later same day): the real (non-spike) pipeline got built after all** — see
+the REBUILD section below, inserted after RE-TEST. The "no further polish spikes for now" call
+right below was about not chasing the hit-rate number further inside the throwaway spike; building
+the actual production pipeline (extraction + Derivation Layer + WCAG resolution + font substitution
+table + the mandatory client review gate, all real code at `C:\Jarvis\tools\brand-extraction\`, not
+another spike) was a different, separately-justified step and is now done. The architecture,
+schema, and every decision recorded below are unchanged by this — the rebuild implements them as
+specified, it doesn't revise them.
 
 **DECISION (2026-08-05): APPROVED as validated architecture — but the token pipeline is NOT being
 built yet, and no further polish spikes for now.** Rationale: the remaining gaps found in the
@@ -101,7 +110,10 @@ Consequences for whoever builds the token pipeline:
   looking at their own "confirm your brand" screen and seeing an unfamiliar logo/colors is a natural,
   free catch for exactly that failure mode — not a separate mechanism that needs to be designed.
 
-**Status: research + design complete, architecture approved, nothing built yet.** The token schema
+**Status (2026-08-05, updated): research + design complete, architecture approved, AND the pipeline
+is now built** — `C:\Jarvis\tools\brand-extraction\` (extraction, Derivation Layer, WCAG resolution,
+font substitution table, category→archetype mapping, and the mandatory review gate; see the REBUILD
+section after RE-TEST below for the honest results). The token schema
 below is locked and available for Thread 2 to consume (styling needs the schema shape, not a
 running pipeline). Thread 3 (frame generation) still needs the pipeline actually built before it
 can composite real client tokens/logos into frame sequences, per the roadmap above.
@@ -658,6 +670,145 @@ needs. This doesn't block Thread 3 from starting once Thread 1 is otherwise appr
 mean Thread 3's design should treat "confirmed logo asset" as an input it receives after review, not
 something it can trust straight out of extraction.
 
+### REBUILD (2026-08-05) — the real (non-spike) pipeline, same 9 sites, honest before/after
+
+**Not a spike.** `C:\Jarvis\tools\brand-extraction\` — `src/extract.js` (Playwright extraction,
+ported from `extract2.js`), `src/derive.js` (the Derivation Layer above, implemented), `src/tokens.js`
+(schema assembly incl. `frameGeneration`, WCAG accessibility resolution), `src/fonts.js` (the
+substitution table Thread 1 flagged as unbuilt — ~40 commercial fonts + a known-Google-Fonts list +
+web-safe quality-upgrade table), `src/archetype.js` (the category→archetype table from Thread 2/3,
+below), and `src/review-gate.js` + `bin/review-gate.js` (the mandatory human/client review gate —
+a real local HTTP server with a self-contained "confirm your brand" page, not a mockup, tested
+end-to-end with actual HTTP requests, not just unit-tested). Re-ran against the identical 9 sites
+from VALIDATION/RE-TEST, judged the same way — by eye, against a screenshot, not by whether the JSON
+looked populated. Raw output for all 9 sites in `tools/brand-extraction/test/out/`.
+
+**The `surface`/`background` collapse bug (the walking skeleton's original complaint) is fixed,
+confirmed 9/9.** The Derivation Layer's rule — `surface` always computed from `background` with a
+guaranteed minimum 6% perceptual (HSL) lightness delta, never taken directly from a selector — holds
+across every site in the sample, including five with a white/near-white `background`
+(#FFFFFF) that would have collapsed under the old spike's fixed tint-amount rule. Confirmed by
+direct measurement (`surfaceEqualsBackground: false` for all 9), not spot-checked.
+
+**A real "wrong-but-confident" bug found and fixed, present since VALIDATION/RE-TEST and not caught
+by either round's narrative.** Grace Family Roofing's real CTA ("Contact Us") uses class
+`gfr-btn--ghost` with `background-color: rgba(255, 255, 255, 0.08)` — a near-invisible hover-tint,
+not a real fill. Both the original spike (confirmed by re-reading its saved `RE-TEST` output JSON)
+and this rebuild's first pass checked only for the literal string `rgba(0, 0, 0, 0)`, so a low-alpha
+"ghost" background like this one silently passed as a real, `medium`-confidence extracted color —
+reporting white as the accent with no flag that anything was off, exactly the failure mode Thread 1's
+own validation spike named as the one to watch for. RE-TEST's *prose* already knew this button was a
+ghost button; the *code* never actually said so. Fixed here: any CTA background with alpha < 0.5 is
+now treated as "no real fill," falling into the existing ghost-button proxy path (border/text color,
+`derived: true`, `confidence: low`) instead of being reported as a confident match. Grace Family
+Roofing's accent is now honestly `low, DERIVED` rather than silently `medium`.
+
+**Logo — same shape as RE-TEST, one genuine change, one still-open regression.**
+
+| Site | RE-TEST (2026-08-04) | REBUILD (2026-08-05) |
+|---|---|---|
+| Franklin BBQ | Wrong (unscoped `img[alt*="logo"]` fallback matched a gift-card graphic) | **Still wrong, reproduced exactly** — same gift-card graphic, same root cause, not fixed here |
+| Cedar Village Dentistry | Found, download blocked (403) | Unchanged — same block |
+| Hiut Denim | Not found, correctly flagged low confidence (favicon fallback) | Unchanged — same favicon fallback, same honest low-confidence flag |
+| Birds Barbershop | Wrong (`og:image` matched a generic social-share graphic) | **Now correct** — the `og:image` this run is genuinely the "BIRDS BARBERSHOP" pennant mark, visually confirmed against the header. RE-TEST's own recommendation was to drop `og:image` entirely as a source; this rebuild deliberately did *not* implement that, and this result is why — dropping it would have cost a correct match here. Still the lowest-priority, flagged-for-manual-review tier per the schema; nothing here promotes it |
+| Mark Fisher Fitness | Fixed — confirmed correct | Unchanged — still correct |
+| Newman Roofing | Correct | **Unmeasurable** — the site now returns a Cloudflare "Sorry, you have been blocked" page to Playwright entirely (screenshot confirms). A real external change since the 2026-08-04 spike, not a pipeline defect — but it means this round's comparable sample is 8 sites, not 9, for Newman Roofing specifically |
+| Family Law in Partnership | Mostly fixed (resolved `<use>` ref, real path data, kept outer `<symbol>` tag as a known rough edge) | Unchanged — same result, same rough edge, not addressed here |
+| Oslo Coffee Roasters | Correct | Unchanged — still correct |
+| Grace Family Roofing | Correct | Unchanged — still correct |
+
+Net: 5 of 9 good outcomes (Mark Fisher Fitness, Oslo Coffee, Grace Family Roofing, Birds Barbershop,
+Family Law "mostly"), same count as RE-TEST, with Birds Barbershop swapping in for what would
+otherwise have been a loss (Newman Roofing unmeasurable). Franklin BBQ's regression is not fixed —
+flagged in RE-TEST as a known gap ("scope the `img` fallback to header/nav-adjacent containers
+only") and still not implemented.
+
+**Accent/CTA — same shape as RE-TEST for 8 comparable sites, one confidence-honesty fix.**
+
+| Site | RE-TEST (2026-08-04) | REBUILD (2026-08-05) |
+|---|---|---|
+| Franklin BBQ | Fixed — "Order in Advance", exact color | Unchanged — still correct, visually confirmed against screenshot |
+| Cedar Village Dentistry | Fixed — "Book Virtual Consult", real color | Unchanged — still correct |
+| Hiut Denim | Ambiguous ("Sign up" newsletter, best available) | Unchanged — same result |
+| Birds Barbershop | Partial (picks black nav "Book Now" over yellow-green hero "Book Now") | **Unchanged, reproduced exactly** — same tie-break miss, not addressed here |
+| Mark Fisher Fitness | Fixed — "Explore Our Locations", exact lime+purple | Unchanged — still correct |
+| Newman Roofing | Fixed — "Request A Quote", cross-check-confirmed | Unmeasurable (site blocked, see above) |
+| Family Law in Partnership | Correct | Unchanged — still correct |
+| Oslo Coffee Roasters | Improved, honestly incomplete (right element, ghost button, low confidence) | Unchanged — same honest result |
+| Grace Family Roofing | Partial, with the cross-check side effect noted below | **Same underlying miss, now honestly reported** — was silently `medium`-confidence white (the alpha bug above); now correctly `low`-confidence, `derived: true`, flagged for review. The real red "GET A FREE ESTIMATE" button is still not what gets picked — that scoring gap is unchanged — but the tool no longer claims confidence it doesn't have |
+
+**Custom-property cross-check: now upgrades confidence on the common (direct-extraction) path, not
+only inside a no-match fallback branch — but a new, disclosed limitation surfaced while wiring it
+in.** The original spike's cross-check logic only ever ran inside a fallback branch that rarely
+executes; this rebuild applies it whenever a custom property confirms a directly-extracted `header`
+or `cta` value, upgrading that field to `high` confidence with the confirming property named in
+`source`. Not exercised on this run's 9 sites (Grace Family Roofing has custom properties but its
+CTA scorer still lands on the wrong ghost button, so cross-check correctly reports "not confirmed" —
+the same side effect RE-TEST already named: *"the cross-check is only as reliable as the structural
+signals it compares against."*). **New finding while building this:** Hiut Denim's `--color-primary`
+custom property is serialized by this Playwright/Chromium version as `oklch(0.507 0.208 29.2)`, not
+`rgb()` — the color parser here (like the original spike's) only handles `#hex` and `rgb()/rgba()`,
+so an OKLCH-formatted custom property is silently unusable as a fallback signal rather than parsed.
+Disclosed, not fixed — real color-space math (OKLCH→sRGB) is a scope expansion beyond the ~15-line
+WCAG formula Thread 1 explicitly scoped this to, and per the vault note's own aside, this particular
+value wouldn't have been trustworthy anyway ("does not match the site's actual dominant
+black/white/cream palette by eye").
+
+**Font substitution table: built, and it did real work, not "got lucky."** The walking skeleton's
+honest admission — "the Google Fonts step got lucky... this run doesn't prove that gap is fine" — no
+longer applies; there's now an actual ~40-entry commercial table plus a known-Google-Fonts list.
+Results this round: Barlow/Barlow Condensed (Grace Family Roofing), Poppins/Lora (Cedar Village
+Dentistry), and Bebas Neue (Mark Fisher Fitness) matched the known-Google-Fonts list directly, zero
+risk. Founders Grotesk (Hiut Denim) → Work Sans, Zing Rust (Birds Barbershop) → Righteous, and
+`objektiv-mk1` (Oslo Coffee, now normalizing cleanly) → Inter all hit real commercial-table entries
+instead of falling through unmatched. **A real bug found and fixed in the normalization step itself:**
+the vault note's own honest gap said `circularxxweb-book` "only normalized to `Circularxxweb`" — the
+webfont-loader `xx` token was stripped in the wrong order relative to the weight-suffix strip, so it
+could never actually match. Reordering the strip (weight suffix → `web` token → `xx` token, outside
+in) now reduces `circularxxweb-book` all the way to `Circular`, which hits the commercial table and
+resolves to DM Sans — Family Law in Partnership's fonts are now a real table match instead of an
+unknown-provenance fallback to the project shortlist.
+
+**Header: same 7-of-9 confirmed-good count as RE-TEST**, including the identical unresolved Hiut
+Denim bug (`page.screenshot: Clipped area is either empty or outside the resulting image` —
+reproduced verbatim, not touched here) and Newman Roofing's now-moot null (site blocked before any
+selector could even run).
+
+**rembg data point, re-measured, same direction, one new wrinkle.** Confirmed-correct raster logo
+retrievals this round with a real alpha channel: Mark Fisher Fitness, Oslo Coffee, Grace Family
+Roofing — 0 needed rembg, consistent with every prior round. New this round: Birds Barbershop's
+correct `og:image` logo is a flat, opaque JPG with no alpha channel at all — the first *correct*
+raster logo match in this project's whole sample that actually would need background removal to be
+usable as a compositable asset. Still n=1 for that specific case; doesn't overturn the deferred
+decision, but it's the first real data point pointing the other direction.
+
+**Category/archetype: the promoted first-class field works as specified.** All 9 sites got a
+`category` slug (assigned per this rebuild's own judgment of each business, matching the per-category
+table in Thread 2 below) and a correct `archetype.recommended` from `src/archetype.js`'s lookup table
+— REVEAL for food/beverage, ASSEMBLE for construction/trades, SPIN for retail, FLYTHROUGH for
+real-estate/hospitality/gyms/general-dental, TRANSFORM for beauty, INTERFACE for professional
+services — with no free-text parsing required downstream, closing the exact gap Thread 2 flagged.
+
+**The mandatory review gate is real, not a design document.** Ran it end-to-end against an actual
+tokens.json over real HTTP (not just the unit-tested decision logic): `GET /` returns a working
+"confirm your brand" page (color swatches with `derived`/`extracted` badges, the logo preview, a
+font comparison), `POST /submit` with a corrected accent hex writes a `.reviewed.json` with
+`meta.reviewStatus: "approved"`, the corrected color, a recomputed `accentTextOverride` (WCAG
+contrast re-resolved against the *new* accent, not left stale), and a recomputed
+`frameGeneration.paletteForFrames` — the Thread 1→Thread 3 handoff stays consistent after a human
+correction, not just after the initial extraction. Confirmed by an actual curl round-trip, not
+inspection of the code.
+
+**Updated verdict: no change to the mandatory-review decision, and this round confirms why.** The
+2026-08-05 decision that the review gate is mandatory regardless of measured hit rate holds exactly
+as reasoned — this rebuild fixed two real bugs (the surface collapse, the ghost-button false
+confidence) and closed two real gaps (the font table, the category field) without moving the
+headline logo/accent numbers at all (5/9 and un-improved-but-now-honest, respectively). That is
+itself the argument for the gate: code quality improvements land as *honesty* improvements
+(low-confidence flags where there used to be false medium-confidence ones), not as the hit-rate
+climbing toward a point where review could be dropped. It won't get there by tightening the code
+alone, which is exactly what Thread 1's 2026-08-05 architecture decision already concluded.
+
 ### Honest gaps — not resolved on paper, need a real test before adoption
 
 - **Selector-based extraction hit rate: now partially measured, see Validation Results above** —
@@ -675,13 +826,24 @@ something it can trust straight out of extraction.
   resolvable from research alone.
 - **Font-substitution table coverage is unknown** — how many distinct commercial fonts will
   realistically appear across real client sites, and whether ~30-50 entries is enough for a good
-  hit rate, isn't determinable without testing against real data.
+  hit rate, isn't determinable without testing against real data. **PARTIALLY ADDRESSED (2026-08-05,
+  REBUILD below):** a real ~40-entry table now exists and hit real matches on 3 of the 9 sites'
+  previously-unmatched fonts (Founders Grotesk, Zing Rust, Circular after a normalization-order
+  fix). Coverage against the wider space of real client fonts is still unmeasured — this only
+  confirms the table does real work on this specific 9-site sample, not that ~40 entries is enough
+  in general.
 - **rembg's inference cost/latency in this pipeline is unmeasured** — whether local background
   removal is fast enough to run synchronously in the generation flow, or needs to be async/queued,
-  is unknown until it's actually run.
+  is unknown until it's actually run. Still true after the REBUILD below — 0 of the confirmed-correct
+  raster logos needed it this round either, so it's never actually been invoked, cost or otherwise.
 - **Nothing here has been run against a single real client website.** This entire thread is
   research and design, exactly as scoped — the next step, if approved, is a small build against a
-  handful of real, diverse sites before treating any of the above as settled.
+  handful of real, diverse sites before treating any of the above as settled. **PARTIALLY ADDRESSED
+  (2026-08-05, REBUILD below):** real (non-spike) code now exists and ran against the same 9 real
+  sites end-to-end, including the review gate over actual HTTP. Still not run against an actual
+  onboarding client, and one of the 9 sites (Newman Roofing) is no longer reachable at all
+  (Cloudflare now blocks the extractor outright) — a real, disclosed reminder that "run against a
+  real site" is a moving target, not a one-time checkbox.
 
 ## Thread 2: Conversion Skeleton — APPROVED as architecture (2026-08-05), nothing built
 

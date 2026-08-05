@@ -1,0 +1,58 @@
+{
+  "url": "https://newmanroofing.com",
+  "extractedAt": "2026-08-05T13:14:55.697Z",
+  "errors": [],
+  "confidence": {
+    "background": {
+      "level": "medium",
+      "note": "transparent computed value, normalized to assumed white"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "low",
+      "note": "no header/nav element matched, or no distinct background found"
+    },
+    "footer": {
+      "level": "low",
+      "note": "no distinct background found"
+    },
+    "cta": {
+      "level": "low",
+      "note": "no candidate cleared the minimum confidence bar - flagged for manual entry, not guessed"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "logo": {
+      "level": "low",
+      "note": "no logo found - falls back to text wordmark"
+    }
+  },
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgb(0, 0, 0)",
+    "header": null,
+    "footer": null,
+    "cta": null,
+    "link": "rgb(0, 81, 195)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "font": {
+    "headingFont": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, \"Helvetica Neue\", Arial, sans-serif",
+    "bodyFont": "\"Times New Roman\"",
+    "headingFirst": "-apple-system",
+    "bodyFirst": "Times New Roman",
+    "headingNormalized": "Apple System",
+    "bodyNormalized": "Times New Roman"
+  },
+  "logo": {
+    "tier": "none",
+    "format": null,
+    "url": null
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Oslo Coffee Roasters",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://www.oslocoffee.com",
+    "extractedAt": "2026-08-05T13:15:01.289Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "food-beverage",
+  "color": {
+    "primary": {
+      "value": "#202020",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#FFFFFF",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "accent": {
+      "value": "#FFFFFF",
+      "source": "derived: CTA (\"Shop Coffee\") found but has no fill (outlined/ghost button) - using its border color as a best-available proxy, needs human confirmation",
+      "derived": true,
+      "confidence": "low"
+    },
+    "text": {
+      "value": "#0E1F52",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#F6F6F6",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#DDDDDD",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#DDDDDD",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 14.54,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 15.08,
+        "passesAA": true
+      },
+      "accentTextOverride": {
+        "reason": "accent #FFFFFF - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 21,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#FFFFFF"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "objektiv-mk1",
+      "resolved": "Inter",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap",
+      "fallbackStack": "'Inter', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "body": {
+      "detected": "objektiv-mk1",
+      "resolved": "Inter",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap",
+      "fallbackStack": "'Inter', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "png",
+    "source": "img-logo-heuristic",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\08-oslo-coffee.logo.png",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "medium",
+    "confidenceNote": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "REVEAL",
+    "reason": "category: food-beverage, per Thread 3 archetype-to-category mapping (Food & Beverage (restaurant, cafe, bakery))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#202020",
+      "#FFFFFF",
+      "#FFFFFF"
+    ],
+    "backgroundForFrames": "#F6F6F6",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\08-oslo-coffee.logo.png",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Mark Fisher Fitness",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://markfisherfitness.com",
+    "extractedAt": "2026-08-05T13:14:52.241Z",
+    "confidence": "medium",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "gyms-fitness",
+  "color": {
+    "primary": {
+      "value": "#2A2227",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#191417",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#B5DF0D",
+      "source": "CTA button background, computed (\"Explore Our Locations\", score 13.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#333333",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#FFFFFF",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#F0F0F0",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#E6E6E6",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 12.63,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 15.48,
+        "passesAA": true
+      },
+      "accentTextOverride": {
+        "reason": "accent #B5DF0D - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 13.53,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#B5DF0D"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "Bebas Neue",
+      "resolved": "Bebas Neue",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@500;700&display=swap",
+      "fallbackStack": "'Bebas Neue', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "body": {
+      "detected": "Nourd Light Font",
+      "resolved": "Instrument Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600&display=swap",
+      "fallbackStack": "'Instrument Sans', sans-serif",
+      "note": "unknown font provenance (\"Nourd Light Font\", normalized \"Nourd Light Font\") - not in the web-safe or commercial-substitution table, treated as unsafe-to-redistribute by default and substituted from this project's vetted shortlist by guessed category (sans)",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "webp",
+    "source": "img-logo-heuristic",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\05-mark-fisher-fitness.logo.webp",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "medium",
+    "confidenceNote": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "FLYTHROUGH",
+    "reason": "category: gyms-fitness, per Thread 3 archetype-to-category mapping (Gyms & Fitness Studios)"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#2A2227",
+      "#B5DF0D",
+      "#191417"
+    ],
+    "backgroundForFrames": "#FFFFFF",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\05-mark-fisher-fitness.logo.webp",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

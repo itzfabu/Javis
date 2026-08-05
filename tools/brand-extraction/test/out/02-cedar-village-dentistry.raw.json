@@ -1,0 +1,69 @@
+{
+  "url": "https://www.cedarvillagedentistry.com",
+  "extractedAt": "2026-08-05T13:14:11.707Z",
+  "errors": [
+    "networkidle timed out, fell back to domcontentloaded: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.cedarvillagedentistry.com/\", waiting until \"networkidle\"\u001b[22m\n"
+  ],
+  "confidence": {
+    "background": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "high",
+      "note": "direct computed value on header"
+    },
+    "footer": {
+      "level": "low",
+      "note": "no distinct background found"
+    },
+    "cta": {
+      "level": "medium",
+      "note": "scored candidate match (score 23.0), still needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "logo": {
+      "level": "medium",
+      "note": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance"
+    }
+  },
+  "color": {
+    "background": "rgb(255, 255, 255)",
+    "text": "rgba(0, 0, 0, 0.7)",
+    "header": "rgb(255, 255, 255)",
+    "footer": null,
+    "cta": {
+      "text": "Book Virtual Consult",
+      "backgroundColor": "rgb(246, 104, 64)",
+      "color": "rgb(255, 255, 255)",
+      "borderColor": "rgb(255, 255, 255)",
+      "score": 23,
+      "selectorClass": "et_pb_button et_pb_button_0_tb_footer et_pb_bg_layout_light"
+    },
+    "link": "rgb(246, 104, 64)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "font": {
+    "headingFont": "Poppins, Helvetica, Arial, Lucida, sans-serif",
+    "bodyFont": "Lora, Georgia, \"Times New Roman\", serif",
+    "headingFirst": "Poppins",
+    "bodyFirst": "Lora",
+    "headingNormalized": "Poppins",
+    "bodyNormalized": "Lora"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[id*=\"logo\" i]",
+    "url": "https://cedarvillagedentistry.com/wp-content/uploads/2025/11/logo.png",
+    "downloadError": "HTTP 403"
+  }
+}

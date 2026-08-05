@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Newman Roofing",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://newmanroofing.com",
+    "extractedAt": "2026-08-05T13:14:55.697Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "construction-trades",
+  "color": {
+    "primary": {
+      "value": "#1A1A1A",
+      "source": "derived: no header/nav element, no custom property, and no image-sample fallback found anything usable; fixed dark neutral fallback per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "secondary": {
+      "value": "#101010",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#1A1A1A",
+      "source": "derived: no CTA candidate cleared the confidence bar at all (nothing-found case); fell back to primary per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "text": {
+      "value": "#000000",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#FFFFFF",
+      "source": "transparent computed value, normalized to assumed white",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "surface": {
+      "value": "#F0F0F0",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#E6E6E6",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 21,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 17.4,
+        "passesAA": true
+      },
+      "accentTextOverride": {
+        "reason": "accent #1A1A1A - text contrast resolved directly",
+        "resolution": "use #FFFFFF text on accent surfaces",
+        "ratio": 17.4,
+        "passesAA": true,
+        "textColor": "#FFFFFF",
+        "accentForText": "#1A1A1A"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "-apple-system",
+      "resolved": "Instrument Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;700&display=swap",
+      "fallbackStack": "'Instrument Sans', sans-serif",
+      "note": "unknown font provenance (\"-apple-system\", normalized \"Apple System\") - not in the web-safe or commercial-substitution table, treated as unsafe-to-redistribute by default and substituted from this project's vetted shortlist by guessed category (sans)",
+      "derived": true
+    },
+    "body": {
+      "detected": "Times New Roman",
+      "resolved": "Lora",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Lora:wght@400;600&display=swap",
+      "fallbackStack": "'Lora', 'Times New Roman', sans-serif",
+      "note": "web-safe/system font, legally fine as-is, substituted for quality per Thread 1's typography bar",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "text-wordmark",
+    "source": "no-logo-found",
+    "assetPath": null,
+    "hasTransparency": null,
+    "wordmarkFallback": true,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "low",
+    "confidenceNote": "no logo candidate found by any retrieval tier; falls back to a text wordmark per Thread 1 path (a)/(c)/(d) rule",
+    "derived": true
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "ASSEMBLE",
+    "reason": "category: construction-trades, per Thread 3 archetype-to-category mapping (Construction & Trades (roofer, contractor, plumber))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#1A1A1A",
+      "#1A1A1A",
+      "#101010"
+    ],
+    "backgroundForFrames": "#FFFFFF",
+    "logoCompositing": {
+      "enabled": false,
+      "assetPath": null,
+      "appearsAtFrameFraction": 1,
+      "note": "no logo asset available; frame sequence composites nothing (or a text wordmark, per Thread 3's own design, not decided here)"
+    }
+  }
+}

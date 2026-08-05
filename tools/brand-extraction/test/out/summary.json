@@ -1,0 +1,306 @@
+[
+  {
+    "id": "01-franklin-bbq",
+    "client": "Franklin BBQ",
+    "url": "https://franklinbbq.com",
+    "primary": {
+      "value": "#DCD3C2",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "accent": {
+      "value": "#E67437",
+      "source": "CTA button background, computed (\"Order in Advance\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#847F74",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "img-logo-heuristic",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\01-franklin-bbq.logo.png",
+    "headingDetected": "cheap-pine-sans",
+    "headingResolved": "Instrument Sans",
+    "bodyDetected": "sans-serif",
+    "bodyResolved": "Instrument Sans",
+    "archetype": "REVEAL",
+    "ctaCandidateText": "Order in Advance",
+    "customPropsFound": []
+  },
+  {
+    "id": "02-cedar-village-dentistry",
+    "client": "Cedar Village Dentistry",
+    "url": "https://www.cedarvillagedentistry.com",
+    "primary": {
+      "value": "#FFFFFF",
+      "source": "direct computed value on header",
+      "derived": false,
+      "confidence": "high"
+    },
+    "accent": {
+      "value": "#F66840",
+      "source": "CTA button background, computed (\"Book Virtual Consult\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#999999",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "img-logo-heuristic",
+    "logoAssetPath": null,
+    "headingDetected": "Poppins",
+    "headingResolved": "Poppins",
+    "bodyDetected": "Lora",
+    "bodyResolved": "Lora",
+    "archetype": "FLYTHROUGH",
+    "ctaCandidateText": "Book Virtual Consult",
+    "customPropsFound": []
+  },
+  {
+    "id": "03-hiut-denim",
+    "client": "Hiut Denim",
+    "url": "https://hiutdenim.co.uk",
+    "primary": {
+      "value": "#1A1A1A",
+      "source": "derived: no header/nav element, no custom property, and no image-sample fallback found anything usable; fixed dark neutral fallback per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#000000",
+      "source": "CTA button background, computed (\"Sign up\", score 14.9)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#F5F4F0",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "favicon",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\03-hiut-denim.logo.svg",
+    "headingDetected": "Founders Grotesk",
+    "headingResolved": "Work Sans",
+    "bodyDetected": "Founders Grotesk",
+    "bodyResolved": "Work Sans",
+    "archetype": "SPIN",
+    "ctaCandidateText": "Sign up",
+    "customPropsFound": [
+      "--color-primary"
+    ]
+  },
+  {
+    "id": "04-birds-barbershop",
+    "client": "Birds Barbershop",
+    "url": "https://birdsbarbershop.com",
+    "primary": {
+      "value": "#DCD7D1",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "accent": {
+      "value": "#111111",
+      "source": "CTA button background, computed (\"Book Now\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#84817D",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "og-image",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\04-birds-barbershop.logo.jpg",
+    "headingDetected": "Zing Rust",
+    "headingResolved": "Righteous",
+    "bodyDetected": "Source Sans 3",
+    "bodyResolved": "Source Sans 3",
+    "archetype": "TRANSFORM",
+    "ctaCandidateText": "Book Now",
+    "customPropsFound": []
+  },
+  {
+    "id": "05-mark-fisher-fitness",
+    "client": "Mark Fisher Fitness",
+    "url": "https://markfisherfitness.com",
+    "primary": {
+      "value": "#2A2227",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "accent": {
+      "value": "#B5DF0D",
+      "source": "CTA button background, computed (\"Explore Our Locations\", score 13.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#191417",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "img-logo-heuristic",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\05-mark-fisher-fitness.logo.webp",
+    "headingDetected": "Bebas Neue",
+    "headingResolved": "Bebas Neue",
+    "bodyDetected": "Nourd Light Font",
+    "bodyResolved": "Instrument Sans",
+    "archetype": "FLYTHROUGH",
+    "ctaCandidateText": "Explore Our Locations",
+    "customPropsFound": []
+  },
+  {
+    "id": "06-newman-roofing",
+    "client": "Newman Roofing",
+    "url": "https://newmanroofing.com",
+    "primary": {
+      "value": "#1A1A1A",
+      "source": "derived: no header/nav element, no custom property, and no image-sample fallback found anything usable; fixed dark neutral fallback per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#1A1A1A",
+      "source": "derived: no CTA candidate cleared the confidence bar at all (nothing-found case); fell back to primary per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "secondary": {
+      "value": "#101010",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "none",
+    "logoAssetPath": null,
+    "headingDetected": "-apple-system",
+    "headingResolved": "Instrument Sans",
+    "bodyDetected": "Times New Roman",
+    "bodyResolved": "Lora",
+    "archetype": "ASSEMBLE",
+    "ctaCandidateText": null,
+    "customPropsFound": []
+  },
+  {
+    "id": "07-family-law-partnership",
+    "client": "Family Law in Partnership",
+    "url": "https://www.flip.co.uk",
+    "primary": {
+      "value": "#F3F2F1",
+      "source": "direct computed value on header",
+      "derived": false,
+      "confidence": "high"
+    },
+    "accent": {
+      "value": "#D3C494",
+      "source": "CTA button background, computed (\"Get Started Online\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#F3F2F1",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "inline-svg-validated",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\07-family-law-partnership.logo.svg",
+    "headingDetected": "circularxxweb-book",
+    "headingResolved": "DM Sans",
+    "bodyDetected": "CircularXXWeb-Book",
+    "bodyResolved": "DM Sans",
+    "archetype": "INTERFACE",
+    "ctaCandidateText": "Get Started Online",
+    "customPropsFound": []
+  },
+  {
+    "id": "08-oslo-coffee",
+    "client": "Oslo Coffee Roasters",
+    "url": "https://www.oslocoffee.com",
+    "primary": {
+      "value": "#202020",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "accent": {
+      "value": "#FFFFFF",
+      "source": "derived: CTA (\"Shop Coffee\") found but has no fill (outlined/ghost button) - using its border color as a best-available proxy, needs human confirmation",
+      "derived": true,
+      "confidence": "low"
+    },
+    "secondary": {
+      "value": "#FFFFFF",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "img-logo-heuristic",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\08-oslo-coffee.logo.png",
+    "headingDetected": "objektiv-mk1",
+    "headingResolved": "Inter",
+    "bodyDetected": "objektiv-mk1",
+    "bodyResolved": "Inter",
+    "archetype": "REVEAL",
+    "ctaCandidateText": "Shop Coffee",
+    "customPropsFound": []
+  },
+  {
+    "id": "09-grace-family-roofing",
+    "client": "Grace Family Roofing",
+    "url": "https://gfryork.com",
+    "primary": {
+      "value": "#212F3F",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "accent": {
+      "value": "#FFFFFF",
+      "source": "derived: CTA (\"Contact Us\") found but has no fill (outlined/ghost button) - using its border color as a best-available proxy, needs human confirmation",
+      "derived": true,
+      "confidence": "low"
+    },
+    "secondary": {
+      "value": "#141C26",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "surfaceEqualsBackground": false,
+    "logoTier": "img-logo-heuristic",
+    "logoAssetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\09-grace-family-roofing.logo.png",
+    "headingDetected": "Barlow Condensed",
+    "headingResolved": "Barlow Condensed",
+    "bodyDetected": "Barlow",
+    "bodyResolved": "Barlow",
+    "archetype": "ASSEMBLE",
+    "ctaCandidateText": "Contact Us",
+    "customPropsFound": [
+      "--color-primary",
+      "--color-secondary",
+      "--color-accent",
+      "--color-text"
+    ]
+  }
+]

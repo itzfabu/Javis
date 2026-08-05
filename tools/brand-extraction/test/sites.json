@@ -1,0 +1,11 @@
+[
+  { "id": "01-franklin-bbq", "client": "Franklin BBQ", "url": "https://franklinbbq.com", "category": "food-beverage" },
+  { "id": "02-cedar-village-dentistry", "client": "Cedar Village Dentistry", "url": "https://www.cedarvillagedentistry.com", "category": "health-dental-general" },
+  { "id": "03-hiut-denim", "client": "Hiut Denim", "url": "https://hiutdenim.co.uk", "category": "retail-product" },
+  { "id": "04-birds-barbershop", "client": "Birds Barbershop", "url": "https://birdsbarbershop.com", "category": "beauty-personal-care" },
+  { "id": "05-mark-fisher-fitness", "client": "Mark Fisher Fitness", "url": "https://markfisherfitness.com", "category": "gyms-fitness" },
+  { "id": "06-newman-roofing", "client": "Newman Roofing", "url": "https://newmanroofing.com", "category": "construction-trades" },
+  { "id": "07-family-law-partnership", "client": "Family Law in Partnership", "url": "https://www.flip.co.uk", "category": "professional-services-saas" },
+  { "id": "08-oslo-coffee", "client": "Oslo Coffee Roasters", "url": "https://www.oslocoffee.com", "category": "food-beverage" },
+  { "id": "09-grace-family-roofing", "client": "Grace Family Roofing", "url": "https://gfryork.com", "category": "construction-trades" }
+]

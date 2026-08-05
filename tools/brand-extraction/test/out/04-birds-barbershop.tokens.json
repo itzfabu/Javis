@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Birds Barbershop",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://birdsbarbershop.com",
+    "extractedAt": "2026-08-05T13:14:47.838Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "beauty-personal-care",
+  "color": {
+    "primary": {
+      "value": "#DCD7D1",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#84817D",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#111111",
+      "source": "CTA button background, computed (\"Book Now\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#333333",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#F7F1EA",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#DED9D3",
+      "source": "derived: tint/shade of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#DED9D3",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 11.27,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 1.28,
+        "passesAA": false
+      },
+      "accentTextOverride": {
+        "reason": "accent #111111 - text contrast resolved directly",
+        "resolution": "use #FFFFFF text on accent surfaces",
+        "ratio": 18.88,
+        "passesAA": true,
+        "textColor": "#FFFFFF",
+        "accentForText": "#111111"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "Zing Rust",
+      "resolved": "Righteous",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Righteous:wght@500;700&display=swap",
+      "fallbackStack": "'Righteous', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: display)",
+      "derived": true
+    },
+    "body": {
+      "detected": "Source Sans 3",
+      "resolved": "Source Sans 3",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap",
+      "fallbackStack": "'Source Sans 3', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "jpg",
+    "source": "og-image",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\04-birds-barbershop.logo.jpg",
+    "hasTransparency": false,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": true,
+    "confidence": "low",
+    "confidenceNote": "often a marketing/share graphic, not a clean logo mark - flag for manual review",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "TRANSFORM",
+    "reason": "category: beauty-personal-care, per Thread 3 archetype-to-category mapping (Beauty & Personal Care (salon, spa))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#DCD7D1",
+      "#111111",
+      "#84817D"
+    ],
+    "backgroundForFrames": "#F7F1EA",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\04-birds-barbershop.logo.jpg",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

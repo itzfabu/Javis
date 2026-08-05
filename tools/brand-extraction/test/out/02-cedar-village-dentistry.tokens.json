@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Cedar Village Dentistry",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://www.cedarvillagedentistry.com",
+    "extractedAt": "2026-08-05T13:14:11.707Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "health-dental-general",
+  "color": {
+    "primary": {
+      "value": "#FFFFFF",
+      "source": "direct computed value on header",
+      "derived": false,
+      "confidence": "high"
+    },
+    "secondary": {
+      "value": "#999999",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#F66840",
+      "source": "CTA button background, computed (\"Book Virtual Consult\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#000000",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#FFFFFF",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#F0F0F0",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#E6E6E6",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 21,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 1,
+        "passesAA": false
+      },
+      "accentTextOverride": {
+        "reason": "accent #F66840 - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 6.97,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#F66840"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "Poppins",
+      "resolved": "Poppins",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap",
+      "fallbackStack": "'Poppins', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "body": {
+      "detected": "Lora",
+      "resolved": "Lora",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Lora:wght@400;600&display=swap",
+      "fallbackStack": "'Lora', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "text-wordmark",
+    "source": "no-logo-found",
+    "assetPath": null,
+    "hasTransparency": null,
+    "wordmarkFallback": true,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "low",
+    "confidenceNote": "no logo candidate found by any retrieval tier; falls back to a text wordmark per Thread 1 path (a)/(c)/(d) rule",
+    "derived": true
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "FLYTHROUGH",
+    "reason": "category: health-dental-general, per Thread 3 archetype-to-category mapping (Health & Dental (general/family practice))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#FFFFFF",
+      "#F66840",
+      "#999999"
+    ],
+    "backgroundForFrames": "#FFFFFF",
+    "logoCompositing": {
+      "enabled": false,
+      "assetPath": null,
+      "appearsAtFrameFraction": 1,
+      "note": "no logo asset available; frame sequence composites nothing (or a text wordmark, per Thread 3's own design, not decided here)"
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Family Law in Partnership",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://www.flip.co.uk",
+    "extractedAt": "2026-08-05T13:14:57.636Z",
+    "confidence": "medium",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "professional-services-saas",
+  "color": {
+    "primary": {
+      "value": "#F3F2F1",
+      "source": "direct computed value on header",
+      "derived": false,
+      "confidence": "high"
+    },
+    "secondary": {
+      "value": "#F3F2F1",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "accent": {
+      "value": "#D3C494",
+      "source": "CTA button background, computed (\"Get Started Online\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#1A2844",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#FFFFFF",
+      "source": "transparent computed value, normalized to assumed white",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "surface": {
+      "value": "#F0F0F0",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#E6E6E6",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 14.68,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 1.12,
+        "passesAA": false
+      },
+      "accentTextOverride": {
+        "reason": "accent #D3C494 - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 12.09,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#D3C494"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "circularxxweb-book",
+      "resolved": "DM Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&display=swap",
+      "fallbackStack": "'DM Sans', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "body": {
+      "detected": "CircularXXWeb-Book",
+      "resolved": "DM Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&display=swap",
+      "fallbackStack": "'DM Sans', sans-serif",
+      "note": "licensed/not redistributable, substituted per commercial-font table (category: sans)",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "svg",
+    "source": "inline-svg-validated",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\07-family-law-partnership.logo.svg",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "medium",
+    "confidenceNote": "passed display:none / icon-font / size / use-ref validation, but validation is heuristic, not certain",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "INTERFACE",
+    "reason": "category: professional-services-saas, per Thread 3 archetype-to-category mapping (Professional Services & SaaS (law, consulting, agency, software))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#F3F2F1",
+      "#D3C494",
+      "#F3F2F1"
+    ],
+    "backgroundForFrames": "#FFFFFF",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\07-family-law-partnership.logo.svg",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

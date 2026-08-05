@@ -1,0 +1,22 @@
+{
+  "name": "brand-extraction",
+  "version": "1.0.0",
+  "description": "Thread 1 brand extraction pipeline (Website Generator project) - input path (a): existing website. Playwright extraction, Derivation Layer, WCAG accessibility resolution, font substitution, and the mandatory human/client review gate.",
+  "main": "src/tokens.js",
+  "bin": {
+    "extract-brand": "bin/extract-brand.js",
+    "review-gate": "bin/review-gate.js"
+  },
+  "scripts": {
+    "extract": "node bin/extract-brand.js",
+    "review": "node bin/review-gate.js",
+    "validate": "node test/run-validation.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}

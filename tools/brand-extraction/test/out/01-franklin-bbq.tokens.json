@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Franklin BBQ",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://franklinbbq.com",
+    "extractedAt": "2026-08-05T13:14:08.024Z",
+    "confidence": "medium",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "food-beverage",
+  "color": {
+    "primary": {
+      "value": "#DCD3C2",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#847F74",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#E67437",
+      "source": "CTA button background, computed (\"Order in Advance\", score 23.0)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "text": {
+      "value": "#4E4B4E",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#EFEEDE",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "surface": {
+      "value": "#D7D6C8",
+      "source": "derived: tint/shade of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#D7D6C8",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 7.36,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 1.27,
+        "passesAA": false
+      },
+      "accentTextOverride": {
+        "reason": "accent #E67437 - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 6.92,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#E67437"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "cheap-pine-sans",
+      "resolved": "Instrument Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;700&display=swap",
+      "fallbackStack": "'Instrument Sans', sans-serif",
+      "note": "unknown font provenance (\"cheap-pine-sans\", normalized \"Cheap Pine Sans\") - not in the web-safe or commercial-substitution table, treated as unsafe-to-redistribute by default and substituted from this project's vetted shortlist by guessed category (sans)",
+      "derived": true
+    },
+    "body": {
+      "detected": "sans-serif",
+      "resolved": "Instrument Sans",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600&display=swap",
+      "fallbackStack": "'Instrument Sans', sans-serif",
+      "note": "unknown font provenance (\"sans-serif\", normalized \"Sans Serif\") - not in the web-safe or commercial-substitution table, treated as unsafe-to-redistribute by default and substituted from this project's vetted shortlist by guessed category (sans)",
+      "derived": true
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "png",
+    "source": "img-logo-heuristic",
+    "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\01-franklin-bbq.logo.png",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "medium",
+    "confidenceNote": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "REVEAL",
+    "reason": "category: food-beverage, per Thread 3 archetype-to-category mapping (Food & Beverage (restaurant, cafe, bakery))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#DCD3C2",
+      "#E67437",
+      "#847F74"
+    ],
+    "backgroundForFrames": "#EFEEDE",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\01-franklin-bbq.logo.png",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

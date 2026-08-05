@@ -1,0 +1,73 @@
+{
+  "url": "https://www.oslocoffee.com",
+  "extractedAt": "2026-08-05T13:15:01.289Z",
+  "errors": [
+    "networkidle timed out, fell back to domcontentloaded: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.oslocoffee.com/\", waiting until \"networkidle\"\u001b[22m\n"
+  ],
+  "confidence": {
+    "background": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "text": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "header": {
+      "level": "medium",
+      "note": "sampled from screenshot crop (image-based header, no computed background-color)"
+    },
+    "footer": {
+      "level": "high",
+      "note": "direct computed value"
+    },
+    "cta": {
+      "level": "low",
+      "note": "scored candidate is an outlined/transparent element - color role ambiguous, needs human review"
+    },
+    "link": {
+      "level": "medium",
+      "note": "filtered for near-white and body-text-color matches, still not independently verified"
+    },
+    "logo": {
+      "level": "medium",
+      "note": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance"
+    }
+  },
+  "color": {
+    "background": "rgb(246, 246, 246)",
+    "text": "rgb(14, 31, 82)",
+    "header": "rgb(32, 32, 32)",
+    "footer": "rgb(255, 255, 255)",
+    "cta": {
+      "text": "Shop Coffee",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)",
+      "borderColor": "rgb(255, 255, 255)",
+      "score": 23,
+      "selectorClass": "btn"
+    },
+    "link": "rgb(21, 68, 136)"
+  },
+  "customProperties": {},
+  "customPropertyCrossCheck": {},
+  "font": {
+    "headingFont": "objektiv-mk1, sans-serif",
+    "bodyFont": "objektiv-mk1, sans-serif",
+    "headingFirst": "objektiv-mk1",
+    "bodyFirst": "objektiv-mk1",
+    "headingNormalized": "Objektiv Mk1",
+    "bodyNormalized": "Objektiv Mk1"
+  },
+  "logo": {
+    "tier": "img-logo-heuristic",
+    "format": "png",
+    "selector": "header img[class*=\"logo\" i]",
+    "url": "https://oslocoffee.com/cdn/shop/t/26/assets/oslo-logo-white_400x.png?v=20527188679633558461764620190",
+    "downloadedPath": "C:\\Jarvis\\tools\\brand-extraction\\test\\out\\08-oslo-coffee.logo.png",
+    "downloadedBytes": 33011,
+    "hasTransparency": true,
+    "pillowMode": "RGBA",
+    "needsBackgroundRemoval": false
+  }
+}
