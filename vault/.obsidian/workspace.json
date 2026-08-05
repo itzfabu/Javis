@@ -45,7 +45,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -207,7 +207,7 @@
       "new-3d-graph:Open 3d graph": false
     }
   },
-  "active": "27f6ed61f116ecbc",
+  "active": "fe11249ba153ac0b",
   "lastOpenFiles": [
     "Projects/Website Generator.md.tmp.41128.1535d522909a",
     "Projects/Website Generator.md.tmp.41128.fa8f2efaf6b7",

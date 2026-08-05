@@ -72,13 +72,54 @@ if (Test-Path $tasksPath) {
     }
 }
 
+function Get-FrontMatterStatus($filePath) {
+    $inFrontMatter = $false
+    foreach ($line in Get-Content $filePath) {
+        if ($line.Trim() -eq "---") {
+            if (-not $inFrontMatter) { $inFrontMatter = $true; continue }
+            else { break }
+        }
+        if ($inFrontMatter -and $line -match "^status:\s*(.+)$") {
+            return $matches[1].Trim().Trim("'").Trim('"')
+        }
+    }
+    return $null
+}
+
+# Notes-panel cleanup rule (signed off 2026-08-05, see vault/Projects/Jarvis System.md):
+# - Ideas: only show notes still at status "captured" (evaluating/building/shelved have been looked at, drop them).
+# - Projects/Architecture/Knowledge/Boards/Daily: drop a note once it's referenced via related-projects
+#   or a wikilink from an active Project note - being linked into a live project is what "filed" means here.
+$filedTitles = @{}
+$activeProjectsPath = "C:\Jarvis\vault\Projects"
+if (Test-Path $activeProjectsPath) {
+    Get-ChildItem -Path $activeProjectsPath -Filter "*.md" -File | ForEach-Object {
+        if ((Get-FrontMatterStatus $_.FullName) -eq "active") {
+            $content = Get-Content $_.FullName -Raw
+            [regex]::Matches($content, '\[\[([^\]]+)\]\]') | ForEach-Object {
+                $target = ($_.Groups[1].Value -split '\|')[0]
+                $target = ($target -split '#')[0]
+                $target = ($target -split '/')[-1].Trim()
+                if ($target) { $filedTitles[$target] = $true }
+            }
+        }
+    }
+}
+
 $notes = @()
 $vaultFolders = @("Projects","Ideas","Architecture","Knowledge","Boards","Daily")
 foreach ($folder in $vaultFolders) {
     $folderPath = "C:\Jarvis\vault\$folder"
     if (Test-Path $folderPath) {
         Get-ChildItem -Path $folderPath -Filter "*.md" -File | ForEach-Object {
-            $notes += @{ title = $_.BaseName; folder = $folder }
+            if ($folder -eq "Ideas") {
+                $status = Get-FrontMatterStatus $_.FullName
+                if ([string]::IsNullOrEmpty($status) -or $status -eq "captured") {
+                    $notes += @{ title = $_.BaseName; folder = $folder }
+                }
+            } elseif (-not $filedTitles.ContainsKey($_.BaseName)) {
+                $notes += @{ title = $_.BaseName; folder = $folder }
+            }
         }
     }
 }

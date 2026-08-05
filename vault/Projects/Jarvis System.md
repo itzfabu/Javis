@@ -53,19 +53,19 @@ should drop filed/actioned items) is untouched - confirmed by reading
 `.claude/hooks/sync-knowledge.ps1` lines 75-84: it still does an unconditional directory listing of
 every `.md` under `Projects/Ideas/Architecture/Knowledge/Boards/Daily`, with no filter for
 already-actioned items, exactly as the idea note describes.
-- **Recommendation - notes panel cleanup: build now.** Small, well-scoped, no external dependency,
-  and it's a real (if minor) UX papercut in daily use, which is the one goal this project does
-  cleanly connect to ("Get Jarvis into daily use"). Concrete rule to adopt (the idea note flagged
-  this as needing a rule before touching code): use the `status` frontmatter field the Ideas
-  lifecycle already defines (`captured / evaluating / building / shelved`, per
-  [[Knowledge/Ideas Index]]) - only list ideas still at `captured` in the NOTES panel; once a note
-  moves to `evaluating`/`building`/`shelved` it's implicitly been looked at and can drop off. For
-  Projects/Architecture/Knowledge/Boards/Daily notes (which don't use that status field), a
-  reasonable parallel rule is: drop a note once it's referenced via `related-projects`/wikilink from
-  an *active* Project note, since being linked into a live project is what "filed" means for those
-  folders. This still needs a human sign-off on the exact rule before `sync-knowledge.ps1` changes,
-  per the idea note's own instruction - not decided unilaterally here, just narrowed from "define a
-  rule" to one concrete proposal.
+- **Notes panel cleanup: signed off by Fabio and implemented (2026-08-05, evening).** Rule adopted
+  as proposed: Ideas notes only show in the NOTES panel while `status: captured`
+  (`evaluating`/`building`/`shelved` have been looked at, drop them); Projects/Architecture/
+  Knowledge/Boards/Daily notes drop once referenced via `related-projects`/wikilink from an *active*
+  Project note. Implemented in `.claude/hooks/sync-knowledge.ps1` (front-matter status parser +
+  active-project wikilink scan feeding a "filed titles" set). Verified against the actual vault:
+  count went from 20 notes to 11 - correctly dropped 2 non-`captured` ideas (`AI Practitioner
+  Knowledge + Token-Reduction Loops` at `evaluating`, `Website Generator (Landing Pages +
+  Clone-and-Rebuild)` at `evaluating`) plus 7 filed notes referenced from active projects
+  ([[Knowledge/Ideas Index]], [[Knowledge/CAPABILITIES]], `Jarvis System Architecture`,
+  `Streamer HUD Widget Market Research`, and the [[Projects/Streamer HUD Widget]],
+  [[Projects/Jarvis-as-a-Service Launch]], and this note's own project entries, each cross-linked
+  from another active project). No false drops found on inspection.
 - **Recommendation - System Health page: build next, ahead of Finance.** Not one of the two staged
   ideas, but a direct consequence of reading this project's own "Noch offen" list below: several
   things are marked "not live tested" (OpenAI fallback, Twitch reconnect) or carry caveats like
@@ -121,7 +121,7 @@ new recommendation, noted for completeness:**
 - [[Ideas/Automatisches Wikilinking]]: Idee, nicht begonnen
 - Mobile-Zugriff: nicht begonnen
 - Sprachsteuerung/Wake-Word: nicht begonnen
-- NOTES panel doesn't drop filed/actioned items (see 2026-08-05 research above) - rule proposed, not yet implemented pending sign-off.
+- ~~NOTES panel doesn't drop filed/actioned items~~ - fixed 2026-08-05 (see Recent Activity above), rule implemented in `sync-knowledge.ps1`.
 - Finance dashboard page still a placeholder - correctly deferred, no income event yet (see 2026-08-05 research above).
 - System Health dashboard page still a placeholder - proposed as the next build target, ahead of Finance (see 2026-08-05 research above).
 
