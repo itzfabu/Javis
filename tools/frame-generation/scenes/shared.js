@@ -266,6 +266,25 @@ window.FrameScene = (function () {
   // exactly the blend-dependent noise just measured.
   const OCCLUSION_COLOR_TOL = 24; // used only for the (already-opaque) visibility comparison itself - see checkOcclusion
   const OCCLUSION_ALPHA_TOL = 250;
+  // MIN_OPAQUE_PIXEL_COUNT: the zero-sample hole. isolatedCount can land
+  // anywhere from "the whole logo" down to zero fully-opaque pixels - a
+  // soft-edged logo, a small on-screen render, or a PNG exported with
+  // global opacity under 1 can all leave every pixel below OCCLUSION_ALPHA_TOL,
+  // which used to make isolatedCount 0 and visibleRatio default to 1 (see
+  // checkOcclusion below) - "cannot evaluate" reported as "fully visible",
+  // measuring nothing while claiming success. Real fixtures measured this
+  // directly, not guessed: with a synthetic placeholder text logo,
+  // isolatedCount ranges 17,088-243,936 across the six archetypes; with
+  // Grace Family Roofing's REAL approved PNG (the same asset used to
+  // calibrate OCCLUSION_ALPHA_TOL above), ASSEMBLE's signboard - the
+  // smallest of three real assets measured - comes in at just 293 opaque
+  // pixels, because a small on-screen texture with soft/antialiased edges
+  // leaves most of its own pixels below full opacity even though the logo
+  // is genuinely, visibly there (confirmed by screenshot). 50 is set well
+  // below that real 293-pixel floor (kept evaluable, not flagged) and well
+  // above single-digit stray-pixel noise, which is the class of case this
+  // guard exists to catch instead of silently passing.
+  const MIN_OPAQUE_PIXEL_COUNT = 50;
   // VISIBLE_RATIO_THRESHOLD: fraction of the logo's own isolated-render
   // alpha silhouette that must still match in the normal render. Set to
   // 0.9, not 0.5 or lower: a real occlusion event found in this project's
@@ -324,9 +343,34 @@ window.FrameScene = (function () {
         mismatchSamples.push({ i: i / 4, isolatedAlpha: ia, isolated: [ir, ig, ib], normal: [nr, ng, nb], distMatch });
       }
     }
-    const visibleRatio = isolatedCount > 0 ? visibleCount / isolatedCount : 1;
+    const minOpaquePixels = opts.minOpaquePixels != null ? opts.minOpaquePixels : MIN_OPAQUE_PIXEL_COUNT;
+    if (isolatedCount < minOpaquePixels) {
+      // The zero-sample hole: isolatedCount==0 used to fall through to
+      // visibleRatio=1 (vacuously "fully visible") below - "cannot
+      // evaluate" reported as success, measuring nothing. Fail loudly
+      // instead, distinctly from a real occlusion failure (evaluable:false,
+      // not visibleRatio:0), so a caller can tell "this logo is occluded"
+      // apart from "this guard couldn't measure this logo at all" - see
+      // MIN_OPAQUE_PIXEL_COUNT's comment for how the floor was chosen.
+      return {
+        ok: false,
+        evaluable: false,
+        visibleRatio: null,
+        isolatedLogoPixelCount: isolatedCount,
+        visibleLogoPixelCount: visibleCount,
+        minOpaquePixels,
+        reason: `cannot evaluate: only ${isolatedCount} fully-opaque logo pixel(s) found (need >= ${minOpaquePixels}) - the logo texture may be too soft-edged, too small on screen, or exported with reduced global opacity for this alpha-based check to measure occlusion reliably`,
+        threshold,
+        colorTol,
+        alphaTol,
+        bbox,
+        mismatchSamples: opts.debug ? mismatchSamples : undefined,
+      };
+    }
+    const visibleRatio = visibleCount / isolatedCount;
     return {
       ok: visibleRatio >= threshold,
+      evaluable: true,
       visibleRatio: +visibleRatio.toFixed(3),
       isolatedLogoPixelCount: isolatedCount,
       visibleLogoPixelCount: visibleCount,

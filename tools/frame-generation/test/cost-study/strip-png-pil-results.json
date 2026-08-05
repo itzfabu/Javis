@@ -1,0 +1,44 @@
+[
+  {
+    "dir": "assemble",
+    "label": "no-logo",
+    "bytes": 1202625,
+    "width": 76800,
+    "height": 1200
+  },
+  {
+    "dir": "assemble-approved",
+    "label": "approved-logo",
+    "bytes": 1692921,
+    "width": 76800,
+    "height": 1200
+  },
+  {
+    "dir": "flythrough",
+    "label": "no-logo",
+    "bytes": 10756764,
+    "width": 86400,
+    "height": 675
+  },
+  {
+    "dir": "flythrough-approved",
+    "label": "approved-logo",
+    "bytes": 11122760,
+    "width": 86400,
+    "height": 675
+  },
+  {
+    "dir": "transform",
+    "label": "no-logo_CALIBRATION",
+    "bytes": 134046,
+    "width": 38400,
+    "height": 800
+  },
+  {
+    "dir": "transform-approved",
+    "label": "approved-logo_CALIBRATION",
+    "bytes": 186775,
+    "width": 38400,
+    "height": 800
+  }
+]

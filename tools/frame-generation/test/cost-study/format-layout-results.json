@@ -1,0 +1,230 @@
+[
+  {
+    "archetype": "ASSEMBLE",
+    "state": "no-logo",
+    "frameCount": 96,
+    "dims": {
+      "width": 800,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 12,
+      "rows": 8,
+      "width": 9600,
+      "height": 9600
+    },
+    "stripWidth": 76800,
+    "gridPngBytes": 1251583,
+    "gridWebpBytes": 842106,
+    "stripPngBytes": 271406
+  },
+  {
+    "archetype": "ASSEMBLE",
+    "state": "approved-logo",
+    "frameCount": 96,
+    "dims": {
+      "width": 800,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 12,
+      "rows": 8,
+      "width": 9600,
+      "height": 9600
+    },
+    "stripWidth": 76800,
+    "gridPngBytes": 1686440,
+    "gridWebpBytes": 887186,
+    "stripPngBytes": 271406
+  },
+  {
+    "archetype": "REVEAL",
+    "state": "no-logo",
+    "frameCount": 48,
+    "dims": {
+      "width": 960,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 8,
+      "rows": 6,
+      "width": 7680,
+      "height": 7200
+    },
+    "stripWidth": 46080,
+    "gridPngBytes": 5833328,
+    "gridWebpBytes": 518874,
+    "stripPngBytes": 6300883
+  },
+  {
+    "archetype": "REVEAL",
+    "state": "approved-logo",
+    "frameCount": 48,
+    "dims": {
+      "width": 960,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 8,
+      "rows": 6,
+      "width": 7680,
+      "height": 7200
+    },
+    "stripWidth": 46080,
+    "gridPngBytes": 6011968,
+    "gridWebpBytes": 545346,
+    "stripPngBytes": 6493697
+  },
+  {
+    "archetype": "SPIN",
+    "state": "no-logo",
+    "frameCount": 24,
+    "dims": {
+      "width": 1200,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 5,
+      "width": 6000,
+      "height": 6000
+    },
+    "stripWidth": 28800,
+    "gridPngBytes": 591764,
+    "gridWebpBytes": 171676,
+    "stripPngBytes": 557459
+  },
+  {
+    "archetype": "SPIN",
+    "state": "approved-logo",
+    "frameCount": 24,
+    "dims": {
+      "width": 1200,
+      "height": 1200
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 5,
+      "width": 6000,
+      "height": 6000
+    },
+    "stripWidth": 28800,
+    "gridPngBytes": 591494,
+    "gridWebpBytes": 170626,
+    "stripPngBytes": 557224
+  },
+  {
+    "archetype": "TRANSFORM",
+    "state": "no-logo",
+    "frameCount": 32,
+    "dims": {
+      "width": 1200,
+      "height": 800
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 7,
+      "width": 6000,
+      "height": 5600
+    },
+    "stripWidth": 38400,
+    "gridPngBytes": 153066,
+    "gridWebpBytes": 83116,
+    "stripPngBytes": 126492
+  },
+  {
+    "archetype": "TRANSFORM",
+    "state": "approved-logo",
+    "frameCount": 32,
+    "dims": {
+      "width": 1200,
+      "height": 800
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 7,
+      "width": 6000,
+      "height": 5600
+    },
+    "stripWidth": 38400,
+    "gridPngBytes": 202926,
+    "gridWebpBytes": 89608,
+    "stripPngBytes": 178042
+  },
+  {
+    "archetype": "FLYTHROUGH",
+    "state": "no-logo",
+    "frameCount": 72,
+    "dims": {
+      "width": 1200,
+      "height": 675
+    },
+    "grid": {
+      "cols": 6,
+      "rows": 12,
+      "width": 7200,
+      "height": 8100
+    },
+    "stripWidth": 86400,
+    "gridPngBytes": 9836478,
+    "gridWebpBytes": 1350632,
+    "stripPngBytes": 172078
+  },
+  {
+    "archetype": "FLYTHROUGH",
+    "state": "approved-logo",
+    "frameCount": 72,
+    "dims": {
+      "width": 1200,
+      "height": 675
+    },
+    "grid": {
+      "cols": 6,
+      "rows": 12,
+      "width": 7200,
+      "height": 8100
+    },
+    "stripWidth": 86400,
+    "gridPngBytes": 10176743,
+    "gridWebpBytes": 1417324,
+    "stripPngBytes": 172078
+  },
+  {
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "frameCount": 48,
+    "dims": {
+      "width": 1200,
+      "height": 675
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 10,
+      "width": 6000,
+      "height": 6750
+    },
+    "stripWidth": 57600,
+    "gridPngBytes": 320603,
+    "gridWebpBytes": 115958,
+    "stripPngBytes": 255969
+  },
+  {
+    "archetype": "INTERFACE",
+    "state": "approved-logo",
+    "frameCount": 48,
+    "dims": {
+      "width": 1200,
+      "height": 675
+    },
+    "grid": {
+      "cols": 5,
+      "rows": 10,
+      "width": 6000,
+      "height": 6750
+    },
+    "stripWidth": 57600,
+    "gridPngBytes": 417769,
+    "gridWebpBytes": 129802,
+    "stripPngBytes": 358105
+  }
+]

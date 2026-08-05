@@ -2677,6 +2677,177 @@ guard, and both a genuine detection (the false positive against a real logo, mid
 genuine verification (the reconstructed ASSEMBLE failure) happened during this build, not just a
 clean pass reported without having tried to break it.**
 
+### FORMAT/LAYOUT CELL FILLED + MEASURED LCP + OCCLUSION FLOOR (2026-08-06) — three follow-ups
+
+Three specific gaps flagged after the GRID SPRITE LAYOUT + WEBP and OCCLUSION REGRESSION GUARD
+sections above: the missing PNG+grid experiment cell, an estimated (not measured) download time in
+the LCP table, and the occlusion guard's zero-sample hole. All three closed this session, in
+`tools/frame-generation/test/measure-format-layout.js`, `measure-lcp.js`, `strip-png-pil.py`, and
+`scenes/shared.js`/`src/capture.js`.
+
+**Headline finding, unrequested but the most consequential thing this pass found: the "ASSEMBLE and
+FLYTHROUGH regressed to Poor under grid+WebP" conclusion from GRID SPRITE LAYOUT above was built on
+a corrupted baseline, not a real regression.** Filling in the missing PNG+grid cell required
+re-deriving PNG+strip numbers for comparison, which led to discovering that Playwright's
+`locator.screenshot()` — the exact mechanism the *original* pre-rework `composite.js` used to
+produce the "old 1xN PNG" figures this document has cited since COST STUDY (0.259MB ASSEMBLE,
+0.164MB FLYTHROUGH) — silently paints only a small region near the canvas origin and leaves
+everything else **blank white** for canvases wider than somewhere between 65,535px and 76,800px in
+this Chromium build, with no error or warning. ASSEMBLE's strip (76,800px) and FLYTHROUGH's
+(86,400px) both exceed that; verified directly by sampling frame-sized crops across the full strip
+width — frame 0 painted, every other sampled frame (1, 5, 10, 20, 40, 60, 80, 90, 95 for ASSEMBLE)
+came back pure white (255,255,255 at every sampled pixel). REVEAL/SPIN/TRANSFORM/INTERFACE's strip
+widths (28,800-57,600px) are all under the failure threshold and were confirmed fully painted at
+every sampled frame — their historical figures are real. **This means the old 0.259MB/0.164MB
+figures for ASSEMBLE/FLYTHROUGH describe a mostly-blank image, not a real, fully-rendered PNG
+strip** — the small file size was the blank canvas compressing trivially, not PNG achieving
+exceptional cross-frame compression on real content. The true PNG-strip size for these two
+archetypes (via Pillow, since the canvas rasterizer itself also has a separate, tighter failure mode
+at these widths — `canvas.toDataURL` returns the empty `"data:,"` sentinel above ~65,535-76,800px,
+confirmed by sweeping widths from 8,192 to 86,400 — cross-calibrated against TRANSFORM's strip,
+where both Pillow and the real screenshot pipeline could run: Pillow measures 4.9-6.0% larger than
+Chromium's own screenshot PNG encoder for identical content, so the ASSEMBLE/FLYTHROUGH Pillow
+figures below are divided by that measured 1.0544 average factor to estimate the Chromium-equivalent
+byte count) is **~1114KB for ASSEMBLE and ~9963KB for FLYTHROUGH** — 4.2x and 60.8x the old figures,
+respectively, not the small numbers this document compared WebP against.
+
+**Consequence: there is no ASSEMBLE/FLYTHROUGH format regression to decide.** Re-run against the
+correct baseline, WebP+grid (already shipped) is the smallest option for **all six** archetypes, not
+four of six — the TASKS.md item asking Fabio to decide a per-archetype format is resolved, not
+merely answered: keep the single WebP+grid format uniformly, per-archetype format splitting was
+never actually justified by real data.
+
+**Full 2x3 comparison, no-logo state** (approved-logo state moves every figure up slightly — see
+raw data in `test/cost-study/format-layout-results.json`/`strip-png-pil-results.json` — direction is
+identical, omitted here for space):
+
+| Archetype | Frames | Grid | PNG-strip | PNG-grid | WebP-grid (shipped) | Smallest |
+|---|---|---|---|---|---|---|
+| ASSEMBLE | 96 | 12x8 | ~1113.8 KB¹ | 1222.2 KB | **822.4 KB** | WebP |
+| REVEAL | 48 | 8x6 | 6153.2 KB | 5696.6 KB | **506.7 KB** | WebP |
+| SPIN | 24 | 5x5 | 544.4 KB | 577.9 KB | **167.7 KB** | WebP |
+| TRANSFORM | 32 | 5x7 | 123.5 KB | 149.5 KB | **81.2 KB** | WebP |
+| FLYTHROUGH | 72 | 6x12 | ~9962.7 KB¹ | 9605.9 KB | **1319.0 KB** | WebP |
+| INTERFACE | 48 | 5x10 | 250.0 KB | 313.1 KB | **113.2 KB** | WebP |
+
+¹ Pillow-measured, calibration-adjusted to estimate Chromium's own encoder (see above) — the only
+two cells in this experiment not measured through the production canvas pipeline directly, because
+that pipeline cannot rasterize a canvas this wide in this Chromium build at all.
+
+**Recommendation, decisively: WebP+grid for all six archetypes, uniformly. No per-archetype format
+split.** This *is* choosing per archetype on measured bytes, per the instruction — it just turns out
+every archetype's measured-smallest format is the same one already shipped. Not implemented as a
+pipeline change since nothing needs to change: `src/composite.js` already only emits WebP.
+
+**The LZ77/row-boundary hypothesis (stated: only frames at row boundaries lose the previous-frame
+match, since frames wrap left-to-right within a row and the match distance stays inside zlib's 32KB
+window) — confirmed in direction for 4 of 6 archetypes, contradicted for 2.** Reasoning behind the
+hypothesis holds up structurally: in a grid, frame *i*'s raw scanline data sits directly adjacent to
+frame *i-1*'s in the byte stream whenever both are in the same row (col>0) — the identical adjacency
+a 1xN strip has for every frame — but a frame starting a new row (col=0) has its immediate
+byte-stream predecessor be the *end of the previous row*, a dissimilar, non-adjacent animation frame,
+losing the short-distance match. Measured row-boundary frame counts (`grid.rows - 1`, the number of
+row-starts after the first) range 7.3% of frames (ASSEMBLE) to 18.8% (TRANSFORM/INTERFACE) — small,
+consistent with "only some frames lose the match." **Grid came out larger than strip, as the
+hypothesis predicts, for ASSEMBLE (+9.7%), SPIN (+6.2%), TRANSFORM (+21.0%), INTERFACE (+25.2%).**
+**But REVEAL (-7.4%) and FLYTHROUGH (-3.6%) came out SMALLER under grid, contradicting it outright.**
+Both of the contradicting cases are archetypes already known from COST STUDY to get little-to-no net
+benefit from any cross-frame compositing at all — REVEAL's strip was already *larger* than its own
+frame-sum, and this session found FLYTHROUGH's strip/grid PNG (9962.7KB/9605.9KB) is now *also*
+larger than its per-frame independent sum (9329.0KB, measured directly from the individual captured
+files) — meaning there is no real cross-frame redundancy being exploited in strip form for either of
+these two to begin with, so a model that predicts loss *from* redundancy has nothing to act on.
+**Honest conclusion: the row-boundary mechanism is real and directionally correct where cross-frame
+redundancy exists to lose, but it is not the dominant or sole factor in overall byte count — some
+other scanline-width-dependent effect (deflate match-finder or PNG filter-heuristic behavior on a
+much shorter overall byte stream) plays a comparable or larger role for at least two archetypes.**
+This doesn't change the format recommendation above (WebP wins outright, independent of layout, for
+every archetype) — it only means the hypothesis shouldn't be trusted as a complete predictive model
+if PNG were ever reconsidered later.
+
+**Measured LCP replaces the file-size/200KB/s estimate.** `measure-lcp.js` extends the already-
+validated Element Timing method from COST STUDY (CPU throttle 4x via CDP, same as before) by adding
+real `Network.emulateNetworkConditions` (1.6Mbps down / 150ms RTT / 750Kbps up — Lighthouse's own
+Slow-4G profile, the same one the old estimate assumed) to the *same* trial, so `renderTime` for the
+real `.hero-sprite` element now includes actual network transfer time end to end, not an added-on
+arithmetic guess. 5 trials/archetype/state, fresh browser context per trial (cold cache), median
+reported. **Tried the native `largest-contentful-paint` PerformanceObserver directly first — it did
+not reliably fire an entry for this page's CSS background-image under network throttling in this
+Playwright/Chromium build** (page `load` fired correctly and on schedule, but no LCP entry arrived
+even 500ms after `load`, reproducible, not a fluke) — flagged as its own finding rather than debugged
+further, since Element Timing on the named `.hero-sprite` element is the same underlying paint-timing
+signal LCP is built from, already the mechanism this project's own methodology trusts, and
+numerically equivalent here since the sprite is the only meaningful painted content on the
+measurement page. Separately: `waitUntil: 'load'` in Playwright's `goto()` also proved unreliable
+under CPU throttle alone (a plain page's `load` event was observed taking 18+ real seconds under 4x
+CPU throttle with no network throttle involved) — switched to `waitUntil: 'commit'` plus the
+in-page `PerformanceObserver` promise, the exact pattern `measure-cost.js` already used successfully.
+
+| Archetype | Old estimate (no-logo) | Measured (no-logo) | Measured (approved-logo) | Verdict (unchanged) |
+|---|---|---|---|---|
+| ASSEMBLE | 4.67s | **4.72s** | 4.94s | Poor |
+| REVEAL | 2.91s | **3.09s** | 3.21s | Needs Improvement |
+| SPIN | 1.34s | **1.48s** | 1.48s | Good |
+| TRANSFORM | 0.87s | **1.04s** | 1.06s | Good |
+| FLYTHROUGH | 7.08s | **7.07s** | 7.41s | Poor |
+| INTERFACE | 1.10s | **1.26s** | 1.33s | Good |
+
+**No verdict bucket changes** — every archetype lands in the same Good/Needs Improvement/Poor
+category as the estimate predicted. The measured figures run consistently *higher* than the old
+estimate for the smaller/faster archetypes (+10-19% for SPIN/TRANSFORM/INTERFACE, roughly one
+network RTT's worth of connection overhead the old file-size÷throughput arithmetic had no way to
+represent), and land almost exactly on the estimate for the two biggest sprites (ASSEMBLE, FLYTHROUGH
+— where download time dominates total LCP and the RTT overhead is proportionally negligible).
+
+**Does REVEAL clear the 2.5s Good threshold under measurement? No — and the gap is larger than the
+estimate suggested, not smaller.** 3.09s (no-logo) / 3.21s (approved-logo) against a 2.5s threshold
+is 0.59-0.71s (24-28%) over, versus the old estimate's 0.41-0.53s (16-20%) gap. **Per the task's own
+instruction, this keeps the REVEAL LCP task open** (TASKS.md, unchanged) — its materials stay
+untouched either way, but the "if it clears, close the task" condition did not fire. Also worth
+recording plainly: ASSEMBLE and FLYTHROUGH's Poor verdicts are not a format problem (WebP+grid is
+already each one's smallest available option, per the corrected finding above) — closing those would
+need a different lever (frame count, resolution, WebP quality), not a format swap, if ever prioritized.
+
+**Occlusion guard's zero-sample hole, closed.** `checkOcclusion` (`scenes/shared.js`) used to default
+`visibleRatio` to `1` whenever `isolatedCount` was `0` — a logo producing zero fully-opaque pixels
+(soft edges, a small on-screen render, reduced global opacity — all real, reachable states given
+`OCCLUSION_ALPHA_TOL=250`'s own already-documented reasoning) silently reported "fully visible"
+having measured nothing. **Floor chosen from real fixture measurements, not guessed:** with the
+synthetic placeholder text logo used for fast iteration, `isolatedLogoPixelCount` ranges
+17,088-243,936 across the six archetypes — comfortably large. With Grace Family Roofing's REAL
+approved PNG logo (the same asset OCCLUSION_ALPHA_TOL was calibrated against) composited into its
+three real fixture states (ASSEMBLE/REVEAL/INTERFACE), the counts are dramatically smaller —
+**ASSEMBLE's real signboard measures just 293 fully-opaque pixels**, REVEAL 35,120, INTERFACE 12,511
+— because a small on-screen texture with soft/antialiased edges leaves most of its own rendered
+pixels below full opacity even when the logo is genuinely, visibly correct (confirmed by direct
+screenshot). **`MIN_OPAQUE_PIXEL_COUNT = 50`**, chosen well below the real 293-pixel floor (so the
+guard stays evaluable on real production fixtures, not falsely flagged) and well above single-digit
+stray-pixel noise (the class of case this floor exists to catch). Below it, `checkOcclusion` now
+returns `{ ok: false, evaluable: false, visibleRatio: null, reason: "cannot evaluate: ..." }` instead
+of a vacuous pass; `src/capture.js` throws a distinct `OCCLUSION CHECK COULD NOT EVALUATE` error
+(separate from the existing `OCCLUSION CHECK FAILED` for a real detected occlusion — the two are
+different failure classes and need different fixes, so the error text doesn't conflate them) — fixed
+a latent crash along the way, since the old error-formatting code called
+`(visibleRatio * 100).toFixed(1)`, which throws on `null`.
+
+**Verified three ways, not assumed correct by construction:**
+- **No regression on real fixtures:** all six archetypes re-run with the synthetic text logo still
+  pass exactly as before (`ok:true, evaluable:true`, same visibleRatio values); the real
+  Grace Family Roofing ASSEMBLE fixture (293 pixels) still evaluates normally, not flagged.
+- **Constructed the exact failing case the task specified:** a synthetic logo PNG with uniform
+  alpha=200 (below `OCCLUSION_ALPHA_TOL=250`) now correctly returns `isolatedLogoPixelCount: 0`,
+  `evaluable: false`, `ok: false` — previously this would have silently returned `visibleRatio: 1`.
+- **Re-verified the original ASSEMBLE occlusion bug still trips correctly, distinct from the new
+  floor:** temporarily reverted the signboard to the known-occluded `z=0.55` (found and fixed under
+  OCCLUSION REGRESSION GUARD above) — still correctly returns `ok:false, evaluable:true,
+  visibleRatio:0.085` (a real, measurable occlusion, not a "cannot evaluate"), confirming the new
+  floor doesn't swallow or mask genuine occlusion failures. Reverted back to `z=0.75` immediately
+  after; confirmed via `git diff` the scene file returned to its exact committed state.
+
+Full method/scripts: `test/measure-format-layout.js`, `test/strip-png-pil.py`, `test/measure-lcp.js`;
+raw data in `test/cost-study/format-layout-results.json`, `strip-png-pil-results.json`,
+`lcp-measured-results.json`.
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

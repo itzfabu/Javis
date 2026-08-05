@@ -61,6 +61,14 @@ async function run() {
 // and can time it separately from compositing if ever useful.
 window.__toWebpDataUrl = (quality) => canvas.toDataURL('image/webp', quality);
 
+// PNG export, added for the PNG+grid measurement (vault: GRID SPRITE LAYOUT
+// follow-up, "fill in the missing experiment cell"). Not used by the
+// shipping composite.js (which only calls __toWebpDataUrl) - measurement-only
+// addition, same canvas/encoder the production WebP path already uses, so a
+// PNG-vs-WebP byte comparison on the same layout is a true encoder-only
+// difference, not a different rasterizer.
+window.__toPngDataUrl = () => canvas.toDataURL('image/png');
+
 run().catch((err) => {
   window.__error = String(err);
 });

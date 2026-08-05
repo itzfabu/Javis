@@ -150,6 +150,22 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
     // hidden behind a tower block while the frustum check passed cleanly) -
     // see vault note for the full account and how this guard was calibrated.
     const occlusionResult = await page.evaluate(() => (window.__occlusionCheck ? window.__occlusionCheck() : null));
+    if (occlusionResult && occlusionResult.evaluable === false) {
+      // Distinct from a real occlusion failure below: the guard found too
+      // few fully-opaque logo pixels to measure occlusion at all (soft
+      // edges, a small on-screen render, reduced global opacity) - this is
+      // "cannot evaluate," not "confirmed occluded." Still fails the
+      // capture loudly (an unverified logo is exactly the risk this guard
+      // exists to catch), but with its own message so it isn't mistaken
+      // for a real occlusion bug to "fix" by moving the signboard.
+      throw new Error(
+        `OCCLUSION CHECK COULD NOT EVALUATE for archetype ${archetype.key}: ${occlusionResult.reason} at t=${checkT}. ` +
+        `This does not mean the logo is occluded - it means this alpha-based check found too few fully-opaque pixels ` +
+        `(${occlusionResult.isolatedLogoPixelCount} < ${occlusionResult.minOpaquePixels}) to trust either way. ` +
+        `Check the logo asset's opacity/edge softness and signboard size in scenes/${archetype.scene}, or verify ` +
+        `visibility manually via a screenshot - do not lower minOpaquePixels just to make this pass.`
+      );
+    }
     if (occlusionResult && !occlusionResult.ok) {
       throw new Error(
         `OCCLUSION CHECK FAILED for archetype ${archetype.key}: only ${(occlusionResult.visibleRatio * 100).toFixed(1)}% ` +
