@@ -30,6 +30,44 @@
 //
 // 5 trials per archetype/state, fresh browser context per trial (cold HTTP
 // cache), median reported as the headline figure - same as measure-cost.js.
+//
+// CONTROL ARCHETYPE - added 2026-08-06, closing a real methodology gap: a
+// same-machine re-measurement of SPIN with zero code change came back
+// 1992-2000ms against a stored 1476-1480ms - about 35% drift across
+// sessions on the same box (see vault: TRANSFORM GRAIN MADE LUMINANCE-
+// CONDITIONAL + STD FLOOR CORRECTED). Every absolute figure in this
+// project's LCP tables was taken on a different day, and several
+// decisions (REVEAL's 0.59-0.71s "gap," the 60-unit-grain discard at
+// 2.54s against a 2.5s threshold) rest on margins that size of drift can
+// swallow whole. So every run of this script now ALSO measures one fixed,
+// never-modified archetype/state and reports every other figure alongside
+// that session's own control reading and the ratio between them - a
+// reader can then tell "this number moved because the code changed" from
+// "this number moved because the machine was under different load today"
+// without having to remember to re-measure a second thing by hand.
+//
+// Why INTERFACE/no-logo, specifically, and not the first name in the
+// archetype list: it has no open LCP task, unlike ASSEMBLE/FLYTHROUGH
+// (high-priority open gaps with untried levers - frame count, resolution,
+// WebP quality - all of which are expected to change their captured
+// content) or REVEAL (an open medium-priority gap with the same kind of
+// untried levers). TRANSFORM is under active per-session modification
+// (this same day's grain work). SPIN's format task is closed, but its
+// frame-count-reduction idea was reported, not applied, and remains live
+// per TASKS.md - not a safe "nobody will touch this" bet either. INTERFACE
+// is the one archetype with zero open or lingering ideas attached to it.
+// Its own captured content (three fixed-geometry dashboard panels sliding
+// in + a canvas-text counter, no lighting/material experimentation of the
+// kind TRANSFORM/REVEAL involve) is also simple and deterministic to
+// render, which is what a stable reference reading needs. no-logo (not
+// approved-logo) is used for the control specifically because it has one
+// fewer moving part (no extracted logo texture load).
+//
+// Control readings are appended to their OWN file (lcp-control-log.json),
+// NEVER to lcp-measured-results.json - the previous session's ad-hoc
+// control check overwrote SPIN's stored baseline there and needed a
+// manual revert. Keeping the two files structurally separate makes that
+// mistake impossible to repeat, not just something to remember not to do.
 
 const path = require('path');
 const fs = require('fs');
@@ -48,6 +86,10 @@ const NETWORK = {
   downloadThroughput: (1.6 * 1024 * 1024) / 8, // 1.6Mbps -> bytes/sec
   uploadThroughput: (750 * 1024) / 8, // 750Kbps -> bytes/sec (Lighthouse's figure; this page has no uploads)
 };
+
+const CONTROL_ARCHETYPE = 'interface';
+const CONTROL_STATE = 'no-logo';
+const CONTROL_LOG_PATH = path.join(__dirname, 'cost-study', 'lcp-control-log.json');
 
 function buildHeroPage(metadata) {
   const html = metadata.html.replace(
@@ -121,63 +163,117 @@ function median(arr) {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
+// Shared by both the control measurement and the main per-archetype loop below - one code path
+// for "run TRIALS trials against one archetype/state directory," not two copies that could
+// quietly drift apart from each other.
+async function measureArchetypeState(browser, base, archName, state) {
+  const dirName = state === 'approved-logo' ? `${archName}-approved` : archName;
+  const archDir = path.join(base, dirName);
+  const metaPath = path.join(archDir, 'metadata.json');
+  if (!fs.existsSync(metaPath)) return null;
+  const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+
+  const renderTimes = [];
+  const wallClocks = [];
+  for (let i = 0; i < TRIALS; i++) {
+    const { entry, wallClockMs } = await measureOne(browser, archDir, metadata);
+    wallClocks.push(wallClockMs);
+    if (entry && entry.renderTime) {
+      renderTimes.push(entry.renderTime);
+    } else if (entry && entry.loadTime) {
+      renderTimes.push(entry.loadTime);
+    } else {
+      renderTimes.push(null);
+    }
+  }
+
+  const valid = renderTimes.filter((v) => v !== null);
+  return {
+    archetype: archName.toUpperCase(),
+    state,
+    spriteBytes: fs.statSync(path.join(archDir, metadata.spriteSheet.path)).size,
+    frameCount: metadata.frameCount,
+    trials: renderTimes,
+    validTrials: valid.length,
+    measuredLcpMedianMs: valid.length ? +median(valid).toFixed(1) : null,
+    measuredLcpMinMs: valid.length ? +Math.min(...valid).toFixed(1) : null,
+    measuredLcpMaxMs: valid.length ? +Math.max(...valid).toFixed(1) : null,
+    wallClockMedianMs: +median(wallClocks).toFixed(1),
+  };
+}
+
+// Measures the control archetype/state and appends the reading to its own append-only log file -
+// see the header comment for why this never touches lcp-measured-results.json.
+async function measureControl(browser, base) {
+  const row = await measureArchetypeState(browser, base, CONTROL_ARCHETYPE, CONTROL_STATE);
+  if (!row) {
+    throw new Error(
+      `Control fixture not found: ${CONTROL_ARCHETYPE}/${CONTROL_STATE} - is test/cost-study/${CONTROL_ARCHETYPE}/metadata.json built?`
+    );
+  }
+  const entry = { measuredAt: new Date().toISOString(), ...row };
+  const log = fs.existsSync(CONTROL_LOG_PATH) ? JSON.parse(fs.readFileSync(CONTROL_LOG_PATH, 'utf8')) : [];
+  log.push(entry);
+  fs.writeFileSync(CONTROL_LOG_PATH, JSON.stringify(log, null, 2));
+  return entry;
+}
+
 async function main() {
   const base = path.join(__dirname, 'cost-study');
+  const rawArgs = process.argv.slice(2);
+  const controlOnly = rawArgs.includes('--control-only');
   // Optional CLI args scope this to specific archetypes (e.g. after
   // regenerating just one archetype's sheet) - same pattern measure-cost.js
   // already uses, added here for the same reason: re-running all six every
   // time a single sheet changes is wasteful and risks silently re-measuring
-  // archetypes that were never touched.
-  const archNames = process.argv.length > 2
-    ? process.argv.slice(2).map((a) => a.toLowerCase())
+  // archetypes that were never touched. Flags (anything starting with --)
+  // are filtered out so they aren't mistaken for archetype names.
+  const positional = rawArgs.filter((a) => !a.startsWith('--'));
+  const archNames = positional.length
+    ? positional.map((a) => a.toLowerCase())
     : Object.keys(ARCHETYPES).map((k) => k.toLowerCase());
+
   const browser = await chromium.launch();
   const results = [];
 
   try {
+    const control = await measureControl(browser, base);
+    const spread = control.measuredLcpMaxMs - control.measuredLcpMinMs;
+    console.log(
+      `CONTROL ${control.archetype}/${control.state}  median=${control.measuredLcpMedianMs}ms ` +
+      `(min=${control.measuredLcpMinMs}, max=${control.measuredLcpMaxMs}, spread=${spread.toFixed(1)}ms) ` +
+      `sprite=${(control.spriteBytes / 1024).toFixed(1)}KB  [logged to ${path.basename(CONTROL_LOG_PATH)}]`
+    );
+
+    if (controlOnly) {
+      const log = JSON.parse(fs.readFileSync(CONTROL_LOG_PATH, 'utf8'));
+      const medians = log.map((e) => e.measuredLcpMedianMs).filter((v) => v != null);
+      if (medians.length > 1) {
+        const lo = Math.min(...medians), hi = Math.max(...medians);
+        console.log(
+          `\n${medians.length} control readings on record: median range ${lo}-${hi}ms ` +
+          `(spread ${(hi - lo).toFixed(1)}ms, ${(((hi - lo) / lo) * 100).toFixed(1)}% of the lowest reading)`
+        );
+      }
+      return;
+    }
+
     for (const arch of archNames) {
       for (const state of ['no-logo', 'approved-logo']) {
-        const dirName = state === 'approved-logo' ? `${arch}-approved` : arch;
-        const archDir = path.join(base, dirName);
-        const metaPath = path.join(archDir, 'metadata.json');
-        if (!fs.existsSync(metaPath)) {
-          console.error(`SKIP ${arch} ${state}: ${metaPath} not found`);
+        const row = await measureArchetypeState(browser, base, arch, state);
+        if (!row) {
+          console.error(`SKIP ${arch} ${state}: ${path.join(base, state === 'approved-logo' ? `${arch}-approved` : arch, 'metadata.json')} not found`);
           continue;
         }
-        const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-
-        const renderTimes = [];
-        const wallClocks = [];
-        for (let i = 0; i < TRIALS; i++) {
-          const { entry, wallClockMs } = await measureOne(browser, archDir, metadata);
-          wallClocks.push(wallClockMs);
-          if (entry && entry.renderTime) {
-            renderTimes.push(entry.renderTime);
-          } else if (entry && entry.loadTime) {
-            renderTimes.push(entry.loadTime);
-          } else {
-            renderTimes.push(null);
-          }
-        }
-
-        const valid = renderTimes.filter((v) => v !== null);
-        const row = {
-          archetype: arch.toUpperCase(),
-          state,
-          spriteBytes: fs.statSync(path.join(archDir, metadata.spriteSheet.path)).size,
-          frameCount: metadata.frameCount,
-          trials: renderTimes,
-          validTrials: valid.length,
-          measuredLcpMedianMs: valid.length ? +median(valid).toFixed(1) : null,
-          measuredLcpMinMs: valid.length ? +Math.min(...valid).toFixed(1) : null,
-          measuredLcpMaxMs: valid.length ? +Math.max(...valid).toFixed(1) : null,
-          wallClockMedianMs: +median(wallClocks).toFixed(1),
-        };
+        row.controlMedianMs = control.measuredLcpMedianMs;
+        row.ratioToControl = row.measuredLcpMedianMs != null && control.measuredLcpMedianMs
+          ? +(row.measuredLcpMedianMs / control.measuredLcpMedianMs).toFixed(3)
+          : null;
         results.push(row);
         console.log(
           `${arch.padEnd(11)} ${state.padEnd(14)} measuredLCP median=${row.measuredLcpMedianMs}ms ` +
           `(min=${row.measuredLcpMinMs}, max=${row.measuredLcpMaxMs}, n=${row.validTrials}/${TRIALS}) ` +
-          `sprite=${(row.spriteBytes/1024).toFixed(1)}KB`
+          `sprite=${(row.spriteBytes/1024).toFixed(1)}KB  ratioToControl=${row.ratioToControl}x`
         );
       }
     }
@@ -188,7 +284,8 @@ async function main() {
   // Merge into the existing results file when scoped to specific
   // archetypes, rather than overwriting it - a partial re-run (e.g. after
   // regenerating just one archetype's sheet) must not silently discard the
-  // other archetypes' still-valid measurements.
+  // other archetypes' still-valid measurements. The control reading itself
+  // is never part of this merge/write - see measureControl() above.
   const outPath = path.join(base, 'lcp-measured-results.json');
   let merged = results;
   if (fs.existsSync(outPath)) {

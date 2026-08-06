@@ -2837,6 +2837,12 @@ under CPU throttle alone (a plain page's `load` event was observed taking 18+ re
 CPU throttle with no network throttle involved) — switched to `waitUntil: 'commit'` plus the
 in-page `PerformanceObserver` promise, the exact pattern `measure-cost.js` already used successfully.
 
+**This table is SUPERSEDED - see LCP MEASUREMENT METHODOLOGY: CONTROL ARCHETYPE + FULL RE-MEASUREMENT
+further down.** Every figure below was measured on a different day with no shared reference point; a
+same-machine, zero-code-change re-measurement of SPIN later found ~35% drift against its own stored
+number here, and several of this project's decisions (REVEAL's gap, the 60-unit TRANSFORM grain
+discard) rest on margins smaller than that. Kept as historical record, not corrected in place.
+
 | Archetype | Old estimate (no-logo) | Measured (no-logo) | Measured (approved-logo) | Verdict (unchanged) |
 |---|---|---|---|---|
 | ASSEMBLE | 4.67s | **4.72s** | 4.94s | Poor |
@@ -3344,6 +3350,156 @@ floor - all pass**, not assumed safe from the one archetype that motivated the c
 Full method: `scenes/transform.html`, `src/sheet-integrity.js` (`NON_UNIFORM_STD_FLOOR`),
 re-measured/re-verified via `bin/generate-frames.js`/`measure-lcp.js`/`verifySheetIntegrity()`
 against real fixtures (Birds Barbershop, Hiut Denim, and all twelve shipped sprite sheets).
+
+### LCP MEASUREMENT METHODOLOGY: CONTROL ARCHETYPE + FULL RE-MEASUREMENT (2026-08-06)
+
+**The problem, stated plainly: every absolute LCP figure in this document up to this point was taken
+on a different day, with no shared reference point between sessions.** The section above already
+flagged the symptom in passing - re-measuring SPIN with zero code change came back 1992-2000ms
+against a stored 1476-1480ms, ~35% drift on the same machine. That's not a rounding error: REVEAL's
+open LCP task rests on a 0.59-0.71s gap, and the TRANSFORM 60-unit-grain discard rested on 2.54s
+against a 2.5s threshold - both margins smaller than the drift just observed. `measure-lcp.js` had no
+mechanism to tell "the code changed" apart from "the machine was busier today," so this fixes that
+structurally rather than asking future sessions to remember a caveat.
+
+**Added a fixed control archetype, measured every run, logged separately from real results.**
+`measure-lcp.js` now always measures INTERFACE/no-logo (5 trials, same method as everything else) at
+the start of every invocation - including `--control-only`, a new mode for a standalone reading with
+no other measurement - and reports every archetype's figure alongside that session's control reading
+and the ratio between them (`controlMedianMs`/`ratioToControl` on every row). The control reading
+itself is appended to a new `test/cost-study/lcp-control-log.json`, never to
+`lcp-measured-results.json` - the previous session's ad-hoc SPIN check overwrote its stored baseline
+there and needed a manual revert; separating the files makes that structurally impossible instead of
+a rule to remember.
+
+**Why INTERFACE/no-logo, specifically:** it's the one archetype with no open or lingering idea
+attached to it. ASSEMBLE and FLYTHROUGH have open, high-priority LCP gaps with untried levers (frame
+count, resolution, WebP quality) that are expected to change their captured content; REVEAL has the
+same shape of open gap at medium priority; TRANSFORM was under active modification this same session;
+SPIN's frame-count-reduction idea was reported but not applied and remains live per TASKS.md - not a
+safe "nobody will touch this" bet either. INTERFACE has zero open tasks and wasn't touched by any of
+today's code changes. Its captured content (three fixed-geometry dashboard panels sliding in + a
+canvas-text counter, no lighting/material experimentation) is also simple and deterministic to render,
+which is what a stable reference needs. no-logo over approved-logo: one fewer moving part (no
+extracted logo texture load).
+
+**Full re-measurement, all six archetypes, one session, back to back** (this table replaces the
+SUPERSEDED one above under MEASURED LCP REPLACES ESTIMATE - same method: 4x CPU throttle + CDP
+Slow-4G network emulation + Element Timing on the real `.hero-sprite`, 5 trials/archetype/state):
+
+| Archetype | State | Median LCP | Min-Max | Sprite | Ratio to control | Verdict (2.5s/4s) |
+|---|---|---|---|---|---|---|
+| ASSEMBLE | no-logo | 5816ms | 5296-6052 | 822.4KB | 3.13x | Poor |
+| ASSEMBLE | approved-logo | 6068ms | 5892-6704 | 866.4KB | 3.26x | Poor |
+| REVEAL | no-logo | 3568ms | 3448-3820 | 506.7KB | 1.92x | Needs Improvement |
+| REVEAL | approved-logo | 3816ms | 3492-3928 | 532.6KB | 2.05x | Needs Improvement |
+| SPIN | no-logo | 2068ms | 1880-2420 | 167.7KB | 1.11x | Good |
+| SPIN | approved-logo | 2100ms | 1840-2240 | 166.6KB | 1.13x | Good |
+| TRANSFORM | no-logo | 2300ms | 2272-2416 | 256.9KB | 1.24x | Good |
+| TRANSFORM | approved-logo | 2220ms | 2172-2496 | 268.2KB | 1.19x | Good |
+| FLYTHROUGH | no-logo | 8152ms | 8040-8188 | 1430.7KB | 4.38x | Poor |
+| FLYTHROUGH | approved-logo | 8664ms | 8368-8904 | 1464.4KB | 4.66x | Poor |
+| INTERFACE | no-logo | 1776ms | 1720-1924 | 113.2KB | 0.96x | Good |
+| INTERFACE | approved-logo | 1928ms | 1848-2484 | 126.8KB | 1.04x | Good |
+
+Control this run (INTERFACE/no-logo, measured separately from INTERFACE's own row above - same
+archetype/state, two independent 5-trial batches within one process, ~85ms apart): **1860ms**
+(1668-2104ms). **No verdict bucket changed from the superseded table** - ASSEMBLE and FLYTHROUGH stay
+Poor, REVEAL stays Needs Improvement, SPIN/TRANSFORM/INTERFACE stay Good - despite every archetype's
+absolute figure running noticeably higher today (machine-load drift, not a code effect; the control
+itself moved 1732-1960ms across this session alone, see below). The one place this DOES change the
+picture, not just the number: TRANSFORM's Good margin is now visibly thin (see the dedicated
+re-test below), where the superseded table's "0.38-0.47s of real margin" language overstated the
+confidence a single day's reading can actually support.
+
+**Harness resolution, measured directly rather than assumed - 5 control readings taken across this
+session** (not artificially bunched: one standalone check, one inside the six-archetype run above,
+one inside the 60-unit test below, one inside the shipped re-test below, one final standalone check,
+spanning about 10 minutes of continuous work):
+
+| # | Median | Min-Max (within-run spread) | Context |
+|---|---|---|---|
+| 1 | 1780ms | 1692-2044 (352ms) | standalone check |
+| 2 | 1860ms | 1668-2104 (436ms) | inside the six-archetype run above |
+| 3 | 1740ms | 1624-1992 (368ms) | inside the 60-unit TRANSFORM test |
+| 4 | 1960ms | 1696-2244 (548ms) | inside the shipped TRANSFORM re-test |
+| 5 | 1732ms | 1596-2120 (524ms) | standalone check |
+
+**Two resolution numbers, not one:** across the 5 runs' own medians, 1732-1960ms - a **228ms (13.2%)
+cross-run spread**, this session's real answer to "how much can two separate measurements of the
+identical, unchanged thing differ." Within a single 5-trial run, the min-max spread ranged
+**352-548ms (20-31% of that run's own median)** - trial-to-trial noise alone, before any run-to-run
+drift is even counted. Across all 25 individual trials this session: 1596-2244ms, a 648ms spread.
+**Practical rule going forward: a difference under ~230ms between two session-median readings, or
+under ~550ms between two single trials, is not distinguishable from this harness's own noise** - the
+Good/Needs Improvement/Poor buckets are fixed field-data thresholds and should keep being read that
+way, but a margin *below* a threshold shouldn't be read as more precise than this resolution allows.
+This is a large fraction of the 35% cross-session drift that motivated this whole fix - most of that
+historical drift is real day-to-day machine variance, but a meaningful slice of any two-session
+comparison is just this same within-session noise, now measured instead of assumed.
+
+**Revisited: does the 60-unit TRANSFORM grain range actually fail, now that luminance-conditional
+scaling exists?** Re-measured back to back in the same session, both variants against the real Birds
+Barbershop fixture (light palette, the one that exercises the grain most):
+
+| Variant | State | Control (that run) | Median LCP | Ratio to control | vs. 2.5s |
+|---|---|---|---|---|---|
+| 60-unit (flat, non-conditional) | no-logo | 1740ms | 2632ms | 1.51x | **+132ms over** |
+| 60-unit (flat, non-conditional) | approved-logo | 1740ms | 2900ms | 1.67x | **+400ms over** |
+| Shipped (luminance-conditional) | no-logo | 1960ms | 2368ms | 1.21x | -132ms under |
+| Shipped (luminance-conditional) | approved-logo | 1960ms | 2308ms | 1.18x | -192ms under |
+
+**Yes, the 60-unit version still fails - this was NOT a noise-driven decision, and re-measuring
+confirms it rather than reversing it.** Both states land in Needs Improvement, consistent with the
+original 2.54s/2.73s finding that discarded it. The raw gap between the two variants (264ms no-logo,
+592ms approved-logo) sits at or above this session's own 228ms cross-run resolution floor, and -
+importantly - the comparison is NOT an artifact of session drift working in its favor: the 60-unit
+run's own control reading (1740ms) was *faster* than the shipped run's control (1960ms), meaning if
+anything today's drift worked against seeing this difference, and it still showed up clearly. **Not
+switching to it** - per the task's own instruction to report, not act - but the luminance-conditional
+work does change what "shipped 40-unit" now means in practice: for Birds Barbershop specifically
+(luma 0.846) the real range shipped today is 34 of 40 units, not the flat 40 this comparison's
+"shipped" row still measured against the code as of this session (post luminance-conditional change,
+pre any further tuning) - the two are close but not identical, disclosed here rather than glossed
+over.
+
+**One real finding this re-test surfaced, unprompted: TRANSFORM's own Good verdict margin is thinner
+than this harness can currently distinguish from noise.** 132ms (no-logo) / 192ms (approved-logo)
+below the 2.5s line - both smaller than the 228ms cross-run control resolution, and far smaller than
+a single run's own 352-548ms internal spread. The six-archetype table above shows a similar story
+independently (200ms/280ms margins, a different run). This doesn't flip today's verdict - TRANSFORM
+measured Good in every run this session, consistently - but it means that margin should be treated as
+"probably Good, margin not confidently distinguishable from this session's own noise floor," not the
+comfortable 0.38-0.47s of headroom the superseded table's language implied. Not a new task by itself;
+flagged as an open watch item for whenever TRANSFORM's grain or fixture set changes again.
+
+**REVEAL's open LCP task, re-measured with control: the gap survives, larger than before, and is not
+explainable by session drift alone.** From the six-archetype table: 3568ms (no-logo, ratio 1.92x) /
+3816ms (approved-logo, ratio 2.05x) against the 2.5s Good threshold - a **1068ms/1316ms (43%/53%)
+gap**, larger in both absolute and percentage terms than the superseded table's 0.59-0.71s (24-28%).
+**Two independent reasons this reads as real signal, not noise:** first, the raw gap (1068-1316ms) is
+more than double this session's largest observed spread (648ms, the widest single-trial range;
+228ms cross-run) - nowhere close to the noise floor just measured. Second, and more telling: REVEAL's
+*ratio to control* (1.92-2.05x) sits far above every Good-bucket archetype's own ratio this session
+(SPIN 1.11-1.13x, TRANSFORM 1.19-1.24x, INTERFACE 0.96-1.04x) - REVEAL isn't just expensive because
+today's machine is generally slower, it is structurally, proportionally heavier than the control and
+every cheap archetype, which the raw ms figure alone (mixed in with today's session-wide slowdown)
+can't cleanly show but the ratio can. **REVEAL's LCP task stays open, correctly** - materials remain
+untouched per the standing instruction; the two previously-identified untried levers (WebP quality,
+frame-count reduction) remain the live options, unchanged by this re-measurement.
+
+**No past bucket-level verdict actually reversed under this scrutiny - said plainly, not glossed
+over.** The honest finding here is narrower than "a past decision was wrong": every Good/Needs
+Improvement/Poor verdict in the superseded table holds up against a fresh, controlled re-measurement,
+including the 60-unit grain discard and REVEAL's open gap. What changed is confidence in the
+*margins*, not the *verdicts* - TRANSFORM's Good call in particular rests on a margin inside this
+session's own measured noise floor, which the earlier write-up didn't know to check for. That's the
+real output of this task: not a reversal, but a resolution limit now stated instead of assumed away.
+
+Full method: `test/measure-lcp.js` (control mechanism), raw data in
+`test/cost-study/lcp-measured-results.json` (six-archetype table + TRANSFORM re-test, control-tagged)
+and `test/cost-study/lcp-control-log.json` (all 5 control readings, append-only, never merged into
+the results file).
 
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)

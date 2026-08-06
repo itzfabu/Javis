@@ -1,0 +1,97 @@
+[
+  {
+    "measuredAt": "2026-08-06T11:13:07.060Z",
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "spriteBytes": 115958,
+    "frameCount": 48,
+    "trials": [
+      2044,
+      1780,
+      1732,
+      1960,
+      1692
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1780,
+    "measuredLcpMinMs": 1692,
+    "measuredLcpMaxMs": 2044,
+    "wallClockMedianMs": 1815
+  },
+  {
+    "measuredAt": "2026-08-06T11:13:39.719Z",
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "spriteBytes": 115958,
+    "frameCount": 48,
+    "trials": [
+      2104,
+      1860,
+      1912,
+      1692,
+      1668
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1860,
+    "measuredLcpMinMs": 1668,
+    "measuredLcpMaxMs": 2104,
+    "wallClockMedianMs": 1887
+  },
+  {
+    "measuredAt": "2026-08-06T11:20:15.283Z",
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "spriteBytes": 115958,
+    "frameCount": 48,
+    "trials": [
+      1992,
+      1740,
+      1664,
+      1920,
+      1624
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1740,
+    "measuredLcpMinMs": 1624,
+    "measuredLcpMaxMs": 1992,
+    "wallClockMedianMs": 1773
+  },
+  {
+    "measuredAt": "2026-08-06T11:21:52.810Z",
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "spriteBytes": 115958,
+    "frameCount": 48,
+    "trials": [
+      1960,
+      1728,
+      2244,
+      1696,
+      2120
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1960,
+    "measuredLcpMinMs": 1696,
+    "measuredLcpMaxMs": 2244,
+    "wallClockMedianMs": 1991
+  },
+  {
+    "measuredAt": "2026-08-06T11:22:56.462Z",
+    "archetype": "INTERFACE",
+    "state": "no-logo",
+    "spriteBytes": 115958,
+    "frameCount": 48,
+    "trials": [
+      2120,
+      1596,
+      1832,
+      1632,
+      1732
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1732,
+    "measuredLcpMinMs": 1596,
+    "measuredLcpMaxMs": 2120,
+    "wallClockMedianMs": 1756
+  }
+]

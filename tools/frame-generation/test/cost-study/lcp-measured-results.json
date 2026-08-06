@@ -5,17 +5,19 @@
     "spriteBytes": 887186,
     "frameCount": 96,
     "trials": [
-      4980,
-      4940,
-      4952,
-      4916,
-      4940
+      6000,
+      6704,
+      6372,
+      6068,
+      5892
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 4940,
-    "measuredLcpMinMs": 4916,
-    "measuredLcpMaxMs": 4980,
-    "wallClockMedianMs": 4948
+    "measuredLcpMedianMs": 6068,
+    "measuredLcpMinMs": 5892,
+    "measuredLcpMaxMs": 6704,
+    "wallClockMedianMs": 6130,
+    "controlMedianMs": 1860,
+    "ratioToControl": 3.262
   },
   {
     "archetype": "ASSEMBLE",
@@ -23,17 +25,19 @@
     "spriteBytes": 842106,
     "frameCount": 96,
     "trials": [
-      4708,
-      4716,
-      4904,
-      4720,
-      4688
+      5816,
+      5296,
+      5892,
+      5652,
+      6052
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 4716,
-    "measuredLcpMinMs": 4688,
-    "measuredLcpMaxMs": 4904,
-    "wallClockMedianMs": 4729
+    "measuredLcpMedianMs": 5816,
+    "measuredLcpMinMs": 5296,
+    "measuredLcpMaxMs": 6052,
+    "wallClockMedianMs": 5860,
+    "controlMedianMs": 1860,
+    "ratioToControl": 3.127
   },
   {
     "archetype": "FLYTHROUGH",
@@ -41,17 +45,19 @@
     "spriteBytes": 1499590,
     "frameCount": 72,
     "trials": [
-      8072,
-      8000,
-      8280,
-      8004,
-      8088
+      8368,
+      8560,
+      8664,
+      8904,
+      8680
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 8072,
-    "measuredLcpMinMs": 8000,
-    "measuredLcpMaxMs": 8280,
-    "wallClockMedianMs": 8086
+    "measuredLcpMedianMs": 8664,
+    "measuredLcpMinMs": 8368,
+    "measuredLcpMaxMs": 8904,
+    "wallClockMedianMs": 8683,
+    "controlMedianMs": 1860,
+    "ratioToControl": 4.658
   },
   {
     "archetype": "FLYTHROUGH",
@@ -59,17 +65,19 @@
     "spriteBytes": 1465006,
     "frameCount": 72,
     "trials": [
-      7760,
-      7832,
-      7840,
-      8000,
-      7836
+      8188,
+      8152,
+      8160,
+      8040,
+      8064
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 7836,
-    "measuredLcpMinMs": 7760,
-    "measuredLcpMaxMs": 8000,
-    "wallClockMedianMs": 7854
+    "measuredLcpMedianMs": 8152,
+    "measuredLcpMinMs": 8040,
+    "measuredLcpMaxMs": 8188,
+    "wallClockMedianMs": 8189,
+    "controlMedianMs": 1860,
+    "ratioToControl": 4.383
   },
   {
     "archetype": "INTERFACE",
@@ -77,17 +85,19 @@
     "spriteBytes": 129802,
     "frameCount": 48,
     "trials": [
-      1344,
-      1336,
-      1304,
-      1332,
-      1304
+      1928,
+      2016,
+      1848,
+      2484,
+      1852
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1332,
-    "measuredLcpMinMs": 1304,
-    "measuredLcpMaxMs": 1344,
-    "wallClockMedianMs": 1337
+    "measuredLcpMedianMs": 1928,
+    "measuredLcpMinMs": 1848,
+    "measuredLcpMaxMs": 2484,
+    "wallClockMedianMs": 1995,
+    "controlMedianMs": 1860,
+    "ratioToControl": 1.037
   },
   {
     "archetype": "INTERFACE",
@@ -95,17 +105,19 @@
     "spriteBytes": 115958,
     "frameCount": 48,
     "trials": [
-      1264,
-      1244,
-      1304,
-      1240,
-      1280
+      1776,
+      1780,
+      1924,
+      1720,
+      1720
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1264,
-    "measuredLcpMinMs": 1240,
-    "measuredLcpMaxMs": 1304,
-    "wallClockMedianMs": 1284
+    "measuredLcpMedianMs": 1776,
+    "measuredLcpMinMs": 1720,
+    "measuredLcpMaxMs": 1924,
+    "wallClockMedianMs": 1799,
+    "controlMedianMs": 1860,
+    "ratioToControl": 0.955
   },
   {
     "archetype": "REVEAL",
@@ -113,17 +125,19 @@
     "spriteBytes": 545346,
     "frameCount": 48,
     "trials": [
-      3172,
-      3208,
-      3216,
-      3188,
-      3212
+      3844,
+      3492,
+      3928,
+      3524,
+      3816
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 3208,
-    "measuredLcpMinMs": 3172,
-    "measuredLcpMaxMs": 3216,
-    "wallClockMedianMs": 3219
+    "measuredLcpMedianMs": 3816,
+    "measuredLcpMinMs": 3492,
+    "measuredLcpMaxMs": 3928,
+    "wallClockMedianMs": 3841,
+    "controlMedianMs": 1860,
+    "ratioToControl": 2.052
   },
   {
     "archetype": "REVEAL",
@@ -131,17 +145,19 @@
     "spriteBytes": 518874,
     "frameCount": 48,
     "trials": [
-      3056,
-      3088,
-      3088,
-      3084,
-      3104
+      3448,
+      3568,
+      3820,
+      3760,
+      3560
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 3088,
-    "measuredLcpMinMs": 3056,
-    "measuredLcpMaxMs": 3104,
-    "wallClockMedianMs": 3101
+    "measuredLcpMedianMs": 3568,
+    "measuredLcpMinMs": 3448,
+    "measuredLcpMaxMs": 3820,
+    "wallClockMedianMs": 3604,
+    "controlMedianMs": 1860,
+    "ratioToControl": 1.918
   },
   {
     "archetype": "SPIN",
@@ -149,17 +165,19 @@
     "spriteBytes": 170626,
     "frameCount": 24,
     "trials": [
-      1516,
-      1484,
-      1476,
-      1476,
-      1472
+      2240,
+      1840,
+      2100,
+      1892,
+      2188
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1476,
-    "measuredLcpMinMs": 1472,
-    "measuredLcpMaxMs": 1516,
-    "wallClockMedianMs": 1486
+    "measuredLcpMedianMs": 2100,
+    "measuredLcpMinMs": 1840,
+    "measuredLcpMaxMs": 2240,
+    "wallClockMedianMs": 2137,
+    "controlMedianMs": 1860,
+    "ratioToControl": 1.129
   },
   {
     "archetype": "SPIN",
@@ -167,52 +185,58 @@
     "spriteBytes": 171676,
     "frameCount": 24,
     "trials": [
-      1500,
-      1480,
-      1488,
-      1460,
-      1480
+      2068,
+      2420,
+      1880,
+      2128,
+      1904
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1480,
-    "measuredLcpMinMs": 1460,
-    "measuredLcpMaxMs": 1500,
-    "wallClockMedianMs": 1512
+    "measuredLcpMedianMs": 2068,
+    "measuredLcpMinMs": 1880,
+    "measuredLcpMaxMs": 2420,
+    "wallClockMedianMs": 2103,
+    "controlMedianMs": 1860,
+    "ratioToControl": 1.112
   },
   {
     "archetype": "TRANSFORM",
     "state": "approved-logo",
-    "spriteBytes": 274664,
+    "spriteBytes": 276076,
     "frameCount": 32,
     "trials": [
-      2304,
-      2300,
-      2160,
-      2532,
-      2172
+      2432,
+      2308,
+      2376,
+      2240,
+      2252
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 2300,
-    "measuredLcpMinMs": 2160,
-    "measuredLcpMaxMs": 2532,
-    "wallClockMedianMs": 2342
+    "measuredLcpMedianMs": 2308,
+    "measuredLcpMinMs": 2240,
+    "measuredLcpMaxMs": 2432,
+    "wallClockMedianMs": 2329,
+    "controlMedianMs": 1960,
+    "ratioToControl": 1.178
   },
   {
     "archetype": "TRANSFORM",
     "state": "no-logo",
-    "spriteBytes": 263058,
+    "spriteBytes": 265370,
     "frameCount": 32,
     "trials": [
-      2448,
-      2272,
-      2184,
-      2268,
-      2232
+      2168,
+      2756,
+      2360,
+      2368,
+      2444
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 2268,
-    "measuredLcpMinMs": 2184,
-    "measuredLcpMaxMs": 2448,
-    "wallClockMedianMs": 2297
+    "measuredLcpMedianMs": 2368,
+    "measuredLcpMinMs": 2168,
+    "measuredLcpMaxMs": 2756,
+    "wallClockMedianMs": 2417,
+    "controlMedianMs": 1960,
+    "ratioToControl": 1.208
   }
 ]
