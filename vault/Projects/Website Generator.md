@@ -3501,6 +3501,152 @@ Full method: `test/measure-lcp.js` (control mechanism), raw data in
 and `test/cost-study/lcp-control-log.json` (all 5 control readings, append-only, never merged into
 the results file).
 
+### RATIO-TO-CONTROL STABILITY UNDER LOAD (2026-08-06) — tested, not assumed
+
+**The gap: the control mechanism above was built to make cross-session comparison possible, but
+that property had never actually been tested - one session's worth of ratio data existed, and a
+ratio only helps if it holds when machine load changes, which is exactly the condition it exists to
+correct for.** Reason to doubt it going in: under Slow-4G emulation, a large fixed component (150ms
+RTT, connection setup) is barely affected by CPU load, so a download-dominated archetype and a
+fixed-cost-dominated one should drift by different proportions under load - moving their ratios
+differently, not uniformly. Tested directly: ran the full six-archetype suite twice, back to back,
+once on an idle machine and once under a deliberate, sustained stressor (a concurrent capture sweep -
+repeatedly running the real ASSEMBLE capture pipeline into a throwaway directory in the background,
+the realistic load the task asked for, not a synthetic busy-loop).
+
+**Per-archetype absolute and ratio movement, idle -> loaded** (control: 1576ms idle -> 1692ms loaded,
++116ms/+7.4%):
+
+| Archetype | State | Idle ms (ratio) | Loaded ms (ratio) | Δms (Δ%) | Δratio |
+|---|---|---|---|---|---|
+| ASSEMBLE | no-logo | 5412 (3.43x) | 6060 (3.58x) | +648ms (+12.0%) | **+0.148** |
+| ASSEMBLE | approved-logo | 5436 (3.45x) | 6184 (3.66x) | +748ms (+13.8%) | **+0.206** |
+| REVEAL | no-logo | 3300 (2.09x) | 3672 (2.17x) | +372ms (+11.3%) | +0.076 |
+| REVEAL | approved-logo | 3504 (2.22x) | 3704 (2.19x) | +200ms (+5.7%) | -0.034 |
+| SPIN | no-logo | 1804 (1.15x) | 1964 (1.16x) | +160ms (+8.9%) | +0.016 |
+| SPIN | approved-logo | 1732 (1.10x) | 2052 (1.21x) | +320ms (+18.5%) | +0.114 |
+| TRANSFORM | no-logo | 2184 (1.39x) | 2244 (1.33x) | +60ms (+2.7%) | -0.060 |
+| TRANSFORM | approved-logo | 2020 (1.28x) | 2252 (1.33x) | +232ms (+11.5%) | +0.049 |
+| FLYTHROUGH | no-logo | 8068 (5.12x) | 8264 (4.88x) | +196ms (+2.4%) | **-0.235** |
+| FLYTHROUGH | approved-logo | 8472 (5.38x) | 8668 (5.12x) | +196ms (+2.3%) | **-0.253** |
+| INTERFACE | no-logo | 1676 (1.06x) | 1768 (1.05x) | +92ms (+5.5%) | -0.018 |
+| INTERFACE | approved-logo | 1900 (1.21x) | 1844 (1.09x) | -56ms (-2.9%) | -0.116 |
+
+**The ratio's own irreducible error, measured directly, not estimated from one sample - three
+independent readings now exist:** INTERFACE/no-logo appears twice in every full-suite run - once as
+itself, once as the control - two independent 5-trial batches of literally identical content within
+one process. Three sessions' worth: 0.955x (original session), 1.063x (idle run above), 1.045x
+(loaded run above) - **range 0.955-1.063x, a 0.109 (10.9-point) spread**, centered slightly above
+1.00 (mean 1.021), not the single-sample "~4-5%" a lone reading suggested. This is the ratio's own
+floor: **a Δratio smaller than ~0.11 between two sessions cannot be distinguished from the ratio
+metric's own measurement noise**, regardless of what caused it.
+
+**Verdict, measured against that floor: ratio-to-control is NOT uniformly stable across load
+conditions - it holds for four of six archetypes and breaks for two, and this is stated plainly, not
+narrowed around quietly.** REVEAL, SPIN, TRANSFORM, and INTERFACE all moved by ≤0.116 between idle
+and loaded - at or inside the ratio's own 0.109 noise floor, meaning their ratio movement can't be
+confidently attributed to the load change at all (it could just as easily be ordinary ratio noise).
+**ASSEMBLE (+0.148/+0.206) and FLYTHROUGH (-0.235/-0.253) both moved 1.4-2.3x beyond that floor -
+real, load-attributable movement, not noise.** This partly confirms the fixed-RTT hypothesis (the two
+most download-dominated, largest-sprite archetypes are exactly the ones whose ratio isn't stable) but
+NOT in the simple, single-direction way that hypothesis would predict: ASSEMBLE's ratio *rose* under
+load (got proportionally more expensive relative to control) while FLYTHROUGH's *fell* (got
+proportionally cheaper relative to control), despite both being large, download-heavy, and both
+archetypes' own raw ms *increasing* under load like everything else. There is no clean correction
+factor to apply here - the direction itself isn't predictable from sprite size alone.
+
+**Practical conclusion: ratio-to-control is valid within one session (trivially - always was), and
+usable for cross-session comparison for REVEAL/SPIN/TRANSFORM/INTERFACE (movement stays inside the
+ratio's own ~11-point noise), but should NOT be trusted across sessions for ASSEMBLE or FLYTHROUGH as
+currently built.** This doesn't change either archetype's own Poor verdict - their gaps against 2.5s
+are multiple *seconds*, an order of magnitude past any noise or drift measured in this whole
+investigation - but it means judging THEM specifically should lean on the raw-ms-vs-measured-noise
+method (already established above), not a ratio comparison across sessions, until the mechanism is
+improved.
+
+**What would make it stable, proposed rather than built (out of scope for this task):** a single
+light control (INTERFACE) structurally can't represent both a network-light and a network-heavy
+archetype's own bottleneck profile. Two candidate fixes: (a) add a second, deliberately heavy/
+download-dominated control archetype, so ASSEMBLE/FLYTHROUGH-class fixtures get compared against a
+control with a similar cost profile instead of a light one; or (b) decompose the LCP figure itself
+into its network-transfer and CPU-render components (Resource/Navigation Timing already exposes both)
+and ratio each component against a matching reference, instead of ratio-ing one blended end-to-end
+number. Neither is built - flagged as a real next step if ASSEMBLE/FLYTHROUGH's LCP task is ever
+worked with cross-session ratio comparisons in mind.
+
+Full method: same `measure-lcp.js` control mechanism; load generated by
+`test/_scratch_load-sweep.js` (repeated real ASSEMBLE captures via `src/capture.js`, deleted between
+iterations, script removed after this measurement - not part of the shipped pipeline). Raw data: both
+runs merged into `test/cost-study/lcp-measured-results.json` (loaded run is now the current stored
+figure per archetype - see caveat below), both control readings in `lcp-control-log.json`.
+
+### DOES MORE TRIALS RESOLVE TRANSFORM'S VERDICT? (2026-08-06)
+
+**The premise being tested: the 228ms/13.2% cross-run resolution recorded above was described as a
+property of the harness. It's really a property of running 5 trials - median sampling error shrinks
+as trial count grows, so a targeted archetype could afford more without paying the cost project-wide.**
+Re-measured TRANSFORM (both states) and the control at 15 trials (3x the standard count), three times
+back to back under idle conditions (load sweep already stopped, so this isolates trial-count from the
+load question above), via the new `--trials=N` override in `measure-lcp.js` (per-invocation only -
+the global default stays 5, per the task's own instruction not to raise it project-wide).
+
+| Run | Control median | TRANSFORM no-logo | TRANSFORM approved-logo |
+|---|---|---|---|
+| 1 | 1680ms (1576-2272) | 2508ms (2140-2692) | 2432ms (2324-3264) |
+| 2 | 1808ms (1592-2412) | 2344ms (2132-2784) | 2644ms (2200-3244) |
+| 3 | 1724ms (1568-1924) | 2300ms (2148-2860) | 2520ms (2224-2924) |
+
+**Resolution DID tighten - control's cross-run median spread went from 228ms/13.2% (5 runs at 5
+trials each, prior section) to 128ms/7.6% (3 runs at 15 trials each) - roughly the direction sampling
+theory predicts, though from fewer runs (3, not 5) so this comparison itself carries more sampling
+uncertainty than the number it's being compared against, disclosed rather than glossed over.**
+
+**But TRANSFORM's own verdict is NOT resolved - the real answer is that it's genuinely undetermined,
+not "probably Good with a thin margin."** TRANSFORM's own cross-run median spread at 15 trials is
+208ms (no-logo) / 212ms (approved-logo) - comparable to, not smaller than, the tightened 128ms control
+resolution, and comparable to the original 132-192ms margin the "Good" verdict rested on. More
+directly: **of the six 15-trial medians measured (3 runs × 2 states), three landed ABOVE the 2500ms
+line** (run 1 no-logo: 2508ms; run 2 approved-logo: 2644ms; run 3 approved-logo: 2520ms) **and three
+landed below it** (run 1 approved-logo: 2432ms; run 2 no-logo: 2344ms; run 3 no-logo: 2300ms). Going
+from 5 to 15 trials did not convert a thin Good margin into a confident one - it revealed that
+TRANSFORM's true value sits close enough to the 2.5s line that real, honestly-measured sessions land
+on both sides of it. **Updating the watch item to a real answer, as asked: TRANSFORM's LCP verdict is
+a genuine toss-up at the current threshold, not a confirmed Good with a caveat** - see the new TASKS.md
+entry below, promoted from a watch item to an open task.
+
+**Why more trials didn't settle it, and what would: this is the expected signature of a true value
+sitting very close to the decision boundary, not a harness limitation to keep throwing trials at.**
+Trial count reduces *within-run* median noise (roughly ∝ 1/√n - 15 trials only buys ~1.7x over 5, not
+enough here) but does nothing about *run-to-run* (session/load) drift, which is a separate noise
+source of comparable size (the 128-228ms cross-run figures throughout this document). When a
+measurement's true value sits within that cross-run band of a threshold - as TRANSFORM's apparently
+does - no realistic trial count fully resolves it; the fix is either accepting the ambiguity or moving
+the true value further from the boundary (trimming TRANSFORM's actual cost for real headroom, not
+measuring harder to detect a contested state).
+
+**Where higher trial counts are worth it, and where they aren't - answered, not left as a blanket
+recommendation:** worth it only for a measurement landing within roughly one single-run resolution
+band (~200-250ms, this document's own repeatedly-measured figure) of a verdict threshold - which
+today means TRANSFORM specifically, and even then expect diminishing returns once the true value is
+this close to the line, exactly as demonstrated above. **Not worth it for any other archetype
+measured this session:** ASSEMBLE and FLYTHROUGH's gaps against 2.5s (3.3-4.2s and 5.7-6.2s) are more
+than 10x any noise figure measured in this whole investigation; REVEAL's gap (1.0-1.3s) is more than
+2x the largest single-trial spread observed (648ms); SPIN and INTERFACE's Good margins (400ms+) sit
+comfortably clear too. Five trials already gives a stable, decision-grade verdict for all five of
+those - spending 3x the runtime on any of them would buy confidence nobody needs.
+
+Full method: `measure-lcp.js --trials=15` (new CLI override, added this session, default unchanged at
+5). Raw data merged into `lcp-measured-results.json` (TRANSFORM's stored figure is now the last of
+these three 15-trial runs - see caveat below); all three control readings in `lcp-control-log.json`.
+
+**A caveat that applies to both sections above, stated once: `lcp-measured-results.json` now reflects
+whichever run happened to write last (the loaded six-archetype run, then the third 15-trial TRANSFORM
+run), not necessarily the most decision-relevant one.** This is consistent with the file's own
+documented merge behavior (last write per archetype/state wins, unrelated rows untouched) - not a
+bug - but means a reader diffing against this file later should check which investigation last touched
+a given row before treating its figure as "the" current shipped measurement, rather than one data
+point among several taken this session for a specific comparison.
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

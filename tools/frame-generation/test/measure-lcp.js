@@ -75,7 +75,9 @@ const { chromium } = require('playwright');
 const { startServer } = require('../src/static-server');
 const { ARCHETYPES } = require('../src/archetypes');
 
-const TRIALS = 5;
+let TRIALS = 5; // overridable per-invocation via --trials=N (see main()) - median error shrinks
+// with trial count, so a specific investigation can afford more without paying the cost on every
+// run. Never changed globally: this stays a per-call override, not a new default.
 const CPU_THROTTLE_RATE = 4;
 // Lighthouse's own "Slow 4G" profile - the same one the superseded
 // file-size/200KBps estimate assumed, so this redoes the same scenario
@@ -222,6 +224,12 @@ async function main() {
   const base = path.join(__dirname, 'cost-study');
   const rawArgs = process.argv.slice(2);
   const controlOnly = rawArgs.includes('--control-only');
+  const trialsArg = rawArgs.find((a) => a.startsWith('--trials='));
+  if (trialsArg) {
+    const n = parseInt(trialsArg.split('=')[1], 10);
+    if (!Number.isFinite(n) || n < 1) throw new Error(`--trials must be a positive integer, got: ${trialsArg}`);
+    TRIALS = n;
+  }
   // Optional CLI args scope this to specific archetypes (e.g. after
   // regenerating just one archetype's sheet) - same pattern measure-cost.js
   // already uses, added here for the same reason: re-running all six every
