@@ -86,7 +86,17 @@ async function compositeOne(server, browser, { frameCount, dims, cols, rows }, t
 
 async function main() {
   const base = path.join(__dirname, 'cost-study');
-  const archNames = Object.keys(ARCHETYPES);
+  // Optional CLI args scope this to specific archetypes - same reasoning as
+  // measure-lcp.js: re-running all six every time one archetype's frames
+  // change is wasteful and risks re-measuring archetypes that weren't
+  // touched. NOTE: for ASSEMBLE/FLYTHROUGH specifically, the strip figure
+  // this script produces is NOT reliable (see measure-format-layout.js's
+  // own header - locator.screenshot() silently corrupts a canvas this wide
+  // in this Chromium build) - use strip-png-pil.py for those two, this
+  // script's grid figures only.
+  const archNames = process.argv.length > 2
+    ? process.argv.slice(2).map((a) => a.toUpperCase())
+    : Object.keys(ARCHETYPES);
   const browser = await chromium.launch();
   const results = [];
 
@@ -140,8 +150,18 @@ async function main() {
     await browser.close();
   }
 
-  fs.writeFileSync(path.join(base, 'format-layout-results.json'), JSON.stringify(results, null, 2));
-  console.log('\nWrote', path.join(base, 'format-layout-results.json'));
+  // Merge into the existing results file when scoped, rather than
+  // overwriting it - same reasoning as measure-lcp.js.
+  const outPath = path.join(base, 'format-layout-results.json');
+  let merged = results;
+  if (fs.existsSync(outPath)) {
+    const existing = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+    const touchedKeys = new Set(results.map((r) => r.archetype + '|' + r.state));
+    merged = existing.filter((r) => !touchedKeys.has(r.archetype + '|' + r.state)).concat(results);
+    merged.sort((a, b) => (a.archetype + a.state).localeCompare(b.archetype + b.state));
+  }
+  fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+  console.log('\nWrote', outPath);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

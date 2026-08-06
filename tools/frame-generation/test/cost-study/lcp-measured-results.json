@@ -1,24 +1,6 @@
 [
   {
     "archetype": "ASSEMBLE",
-    "state": "no-logo",
-    "spriteBytes": 842106,
-    "frameCount": 96,
-    "trials": [
-      4708,
-      4716,
-      4904,
-      4720,
-      4688
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 4716,
-    "measuredLcpMinMs": 4688,
-    "measuredLcpMaxMs": 4904,
-    "wallClockMedianMs": 4729
-  },
-  {
-    "archetype": "ASSEMBLE",
     "state": "approved-logo",
     "spriteBytes": 887186,
     "frameCount": 96,
@@ -36,148 +18,76 @@
     "wallClockMedianMs": 4948
   },
   {
-    "archetype": "REVEAL",
+    "archetype": "ASSEMBLE",
     "state": "no-logo",
-    "spriteBytes": 518874,
-    "frameCount": 48,
+    "spriteBytes": 842106,
+    "frameCount": 96,
     "trials": [
-      3056,
-      3088,
-      3088,
-      3084,
-      3104
+      4708,
+      4716,
+      4904,
+      4720,
+      4688
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 3088,
-    "measuredLcpMinMs": 3056,
-    "measuredLcpMaxMs": 3104,
-    "wallClockMedianMs": 3101
-  },
-  {
-    "archetype": "REVEAL",
-    "state": "approved-logo",
-    "spriteBytes": 545346,
-    "frameCount": 48,
-    "trials": [
-      3172,
-      3208,
-      3216,
-      3188,
-      3212
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 3208,
-    "measuredLcpMinMs": 3172,
-    "measuredLcpMaxMs": 3216,
-    "wallClockMedianMs": 3219
-  },
-  {
-    "archetype": "SPIN",
-    "state": "no-logo",
-    "spriteBytes": 171676,
-    "frameCount": 24,
-    "trials": [
-      1500,
-      1480,
-      1488,
-      1460,
-      1480
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 1480,
-    "measuredLcpMinMs": 1460,
-    "measuredLcpMaxMs": 1500,
-    "wallClockMedianMs": 1512
-  },
-  {
-    "archetype": "SPIN",
-    "state": "approved-logo",
-    "spriteBytes": 170626,
-    "frameCount": 24,
-    "trials": [
-      1516,
-      1484,
-      1476,
-      1476,
-      1472
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 1476,
-    "measuredLcpMinMs": 1472,
-    "measuredLcpMaxMs": 1516,
-    "wallClockMedianMs": 1486
-  },
-  {
-    "archetype": "TRANSFORM",
-    "state": "no-logo",
-    "spriteBytes": 83116,
-    "frameCount": 32,
-    "trials": [
-      1048,
-      1040,
-      1036,
-      1024,
-      1032
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 1036,
-    "measuredLcpMinMs": 1024,
-    "measuredLcpMaxMs": 1048,
-    "wallClockMedianMs": 1051
-  },
-  {
-    "archetype": "TRANSFORM",
-    "state": "approved-logo",
-    "spriteBytes": 89608,
-    "frameCount": 32,
-    "trials": [
-      1068,
-      1056,
-      1048,
-      1056,
-      1056
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 1056,
-    "measuredLcpMinMs": 1048,
-    "measuredLcpMaxMs": 1068,
-    "wallClockMedianMs": 1071
-  },
-  {
-    "archetype": "FLYTHROUGH",
-    "state": "no-logo",
-    "spriteBytes": 1350632,
-    "frameCount": 72,
-    "trials": [
-      7052,
-      7032,
-      7080,
-      7068,
-      7088
-    ],
-    "validTrials": 5,
-    "measuredLcpMedianMs": 7068,
-    "measuredLcpMinMs": 7032,
-    "measuredLcpMaxMs": 7088,
-    "wallClockMedianMs": 7080
+    "measuredLcpMedianMs": 4716,
+    "measuredLcpMinMs": 4688,
+    "measuredLcpMaxMs": 4904,
+    "wallClockMedianMs": 4729
   },
   {
     "archetype": "FLYTHROUGH",
     "state": "approved-logo",
-    "spriteBytes": 1417324,
+    "spriteBytes": 1499590,
     "frameCount": 72,
     "trials": [
-      7416,
-      7416,
-      7408,
-      7404,
-      7368
+      8072,
+      8000,
+      8280,
+      8004,
+      8088
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 7408,
-    "measuredLcpMinMs": 7368,
-    "measuredLcpMaxMs": 7416,
-    "wallClockMedianMs": 7423
+    "measuredLcpMedianMs": 8072,
+    "measuredLcpMinMs": 8000,
+    "measuredLcpMaxMs": 8280,
+    "wallClockMedianMs": 8086
+  },
+  {
+    "archetype": "FLYTHROUGH",
+    "state": "no-logo",
+    "spriteBytes": 1465006,
+    "frameCount": 72,
+    "trials": [
+      7760,
+      7832,
+      7840,
+      8000,
+      7836
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 7836,
+    "measuredLcpMinMs": 7760,
+    "measuredLcpMaxMs": 8000,
+    "wallClockMedianMs": 7854
+  },
+  {
+    "archetype": "INTERFACE",
+    "state": "approved-logo",
+    "spriteBytes": 129802,
+    "frameCount": 48,
+    "trials": [
+      1344,
+      1336,
+      1304,
+      1332,
+      1304
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1332,
+    "measuredLcpMinMs": 1304,
+    "measuredLcpMaxMs": 1344,
+    "wallClockMedianMs": 1337
   },
   {
     "archetype": "INTERFACE",
@@ -198,21 +108,111 @@
     "wallClockMedianMs": 1284
   },
   {
-    "archetype": "INTERFACE",
+    "archetype": "REVEAL",
     "state": "approved-logo",
-    "spriteBytes": 129802,
+    "spriteBytes": 545346,
     "frameCount": 48,
     "trials": [
-      1344,
-      1336,
-      1304,
-      1332,
-      1304
+      3172,
+      3208,
+      3216,
+      3188,
+      3212
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1332,
-    "measuredLcpMinMs": 1304,
-    "measuredLcpMaxMs": 1344,
-    "wallClockMedianMs": 1337
+    "measuredLcpMedianMs": 3208,
+    "measuredLcpMinMs": 3172,
+    "measuredLcpMaxMs": 3216,
+    "wallClockMedianMs": 3219
+  },
+  {
+    "archetype": "REVEAL",
+    "state": "no-logo",
+    "spriteBytes": 518874,
+    "frameCount": 48,
+    "trials": [
+      3056,
+      3088,
+      3088,
+      3084,
+      3104
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 3088,
+    "measuredLcpMinMs": 3056,
+    "measuredLcpMaxMs": 3104,
+    "wallClockMedianMs": 3101
+  },
+  {
+    "archetype": "SPIN",
+    "state": "approved-logo",
+    "spriteBytes": 170626,
+    "frameCount": 24,
+    "trials": [
+      1516,
+      1484,
+      1476,
+      1476,
+      1472
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1476,
+    "measuredLcpMinMs": 1472,
+    "measuredLcpMaxMs": 1516,
+    "wallClockMedianMs": 1486
+  },
+  {
+    "archetype": "SPIN",
+    "state": "no-logo",
+    "spriteBytes": 171676,
+    "frameCount": 24,
+    "trials": [
+      1500,
+      1480,
+      1488,
+      1460,
+      1480
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1480,
+    "measuredLcpMinMs": 1460,
+    "measuredLcpMaxMs": 1500,
+    "wallClockMedianMs": 1512
+  },
+  {
+    "archetype": "TRANSFORM",
+    "state": "approved-logo",
+    "spriteBytes": 304732,
+    "frameCount": 32,
+    "trials": [
+      2072,
+      2232,
+      2144,
+      2084,
+      2116
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 2116,
+    "measuredLcpMinMs": 2072,
+    "measuredLcpMaxMs": 2232,
+    "wallClockMedianMs": 2134
+  },
+  {
+    "archetype": "TRANSFORM",
+    "state": "no-logo",
+    "spriteBytes": 287370,
+    "frameCount": 32,
+    "trials": [
+      2032,
+      2156,
+      1992,
+      2064,
+      1968
+    ],
+    "validTrials": 5,
+    "measuredLcpMedianMs": 2032,
+    "measuredLcpMinMs": 1968,
+    "measuredLcpMaxMs": 2156,
+    "wallClockMedianMs": 2063
   }
 ]

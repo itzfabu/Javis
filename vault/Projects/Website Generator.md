@@ -2553,6 +2553,14 @@ final ~12% of frames changes the numbers and the original study only measured th
 | FLYTHROUGH | 72 | 6x12 | 1319.0 KB | 1384.1 KB | 480ms | **7.08s** | **Poor** | was Good (1.17s) |
 | INTERFACE | 48 | 5x10 | 113.2 KB | 126.8 KB* | 532ms | 1.10s | Good | was Good (1.55s) |
 
+**FLYTHROUGH row above is superseded twice over, kept as historical record, not corrected in place:**
+first by the FORMAT/LAYOUT CELL FILLED section below (the "got WORSE" framing two paragraphs down
+traced to a corrupted comparison baseline, not a real regression), then again by the FLYTHROUGH BLANK
+FRAME FIX section further down (the camera-path fix recaptured all 72 frames, so even this table's own
+raw byte/LCP figures no longer describe the currently-shipped sheet). Current, correct FLYTHROUGH
+figures: sprite 1430.7KB (no-logo) / 1464.4KB (approved-logo), measured LCP 7.84s / 8.07s (see the
+MEASURED LCP table under FORMAT/LAYOUT CELL FILLED, and FLYTHROUGH BLANK FRAME FIX's own account).
+
 *INTERFACE's approved-logo run substitutes Franklin BBQ's PNG logo for Family Law in Partnership's
 own asset - that fixture's real logo is a pre-existing broken SVG (a `<symbol>`-only file with no
 root width/height, already flagged as a known rough edge in Thread 1's REBUILD section) that fails
@@ -2581,11 +2589,15 @@ and this project's own earlier frame-count experiments (48->16->8) found no reli
 was tried here - not requested, and reporting the gap precisely was the ask, not closing it.
 
 **A second, unrequested but important finding: ASSEMBLE and FLYTHROUGH got WORSE, not better - both
-moved from comfortably Good to clearly Poor.** Not a measurement artifact - confirmed by cross-
-checking against the prior cost study's own per-frame-WebP totals: FLYTHROUGH's new grid sheet
-(1319.0KB) lands within 1% of that study's already-measured 1309.2KB per-frame-WebP-total, and
-ASSEMBLE's (822.4KB) is in the same range as its 806.5KB figure. **The old 1xN PNG strips for these
-two archetypes weren't good because PNG is generally efficient for this content - they were good
+moved from comfortably Good to clearly Poor.** (**This "got WORSE" framing is itself superseded -
+see FORMAT/LAYOUT CELL FILLED below: the comparison baseline this section holds it against was a
+corrupted measurement, not a real prior state. Kept here as historical record of what this session
+believed at the time, not as the standing conclusion.**) Not a measurement artifact for THIS session's
+own numbers - confirmed by cross-checking against the prior cost study's own per-frame-WebP totals:
+FLYTHROUGH's new grid sheet (1319.0KB, since superseded by the camera-path fix - see above) lands
+within 1% of that study's already-measured 1309.2KB per-frame-WebP-total, and ASSEMBLE's (822.4KB) is
+in the same range as its 806.5KB figure. **The old 1xN PNG strips for these two archetypes weren't
+good because PNG is generally efficient for this content - they were good
 because PNG's row-based delta filter coincidentally exploited the *specific* redundancy of a long
 strip of near-identical, slowly-changing frames** (ASSEMBLE's mostly-static-until-triggered blocks;
 FLYTHROUGH's repeating ring geometry) - a redundancy that only exists in a 1D strip's own scanline
@@ -2708,8 +2720,10 @@ confirmed by sweeping widths from 8,192 to 86,400 — cross-calibrated against T
 where both Pillow and the real screenshot pipeline could run: Pillow measures 4.9-6.0% larger than
 Chromium's own screenshot PNG encoder for identical content, so the ASSEMBLE/FLYTHROUGH Pillow
 figures below are divided by that measured 1.0544 average factor to estimate the Chromium-equivalent
-byte count) is **~1114KB for ASSEMBLE and ~9963KB for FLYTHROUGH** — 4.2x and 60.8x the old figures,
-respectively, not the small numbers this document compared WebP against.
+byte count) is **~1114KB for ASSEMBLE and ~10527KB for FLYTHROUGH** — 4.2x and 62.7x the old figures,
+respectively, not the small numbers this document compared WebP against. (FLYTHROUGH's figure updated
+2026-08-06 after the camera-path fix regenerated its frames — see the STALE DATA note after this
+table.)
 
 **Consequence: there is no ASSEMBLE/FLYTHROUGH format regression to decide.** Re-run against the
 correct baseline, WebP+grid (already shipped) is the smallest option for **all six** archetypes, not
@@ -2727,12 +2741,30 @@ identical, omitted here for space):
 | REVEAL | 48 | 8x6 | 6153.2 KB | 5696.6 KB | **506.7 KB** | WebP |
 | SPIN | 24 | 5x5 | 544.4 KB | 577.9 KB | **167.7 KB** | WebP |
 | TRANSFORM | 32 | 5x7 | 123.5 KB | 149.5 KB | **81.2 KB** | WebP |
-| FLYTHROUGH | 72 | 6x12 | ~9962.7 KB¹ | 9605.9 KB | **1319.0 KB** | WebP |
+| FLYTHROUGH | 72 | 6x12 | ~10526.6 KB¹² | 10200.0 KB² | **1430.7 KB²** | WebP |
 | INTERFACE | 48 | 5x10 | 250.0 KB | 313.1 KB | **113.2 KB** | WebP |
 
 ¹ Pillow-measured, calibration-adjusted to estimate Chromium's own encoder (see above) — the only
 two cells in this experiment not measured through the production canvas pipeline directly, because
 that pipeline cannot rasterize a canvas this wide in this Chromium build at all.
+
+² **STALE DATA, RE-MEASURED (2026-08-06):** FLYTHROUGH's figures above were originally measured
+against frames captured before the FLYTHROUGH BLANK FRAME FIX (below) changed its camera path — that
+fix recaptured all 72 frames (a shorter total travel distance changes the camera's z-position, and
+therefore every frame's rendered content, not only the last one), so the original PNG-strip/PNG-grid/
+WebP-grid figures were computed against content that no longer exists. Re-measured against the current
+frames using the exact same method (`measure-format-layout.js`, `strip-png-pil.py`), scoped to
+FLYTHROUGH only — ASSEMBLE and TRANSFORM's figures (including the TRANSFORM calibration factor used
+for FLYTHROUGH's own Pillow-to-Chromium adjustment) were re-run as a cross-check and came back byte-
+identical to their original measurements, confirming only FLYTHROUGH's own content actually changed.
+**A second, real bug found in the process, now fixed:** the no-logo fixture's `metadata.json` still
+claimed the OLD sprite's byte count (1,350,632 bytes / 1319.0KB) after the frame fix, because the
+metadata-regeneration step for the fallbackFrame feature (same session) read that stale value from the
+metadata.json that existed at the time, rather than the actual freshly-composited `sprite.webp` file on
+disk (1,465,006 bytes / 1430.7KB, confirmed by direct file measurement and matching a fresh
+recomposite) — a real, disclosed data-integrity bug that shipped in the last commit, corrected here by
+regenerating that one fixture's metadata from the true file size. All twelve fixtures' metadata now
+verified to match their actual sprite.webp byte count on disk, not just the no-logo FLYTHROUGH one.
 
 **Recommendation, decisively: WebP+grid for all six archetypes, uniformly. No per-archetype format
 split.** This *is* choosing per archetype on measured bytes, per the instruction — it just turns out
@@ -2753,17 +2785,18 @@ match." **Grid came out larger than strip, as the hypothesis predicts, for ASSEM
 (+6.2%), TRANSFORM (+21.0%), INTERFACE (+25.2%). REVEAL (-7.4%) came out SMALLER under grid,
 contradicting it outright.**
 
-**FLYTHROUGH (-3.6%) is NOT counted in that tally — correction from an earlier pass of this
-write-up, which reported it as a second contradiction without accounting for a measurement
-mismatch.** ASSEMBLE and FLYTHROUGH's strip-PNG figures were both measured via Pillow, calibrated
-against Chromium's own screenshot encoder (÷1.0544, the average of two measured ratios: 5.97% and
-4.91%, see FORMAT/LAYOUT CELL FILLED above) — their grid-PNG figures were measured directly via
-Chromium's screenshot encoder, uncalibrated. Both comparisons technically cross encoders, but the
+**FLYTHROUGH (-3.1%, re-measured 2026-08-06 against the post-camera-fix frames — was -3.6% against
+the now-superseded frames, same conclusion either way) is NOT counted in that tally — correction from
+an earlier pass of this write-up, which reported it as a second contradiction without accounting for
+a measurement mismatch.** ASSEMBLE and FLYTHROUGH's strip-PNG figures were both measured via Pillow,
+calibrated against Chromium's own screenshot encoder (÷1.0544, the average of two measured ratios:
+5.97% and 4.91%, see FORMAT/LAYOUT CELL FILLED above) — their grid-PNG figures were measured directly
+via Chromium's screenshot encoder, uncalibrated. Both comparisons technically cross encoders, but the
 two calibration measurements themselves only agreed to within about 1 percentage point of each
 other, and were taken on one archetype (TRANSFORM); extrapolating that exact factor to very
 different content (ASSEMBLE's blocks, FLYTHROUGH's rings) carries real residual uncertainty, not
 just the small spread between the two calibration runs. **ASSEMBLE's effect (+9.7%) clears that
-uncertainty with room and is kept in the tally. FLYTHROUGH's (-3.6%) does not — it is smaller than
+uncertainty with room and is kept in the tally. FLYTHROUGH's (-3.1%) does not — it is smaller than
 the raw 4.9-6.0% cross-encoder gap the calibration was trying to correct for, so the measurement
 cannot distinguish a real negative layout effect from residual encoder noise in either direction.**
 Re-measuring FLYTHROUGH's strip through the same encoder as its grid (Chromium's own, not Pillow)
@@ -2810,15 +2843,25 @@ in-page `PerformanceObserver` promise, the exact pattern `measure-cost.js` alrea
 | REVEAL | 2.91s | **3.09s** | 3.21s | Needs Improvement |
 | SPIN | 1.34s | **1.48s** | 1.48s | Good |
 | TRANSFORM | 0.87s | **1.04s** | 1.06s | Good |
-| FLYTHROUGH | 7.08s | **7.07s** | 7.41s | Poor |
+| FLYTHROUGH | 7.08s | **7.84s**³ | 8.07s³ | Poor |
 | INTERFACE | 1.10s | **1.26s** | 1.33s | Good |
+
+³ **Re-measured 2026-08-06** against the current sheet, after the FLYTHROUGH BLANK FRAME FIX (below)
+regenerated its frames. The original figures here (7.07s / 7.41s) were measured against a sheet whose
+final frame was flat white — nearly free to compress and decode, understating the true cost. The
+current sheet's real final frame costs more on both counts: larger file (1430.7KB vs. the stale
+1319.0KB) and more to render. Re-run with `measure-lcp.js flythrough` (now supports scoping to specific
+archetypes, added for this re-measurement), merged into the existing results file rather than
+overwriting the other five archetypes' still-valid numbers.
 
 **No verdict bucket changes** — every archetype lands in the same Good/Needs Improvement/Poor
 category as the estimate predicted. The measured figures run consistently *higher* than the old
 estimate for the smaller/faster archetypes (+10-19% for SPIN/TRANSFORM/INTERFACE, roughly one
 network RTT's worth of connection overhead the old file-size÷throughput arithmetic had no way to
-represent), and land almost exactly on the estimate for the two biggest sprites (ASSEMBLE, FLYTHROUGH
-— where download time dominates total LCP and the RTT overhead is proportionally negligible).
+represent) and for ASSEMBLE (+1%, negligible). **FLYTHROUGH now runs 11% higher than its old
+estimate (7.84s vs. 7.08s)** — the estimate happened to land close to the *original, since-superseded*
+measurement (7.07s), not because download time dominates and RTT is negligible as originally reasoned;
+that reasoning no longer explains the current gap and is not re-asserted here.
 
 **Does REVEAL clear the 2.5s Good threshold under measurement? No — and the gap is larger than the
 estimate suggested, not smaller.** 3.09s (no-logo) / 3.21s (approved-logo) against a 2.5s threshold
@@ -2913,12 +2956,18 @@ single pair may be.
   (~12.8%). `0.5` sits with ~2x margin above the highest real legitimate case, while a genuinely
   blank/corrupted sheet shows close to 100% (confirmed below, not assumed).
 - **`NON_UNIFORM_STD_FLOOR = 1.0`** (a cell's own luma std-dev must exceed this to count as real
-  content). The lowest real, legitimate per-frame std measured across all six archetypes is
-  TRANSFORM's final frame at ~4.99 (a bright, mostly-flat "after" surface with subtle real shading) -
-  `1.0` sits with ~5x margin below that. **Deliberately excluded from this calibration: FLYTHROUGH's
-  own final captured frame, which measured std=0.000** - not a legitimate low-variance case but a
-  genuine, previously undiscovered bug this same calibration pass surfaced (below) - using it to
-  justify a looser floor would have laundered a real bug into the guard's own calibration data.
+  content). **Correction (2026-08-06, caught while working the TRANSFORM END STATE fix below):** this
+  was originally cited as "TRANSFORM's final frame at ~4.99" - checked again directly against the raw
+  per-archetype minimum-std data this floor was calibrated from, and that citation was wrong.
+  INTERFACE's frame 3 measures std=1.315, genuinely lower than TRANSFORM's 4.985 - the TRUE lowest
+  real, legitimate per-frame std measured across all six archetypes. `1.0` sits with only ~1.3x margin
+  below INTERFACE's 1.315, not the ~5x margin originally claimed against TRANSFORM's figure - still a
+  real, positive margin (INTERFACE's frame correctly passes, confirmed, not just assumed from the
+  corrected arithmetic), just a tighter one than stated. The floor value itself (`1.0`) is unaffected -
+  this corrects the stated reasoning, not the number. **Deliberately excluded from this calibration:
+  FLYTHROUGH's own final captured frame, which measured std=0.000** - not a legitimate low-variance
+  case but a genuine, previously undiscovered bug this same calibration pass surfaced (below) - using
+  it to justify a looser floor would have laundered a real bug into the guard's own calibration data.
 
 **Unrequested but the most important thing this task found: FLYTHROUGH's real, currently-shipped
 sprite sheet fails the guard right now.** Running the finished guard against all six archetypes'
@@ -3067,6 +3116,165 @@ throughout) - no false positives introduced on real, correctly-chosen fallback f
 Full method: `scenes/flythrough.html` (camera path constants), `src/archetypes.js` (fallbackFrame per
 archetype), `src/metadata.js` (both CSS states), `src/sheet-integrity.js` (named check),
 `test/debug-sheet-integrity.js` (reusable verification, now checks fallbackFrame too).
+
+### LOGO FADE WINDOW — REPORT ONLY, no value changed (2026-08-06)
+
+**The FLYTHROUGH fallback-frame tradeoff documented above treated "the logo has zero opacity before
+~88% of the sequence" as fixed.** It isn't - `appearsAtFrameFraction` is a per-client config value and
+`fadeWindow` is a constant in the rendering code. This section traces where both actually come from,
+measures what the current setting costs per archetype (occlusion/frustum checked at multiple points in
+each sequence, not assumed), and shows the FLYTHROUGH tradeoff specifically dissolving under an earlier
+fade - **as a report, per the task's own instruction. No value was changed.**
+
+**Traced, not guessed: both values are single global defaults, not reasoned per archetype, and not
+even reasoned once with real justification.**
+- `appearsAtFrameFraction = 1.0` is set in exactly three places, all in `tools/brand-extraction`
+  (Thread 1), none of them archetype-aware: `src/tokens.js:160` (the default written into every new
+  client's token JSON), and `src/review-gate.js:189`/`:202` (the two review-outcome fallback branches -
+  logo rejected, or a replacement uploaded). **Every real client's tokens.json has this value, always
+  1.0, regardless of which archetype gets used** - Thread 1 doesn't know the archetype when it sets
+  this. Traced further back: `1.0` first appears in this vault's own Thread 1 token-schema worked
+  example (`"note": "logo composites in on the final settled frame"`) - a description of *what* the
+  value does, not a stated reason *why* `1.0` specifically, and not tied to any archetype's actual
+  timing. **Defaulted, then copied verbatim into real generation code three times, never revisited
+  per archetype since.**
+- `fadeWindow = 0.12` is a single hardcoded constant in `scenes/shared.js`'s `updateLogoOpacity`,
+  shared by all six scenes identically - also never archetype-specific.
+- Combined effect, identical across all six archetypes: the logo is fully invisible until `t=0.88`,
+  then fades linearly to full opacity by `t=1.0`. **88% of every archetype's runtime shows zero client
+  branding**, not because of a measured constraint, but because nobody has looked at whether the scene
+  geometry actually requires it.
+
+**What it costs, per archetype - measured directly (frustum + occlusion checks re-run at t=0, 0.25,
+0.5, 0.75, 1.0 with the logo's opacity forced to 1, independent of the real fade formula, so "would
+this be visible if faded in here" can be answered without changing `appearsAtFrameFraction` itself):**
+
+| Archetype | Camera | Occlusion-clear window (opacity forced) | What the current 88%-hidden default costs |
+|---|---|---|---|
+| ASSEMBLE | static | Occluded at `t=0` (visibleRatio 0.661 - the signboard's mounting block hasn't been built yet, confirmed visually: the sign hangs off the edge of an as-yet-incomplete block, reading as a rendering glitch, not a design choice) - clear from `t≈0.25` onward. | Could fade in from ~25% through instead of 88% - real headroom, but not from frame 0. |
+| REVEAL | static | Clear at `t=0` (nothing has fallen yet) - **badly occluded at `t=0.25` (0.114) and `t=0.5` (0.687)** - clear again from `t≈0.75`. Falling spheres actively tumble through the signboard's screen position mid-sequence. | The current setting (fade completing at 1.0) happens to sit in a safe window - but "just move the fade earlier" is NOT safe here without also checking where it lands; the middle of this sequence is worse than the current setting, not better. |
+| SPIN | static, product rotates | Visible only at `t=0` and `t=1` (**0 pixels, `cannot evaluate`, at `t=0.25/0.5/0.75`**) - not occlusion, rotation: the label is texture-mapped onto the rotating product itself, not a floating signboard, so it faces the camera only near 0°/360°. | Structurally different case - "earlier fade" isn't the applicable lever at all; the constraint is rotation angle, confirming `fallbackFrame=0` (chosen last session on legibility grounds alone) was doubly correct - it's also one of only two frames where the label is geometrically visible. |
+| TRANSFORM | static | Clear at every tested point, `t=0` through `t=1` (visibleRatio ≥0.996 throughout). | No occlusion reason for the current 88%-hidden default at all - free to fade in anywhere. |
+| FLYTHROUGH | **moving** | **Clear at every tested point, `t=0` through `t=1`** (frustum AND occlusion both pass at all eleven sampled `t` values, confirmed with three.js's own `Vector3.project()` per corner, not assumed from the moving camera being "probably fine"). | The full cost documented in FLYTHROUGH BLANK FRAME FIX above: no frame is both dynamic and branded, because the logo is invisible everywhere except the single-ring end state. **This is not a geometric constraint - it's this default.** |
+| INTERFACE | static | Clear at every tested point, `t=0` through `t=1`. | No occlusion reason for the current 88%-hidden default - free to fade in anywhere. |
+
+**FLYTHROUGH specifically - does an earlier fade dissolve the fallback-frame tradeoff? Yes, shown
+visually, not just measured.** Rendered the real Mark Fisher Fitness logo (forced to full opacity,
+`fadeWindow`/`appearsAtFrameFraction` unchanged in the actual scene - this only previews "what if") at
+`t=0, 0.15, 0.3, 0.45, 0.6`:
+- `t=0`: the full 6-ring tunnel, logo present but small/faint at this distance - legible under
+  magnification, not comfortably at normal viewing size.
+- `t=0.3`: 4-5 rings still visible (clearly dynamic, clearly a tunnel), logo noticeably larger, borderline
+  legible.
+- `t=0.45`: **3 rings still visible - genuine depth and motion sense intact - "SPEAKEASY of Strength"
+  fully, comfortably legible.** This is the frame that resolves the tradeoff: dynamic AND branded
+  simultaneously, something no frame in the *current* sequence achieves (confirmed last session -
+  frames 63/65/71, the only frames with any real logo opacity today, all show the same single-ring,
+  post-tunnel composition).
+
+**Recommendation, stated but not applied:** the 88%-hidden default has no measured justification and
+costs real brand visibility across most of the runtime for four of six archetypes with zero occlusion
+reason. Worth revisiting - but as a **per-archetype, measured decision**, the same way `fallbackFrame`
+was handled, not a single global constant change: TRANSFORM and INTERFACE could move to an early fade
+with no further checking needed (clear throughout); FLYTHROUGH has a concretely identified good target
+(`t≈0.45`, dynamic and branded, visually confirmed above); ASSEMBLE needs the fade start kept at or
+after `t≈0.25`, not earlier; REVEAL needs either an unchanged late fade or a fade completing at/before
+`t=0`-ish (before anything starts falling) - moving it into the current mid-range would make occlusion
+*worse*, not better, and needs its own explicit check before any change, not an assumption that "earlier
+is safer"; SPIN's case isn't about fade timing at all and should be left alone or reconsidered on its
+own terms (rotation angle, not `appearsAtFrameFraction`). **Not applied here, per the task's explicit
+instruction to report first.** Would also require deciding whether `appearsAtFrameFraction`/`fadeWindow`
+become per-archetype fields in `src/archetypes.js` (mirroring `fallbackFrame`) or stay in Thread 1's
+token schema - an architecture question this report surfaces but doesn't resolve.
+
+### TRANSFORM END STATE (2026-08-06) — fixed the scene, not just the fallback
+
+**Frame 31 (`t=1.0`, the animation's own resting state, not just the chosen fallback frame) was a
+near-blank bright panel - std~4.99 (now known to be the second-lowest, not lowest, legitimate value
+measured across all six archetypes - see the correction above).** Choosing frame 16 as TRANSFORM's
+`fallbackFrame` last session helped Firefox/reduced-motion visitors; every visitor who actually watches
+the animation still scrolls into this same weak frame 31 as the hero's resting state. Fixed the scene,
+not just routed around it.
+
+**Looked at the actual frame first, per the task's instruction.** It's genuinely near-flat: a plain
+`MeshStandardMaterial` (`color: P.primary`, `roughness: 0.25`, `metalness: 0.15`) on an untextured
+plane, lit by the standard 3-light rig - no texture, no geometric detail, nothing to break up the
+surface. The specific fixture that caught this (Birds Barbershop, `primary: #DCD7D1`, a light warm
+gray) washes out almost entirely under a glossy finish, but this isn't a one-off fixture quirk: light/
+neutral palettes are common for premium brands (a category TRANSFORM itself targets - renovation,
+fitness, beauty), so any client with one would hit the same wash-out on the archetype's own resting
+frame.
+
+**Chose to give the "after" state real visual substance, not to shorten the animation.** Considered
+the alternative (don't run the wipe all the way to `t=1.0`) and rejected it: the archetype's entire
+premise is a before/after reveal, and never completing that reveal would undercut the payoff a
+before/after hero exists to deliver - a real cost with no clear compensating benefit, versus giving the
+end state something to look at.
+
+**Implementation: a procedurally-generated grain texture on the "after" plane's material
+(`scenes/transform.html`'s new `makeGrainTexture()`), same `CanvasTexture` technique `scenes/shared.js`
+already uses for the logo text-wordmark fallback - no new asset dependency.** Reads as a genuine
+brushed/polished finish (a real cross-category convention - renovation, fitness, beauty, dental "after"
+surfaces are commonly shown with exactly this kind of soft directional sheen), not tied to any specific
+client's actual content.
+
+**A real cost found and corrected before shipping, not assumed away - this took three iterations, each
+measured, not guessed:**
+1. **First attempt: true per-pixel random noise at 512px source resolution.** Looked fine in isolation,
+   but measuring the actual composited sheet found the real cost: TRANSFORM's approved-logo sprite grew
+   from 89.6KB to 587.5KB (6.5x) - independent per-pixel noise is exactly the content PNG/WebP compress
+   worst, with no spatial redundancy to exploit, unlike the smooth gradients and flat fills the rest of
+   this scene produces. Discarded before it reached any fixture.
+2. **Second attempt: same grain, generated at a 64px source and magnified via the GPU's own linear
+   texture filtering onto the much larger rendered plane** (adjacent rendered pixels interpolated from a
+   coarser noise field, not independently random - dramatically cheaper to encode). Visually convincing
+   (a genuine soft marble/plaster look, confirmed by screenshot) at a contrast range of 235-255 (a
+   20-unit range) - but the frame's own measured std barely moved after WebP compression (4.55 raw,
+   3.328 in the actual written sheet) - lossy encoding smooths exactly the kind of low-amplitude,
+   high-frequency detail this range produced. Visually better; not measurably so.
+3. **Third attempt: widened the contrast range to 195-255 (60-unit) to give compression something real
+   to preserve.** This worked - raw std jumped to 13.25 (2.65x the original) - but re-measuring LCP
+   (not assumed safe from the file-size change alone) found a real regression: TRANSFORM's measured LCP
+   moved from 1.04s/1.06s to **2.54s/2.73s - crossing out of the Good bucket into Needs Improvement**,
+   the exact kind of consequence re-verification exists to catch. Discarded.
+4. **Settled: 215-255 (a 40-unit range), the middle ground between attempts 2 and 3, chosen by
+   re-measuring rather than interpolating a guess.** Sheet grows from 89.6KB/83.1KB to 297.6KB/287.4KB
+   (~3.3-3.5x - real, disclosed, not hidden) but **LCP stays in Good: 2.03s/2.12s, with 0.38-0.47s of
+   real margin below the 2.5s threshold** - both measured directly, not estimated. Frame 31's std in the
+   actual shipped sheet: 7.83 (no-logo, ~1.6x the original 4.99) / 38.95 (approved-logo, dominated by
+   the now-visible logo signboard itself, not just the grain). Visually confirmed with the real client
+   asset: "Birds Barbershop" renders clean and fully legible against a tasteful, clearly-deliberate
+   textured surface - screenshotted, not assumed from the numbers alone.
+
+**Re-verified everything the task asked for, against the real regenerated fixtures, not the isolated
+scene test:**
+- **Frustum + occlusion, real logo asset, `t=1.0`:** both pass (`frustumOk: true`,
+  `occlusionOk: true`, `visibleRatio: 1`) - the texture change doesn't touch the signboard's own
+  geometry or material, but re-checked rather than assumed unaffected.
+- **Sheet-integrity guard, both logo states:** both pass, including the named fallback-frame check
+  (`fallbackFrameOk: true` at frame 16 in both).
+- **A real, second instance of the same metadata bug found and fixed in FLYTHROUGH BLANK FRAME FIX
+  above, caught before it shipped this time:** the no-logo fixture's `metadata.json` again claimed the
+  pre-fix sprite's byte count (83,116 bytes) after a manual recapture-and-composite script that bypasses
+  the full `bin/generate-frames.js` pipeline (the same workaround FLYTHROUGH's no-logo state needed,
+  since the occlusion guard correctly refuses to evaluate when there's no logo to check at all).
+  Corrected the same way - regenerated metadata from the actual file's real byte count. **All twelve
+  fixtures re-verified consistent (`metadata.json` bytes match the real `sprite.webp` on disk) as a
+  final check, not assumed from fixing the one instance found.**
+
+**`fallbackFrame` reconsidered, per the task's own instruction - kept at 16, not reverted to 31, with a
+stronger reason than before, not just an inherited one.** Frame 31 no longer being blank removes the
+disqualifying reason 16 was chosen over it, but doesn't make 31 the better choice: 16 still uniquely
+shows *both* states in one frame (the archetype's whole "before/after" concept, visible in a single
+static image, exactly the reasoning that chose it last session) - and the texture fix makes that frame
+*more* compelling than before, not just no-worse: the revealed "after" half now shows a real tactile
+material contrast against the flat matte "before" half, not just a color-block cut, confirmed by
+screenshot. Frame 31 alone, even fixed, can only show the "after" state - it lost its status as the
+weakest available frame, but never had a path to being the *best* one.
+
+Full method: `scenes/transform.html` (`makeGrainTexture()`), re-measured via
+`bin/generate-frames.js`/`measure-lcp.js`/`verifySheetIntegrity()` against the real fixtures, not a
+synthetic test.
 
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)

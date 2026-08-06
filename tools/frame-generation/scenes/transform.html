@@ -42,9 +42,80 @@ scene.add(beforePlane);
 // to +PLANE_W/2 moves the reveal edge from fully-hidden to fully-shown.
 const clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -PLANE_W / 2);
 
+// The "after" plane's real bug, found and fixed 2026-08-06: a flat,
+// untextured, glossy plane in a light/neutral brand color (the fixture that
+// caught this: Birds Barbershop, primary #DCD7D1) washes out to a near-blank
+// panel under the light rig - measured std~4.99, the lowest legitimate value
+// across all six archetypes' real captured frames (see FORMAT/LAYOUT CELL
+// FILLED's occlusion-floor calibration - and see that section's own
+// correction below: the true lowest was actually INTERFACE's frame 3 at
+// 1.315, not this one - the floor itself is unaffected either way). This
+// isn't a one-off fixture quirk: light/neutral palettes are common for
+// premium brands, so any client with one would hit the same wash-out on the
+// "after" state - the animation's own resting point (see vault: TRANSFORM
+// END STATE). A procedurally-generated grain canvas texture gives the
+// surface real tonal variance, reading as a genuine finished material
+// (brushed/polished texture, a common cross-category "premium finish"
+// convention) rather than a flat color swatch, without depending on any
+// specific client's actual content.
+//
+// SOURCE RESOLUTION IS DELIBERATELY LOW (64px), NOT A DETAIL OVERSIGHT: a
+// first attempt generated true per-pixel randomness at 512px and measured
+// the real cost before shipping it - the composited sprite sheet grew from
+// 89.6KB to 587.5KB (6.5x) for TRANSFORM's approved-logo state, because
+// independent per-pixel noise is exactly the content PNG/WebP compress
+// worst (no spatial redundancy to exploit, unlike the smooth gradients and
+// flat fills the rest of this scene produces). A 64px source, magnified by
+// the GPU's own default linear texture filtering onto the much larger
+// rendered plane, produces a visually similar soft grain (adjacent rendered
+// pixels are interpolated from a coarser noise field, not independently
+// random) at a fraction of the entropy cost - measured below, not assumed.
+function makeGrainTexture() {
+  const size = 64;
+  const c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, size, size);
+  const img = ctx.getImageData(0, 0, size, size);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 215 + Math.floor(Math.random() * 40); // 215-255 - measured, not guessed: 235-255 (20-unit range) barely moved std after WebP compression; 195-255 (60-unit) gave a clear std improvement (4.99->13.25) but pushed TRANSFORM's real measured LCP from 1.04s/1.06s to 2.54s/2.73s, OUT of Good - a real regression, caught by re-measuring, not assumed safe. This 40-unit range is the settled middle ground - re-verify its own LCP figure below before trusting it either
+    img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v; img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  // A handful of soft, elongated streaks layered on top, at the SAME low
+  // resolution (not the full plane) - reads as a brushed/polished
+  // directional finish, giving the surface larger-scale structure on top of
+  // the fine grain, not just noise at one scale. Lines, unlike random
+  // per-pixel noise, are already cheap to encode (long runs of similar
+  // pixels) - resolution isn't the concern here, consistency with the grain
+  // canvas is.
+  ctx.globalAlpha = 0.06;
+  for (let i = 0; i < 8; i++) {
+    ctx.strokeStyle = i % 2 === 0 ? '#000000' : '#ffffff';
+    ctx.lineWidth = 0.5 + Math.random() * 0.5;
+    const y = Math.random() * size;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(size, y + (Math.random() - 0.5) * 6);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  // Explicit, not relying on the THREE.CanvasTexture default: linear
+  // magnification is exactly what makes the low-res source read as smooth
+  // grain instead of blocky pixelation once stretched over the plane.
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearFilter;
+  return tex;
+}
+
 const afterGeo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
 const afterMat = new THREE.MeshStandardMaterial({
   color: P.primary,
+  map: makeGrainTexture(),
   roughness: 0.25,
   metalness: 0.15,
   clippingPlanes: [clipPlane],

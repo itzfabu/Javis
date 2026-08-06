@@ -123,7 +123,14 @@ function median(arr) {
 
 async function main() {
   const base = path.join(__dirname, 'cost-study');
-  const archNames = Object.keys(ARCHETYPES).map((k) => k.toLowerCase());
+  // Optional CLI args scope this to specific archetypes (e.g. after
+  // regenerating just one archetype's sheet) - same pattern measure-cost.js
+  // already uses, added here for the same reason: re-running all six every
+  // time a single sheet changes is wasteful and risks silently re-measuring
+  // archetypes that were never touched.
+  const archNames = process.argv.length > 2
+    ? process.argv.slice(2).map((a) => a.toLowerCase())
+    : Object.keys(ARCHETYPES).map((k) => k.toLowerCase());
   const browser = await chromium.launch();
   const results = [];
 
@@ -178,8 +185,20 @@ async function main() {
     await browser.close();
   }
 
-  fs.writeFileSync(path.join(base, 'lcp-measured-results.json'), JSON.stringify(results, null, 2));
-  console.log('\nWrote', path.join(base, 'lcp-measured-results.json'));
+  // Merge into the existing results file when scoped to specific
+  // archetypes, rather than overwriting it - a partial re-run (e.g. after
+  // regenerating just one archetype's sheet) must not silently discard the
+  // other archetypes' still-valid measurements.
+  const outPath = path.join(base, 'lcp-measured-results.json');
+  let merged = results;
+  if (fs.existsSync(outPath)) {
+    const existing = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+    const touchedKeys = new Set(results.map((r) => r.archetype + '|' + r.state));
+    merged = existing.filter((r) => !touchedKeys.has(r.archetype + '|' + r.state)).concat(results);
+    merged.sort((a, b) => (a.archetype + a.state).localeCompare(b.archetype + b.state));
+  }
+  fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+  console.log('\nWrote', outPath);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

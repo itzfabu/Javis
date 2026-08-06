@@ -49,11 +49,15 @@
                       "project":  "website-generator"
                   },
                   {
-                      "text":  "Close REVEAL\u0027s remaining LCP gap (2.91s no-logo / 3.03s approved-logo, ~0.4-0.5s over the 2.5s Good threshold) | priority: medium | #website-generator",
+                      "text":  "Close REVEAL\u0027s remaining LCP gap (measured: 3.09s no-logo / 3.21s approved-logo, ~0.6-0.7s over the 2.5s Good threshold) | priority: medium | #website-generator",
                       "project":  "website-generator"
                   },
                   {
-                      "text":  "Decide ASSEMBLE/FLYTHROUGH sprite format: both regressed from comfortably Good to clearly Poor under the grid+WebP rework | priority: high | #website-generator",
+                      "text":  "Close ASSEMBLE and FLYTHROUGH\u0027s LCP gap (measured: ASSEMBLE 4.72s no-logo / 4.94s approved-logo; FLYTHROUGH 7.84s no-logo / 8.07s approved-logo - both Poor against the 2.5s Good threshold) | priority: high | #website-generator",
+                      "project":  "website-generator"
+                  },
+                  {
+                      "text":  "Reconsider the logo fade window (`appearsAtFrameFraction=1.0`, `fadeWindow=0.12`) per archetype - currently hides client branding for 88% of every archetype\u0027s runtime with no measured justification | priority: medium | #website-generator",
                       "project":  "website-generator"
                   },
                   {
