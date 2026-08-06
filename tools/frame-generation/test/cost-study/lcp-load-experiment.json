@@ -1,0 +1,683 @@
+{
+  "note": "Deliberately-loaded (concurrent ASSEMBLE capture sweep) six-archetype LCP runs - NEVER the stored baseline, see lcp-measured-results.json for that. Two independent replications exist because the pattern did not reproduce cleanly between them - see vault RATIO-TO-CONTROL STABILITY UNDER LOAD and its follow-up section for the analysis.",
+  "replication1": {
+    "label": "replication 1 - pre-decomposition (blended renderTime only)",
+    "measuredAtCommit": "b1dd83d (previous session)",
+    "idleControlMs": 1576,
+    "idleControlSource": "console summary only, vault table - raw trial arrays not preserved",
+    "loadedControlMs": 1692,
+    "loadedRows": [
+      {
+        "archetype": "ASSEMBLE",
+        "state": "approved-logo",
+        "spriteBytes": 887186,
+        "frameCount": 96,
+        "trials": [
+          6160,
+          6204,
+          6080,
+          6184,
+          6200
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 6184,
+        "measuredLcpMinMs": 6080,
+        "measuredLcpMaxMs": 6204,
+        "wallClockMedianMs": 6216,
+        "controlMedianMs": 1692,
+        "ratioToControl": 3.655
+      },
+      {
+        "archetype": "ASSEMBLE",
+        "state": "no-logo",
+        "spriteBytes": 842106,
+        "frameCount": 96,
+        "trials": [
+          5524,
+          6516,
+          6060,
+          5388,
+          6088
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 6060,
+        "measuredLcpMinMs": 5388,
+        "measuredLcpMaxMs": 6516,
+        "wallClockMedianMs": 6102,
+        "controlMedianMs": 1692,
+        "ratioToControl": 3.582
+      },
+      {
+        "archetype": "FLYTHROUGH",
+        "state": "approved-logo",
+        "spriteBytes": 1499590,
+        "frameCount": 72,
+        "trials": [
+          8668,
+          8496,
+          8896,
+          8672,
+          8536
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 8668,
+        "measuredLcpMinMs": 8496,
+        "measuredLcpMaxMs": 8896,
+        "wallClockMedianMs": 8705,
+        "controlMedianMs": 1692,
+        "ratioToControl": 5.123
+      },
+      {
+        "archetype": "FLYTHROUGH",
+        "state": "no-logo",
+        "spriteBytes": 1465006,
+        "frameCount": 72,
+        "trials": [
+          8204,
+          8468,
+          8264,
+          8080,
+          8708
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 8264,
+        "measuredLcpMinMs": 8080,
+        "measuredLcpMaxMs": 8708,
+        "wallClockMedianMs": 8305,
+        "controlMedianMs": 1692,
+        "ratioToControl": 4.884
+      },
+      {
+        "archetype": "INTERFACE",
+        "state": "approved-logo",
+        "spriteBytes": 129802,
+        "frameCount": 48,
+        "trials": [
+          1764,
+          1904,
+          1844,
+          1908,
+          1812
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1844,
+        "measuredLcpMinMs": 1764,
+        "measuredLcpMaxMs": 1908,
+        "wallClockMedianMs": 1899,
+        "controlMedianMs": 1692,
+        "ratioToControl": 1.09
+      },
+      {
+        "archetype": "INTERFACE",
+        "state": "no-logo",
+        "spriteBytes": 115958,
+        "frameCount": 48,
+        "trials": [
+          1728,
+          1768,
+          2028,
+          2040,
+          1768
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1768,
+        "measuredLcpMinMs": 1728,
+        "measuredLcpMaxMs": 2040,
+        "wallClockMedianMs": 1834,
+        "controlMedianMs": 1692,
+        "ratioToControl": 1.045
+      },
+      {
+        "archetype": "REVEAL",
+        "state": "approved-logo",
+        "spriteBytes": 545346,
+        "frameCount": 48,
+        "trials": [
+          3704,
+          3664,
+          3664,
+          3872,
+          3884
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 3704,
+        "measuredLcpMinMs": 3664,
+        "measuredLcpMaxMs": 3884,
+        "wallClockMedianMs": 3730,
+        "controlMedianMs": 1692,
+        "ratioToControl": 2.189
+      },
+      {
+        "archetype": "REVEAL",
+        "state": "no-logo",
+        "spriteBytes": 518874,
+        "frameCount": 48,
+        "trials": [
+          3632,
+          3672,
+          3736,
+          3640,
+          3688
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 3672,
+        "measuredLcpMinMs": 3632,
+        "measuredLcpMaxMs": 3736,
+        "wallClockMedianMs": 3708,
+        "controlMedianMs": 1692,
+        "ratioToControl": 2.17
+      },
+      {
+        "archetype": "SPIN",
+        "state": "approved-logo",
+        "spriteBytes": 170626,
+        "frameCount": 24,
+        "trials": [
+          2004,
+          1988,
+          2064,
+          2052,
+          2232
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 2052,
+        "measuredLcpMinMs": 1988,
+        "measuredLcpMaxMs": 2232,
+        "wallClockMedianMs": 2087,
+        "controlMedianMs": 1692,
+        "ratioToControl": 1.213
+      },
+      {
+        "archetype": "SPIN",
+        "state": "no-logo",
+        "spriteBytes": 171676,
+        "frameCount": 24,
+        "trials": [
+          2044,
+          1952,
+          2080,
+          1964,
+          1916
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1964,
+        "measuredLcpMinMs": 1916,
+        "measuredLcpMaxMs": 2080,
+        "wallClockMedianMs": 1983,
+        "controlMedianMs": 1692,
+        "ratioToControl": 1.161
+      }
+    ],
+    "fullRawDataRecoverableVia": "git show b1dd83d:tools/frame-generation/test/cost-study/lcp-measured-results.json",
+    "note": "The commit this was extracted from also contained TRANSFORM 15-trial idle rows (unrelated investigation, same session) - excluded here; those live in lcp-trials-experiment.json."
+  },
+  "replication2": {
+    "label": "replication 2 - with transfer/decode decomposition",
+    "measuredAt": "2026-08-06T12:26:25.342Z",
+    "idleControlMs": 1236,
+    "idleControlTransferMs": 715.6,
+    "idleControlDecodeMs": 294.8,
+    "idleControlSource": "console summary (test/cost-study/_tmp_idle2_console.log was captured at measurement time, not retained in repo) - raw trial arrays not preserved, superseded by idle3 in lcp-measured-results.json",
+    "loadedControlMs": 1256,
+    "loadedControlTransferMs": 727.6,
+    "loadedControlDecodeMs": 319.9,
+    "loadedRows": [
+      {
+        "archetype": "ASSEMBLE",
+        "state": "approved-logo",
+        "spriteBytes": 887186,
+        "frameCount": 96,
+        "trials": [
+          5108,
+          5116,
+          5076,
+          5100,
+          5104
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 5104,
+        "measuredLcpMinMs": 5076,
+        "measuredLcpMaxMs": 5116,
+        "transferTrials": [
+          4441.099999964237,
+          4442.699999988079,
+          4432.5,
+          4418.5,
+          4448.799999952316
+        ],
+        "transferMedianMs": 4441.1,
+        "decodeTrials": [
+          384.69999998807907,
+          419.10000002384186,
+          395.69999998807907,
+          454.7999999523163,
+          393.10000002384186
+        ],
+        "decodeMedianMs": 395.7,
+        "wallClockMedianMs": 5119,
+        "controlMedianMs": 1256,
+        "ratioToControl": 4.064,
+        "transferRatioToControl": 6.104,
+        "decodeRatioToControl": 1.237
+      },
+      {
+        "archetype": "ASSEMBLE",
+        "state": "no-logo",
+        "spriteBytes": 842106,
+        "frameCount": 96,
+        "trials": [
+          4776,
+          4808,
+          4848,
+          4780,
+          5104
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 4808,
+        "measuredLcpMinMs": 4776,
+        "measuredLcpMaxMs": 5104,
+        "transferTrials": [
+          4187.600000023842,
+          4204.099999964237,
+          4191.100000023842,
+          4189.5,
+          4233.099999964237
+        ],
+        "transferMedianMs": 4191.1,
+        "decodeTrials": [
+          338.2999999523163,
+          336.69999998807907,
+          389,
+          330.80000001192093,
+          615
+        ],
+        "decodeMedianMs": 338.3,
+        "wallClockMedianMs": 4830,
+        "controlMedianMs": 1256,
+        "ratioToControl": 3.828,
+        "transferRatioToControl": 5.76,
+        "decodeRatioToControl": 1.058
+      },
+      {
+        "archetype": "FLYTHROUGH",
+        "state": "approved-logo",
+        "spriteBytes": 1499590,
+        "frameCount": 72,
+        "trials": [
+          8004,
+          8156,
+          8084,
+          8020,
+          8064
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 8064,
+        "measuredLcpMinMs": 8004,
+        "measuredLcpMaxMs": 8156,
+        "transferTrials": [
+          7382.199999988079,
+          7367.800000011921,
+          7367.699999988079,
+          7369,
+          7427.699999988079
+        ],
+        "transferMedianMs": 7369,
+        "decodeTrials": [
+          362.0999999642372,
+          510.19999998807907,
+          432.80000001192093,
+          434.0999999642372,
+          417.69999998807907
+        ],
+        "decodeMedianMs": 432.8,
+        "wallClockMedianMs": 8086,
+        "controlMedianMs": 1256,
+        "ratioToControl": 6.42,
+        "transferRatioToControl": 10.128,
+        "decodeRatioToControl": 1.353
+      },
+      {
+        "archetype": "FLYTHROUGH",
+        "state": "no-logo",
+        "spriteBytes": 1465006,
+        "frameCount": 72,
+        "trials": [
+          7956,
+          7752,
+          7704,
+          7768,
+          7704
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 7752,
+        "measuredLcpMinMs": 7704,
+        "measuredLcpMaxMs": 7956,
+        "transferTrials": [
+          7243.300000011921,
+          7189,
+          7191.700000047684,
+          7214.599999964237,
+          7222.699999988079
+        ],
+        "transferMedianMs": 7214.6,
+        "decodeTrials": [
+          498.89999997615814,
+          304.69999998807907,
+          301.2999999523163,
+          271.69999998807907,
+          266
+        ],
+        "decodeMedianMs": 301.3,
+        "wallClockMedianMs": 7769,
+        "controlMedianMs": 1256,
+        "ratioToControl": 6.172,
+        "transferRatioToControl": 9.916,
+        "decodeRatioToControl": 0.942
+      },
+      {
+        "archetype": "INTERFACE",
+        "state": "approved-logo",
+        "spriteBytes": 129802,
+        "frameCount": 48,
+        "trials": [
+          1404,
+          1460,
+          1500,
+          1528,
+          1372
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1460,
+        "measuredLcpMinMs": 1372,
+        "measuredLcpMaxMs": 1528,
+        "transferTrials": [
+          790.6000000238419,
+          793.1000000238419,
+          802.4000000357628,
+          791.9000000357628,
+          780.6000000238419
+        ],
+        "transferMedianMs": 791.9,
+        "decodeTrials": [
+          412,
+          448.89999997615814,
+          477.39999997615814,
+          450.0999999642372,
+          374.30000001192093
+        ],
+        "decodeMedianMs": 448.9,
+        "wallClockMedianMs": 1495,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.162,
+        "transferRatioToControl": 1.088,
+        "decodeRatioToControl": 1.403
+      },
+      {
+        "archetype": "INTERFACE",
+        "state": "no-logo",
+        "spriteBytes": 115958,
+        "frameCount": 48,
+        "trials": [
+          1420,
+          1520,
+          1364,
+          1340,
+          1336
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1364,
+        "measuredLcpMinMs": 1336,
+        "measuredLcpMaxMs": 1520,
+        "transferTrials": [
+          729.5,
+          749.2999999523163,
+          724,
+          729.9000000357628,
+          719.8999999761581
+        ],
+        "transferMedianMs": 729.5,
+        "decodeTrials": [
+          457.30000001192093,
+          471.80000001192093,
+          418.89999997615814,
+          394.2999999523163,
+          396
+        ],
+        "decodeMedianMs": 418.9,
+        "wallClockMedianMs": 1380,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.086,
+        "transferRatioToControl": 1.003,
+        "decodeRatioToControl": 1.309
+      },
+      {
+        "archetype": "REVEAL",
+        "state": "approved-logo",
+        "spriteBytes": 545346,
+        "frameCount": 48,
+        "trials": [
+          3296,
+          3248,
+          3240,
+          3264,
+          3224
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 3248,
+        "measuredLcpMinMs": 3224,
+        "measuredLcpMaxMs": 3296,
+        "transferTrials": [
+          2791.300000011921,
+          2789.399999976158,
+          2784.199999988079,
+          2783.699999988079,
+          2781.400000035763
+        ],
+        "transferMedianMs": 2784.2,
+        "decodeTrials": [
+          242.29999995231628,
+          241.60000002384186,
+          251.10000002384186,
+          270.80000001192093,
+          225.5
+        ],
+        "decodeMedianMs": 242.3,
+        "wallClockMedianMs": 3274,
+        "controlMedianMs": 1256,
+        "ratioToControl": 2.586,
+        "transferRatioToControl": 3.827,
+        "decodeRatioToControl": 0.757
+      },
+      {
+        "archetype": "REVEAL",
+        "state": "no-logo",
+        "spriteBytes": 518874,
+        "frameCount": 48,
+        "trials": [
+          3128,
+          3168,
+          3124,
+          3148,
+          3112
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 3128,
+        "measuredLcpMinMs": 3112,
+        "measuredLcpMaxMs": 3168,
+        "transferTrials": [
+          2687.300000011921,
+          2677,
+          2691.900000035763,
+          2661.800000011921,
+          2663.5
+        ],
+        "transferMedianMs": 2677,
+        "decodeTrials": [
+          226,
+          215.89999997615814,
+          227.79999995231628,
+          221.30000001192093,
+          220.39999997615814
+        ],
+        "decodeMedianMs": 221.3,
+        "wallClockMedianMs": 3148,
+        "controlMedianMs": 1256,
+        "ratioToControl": 2.49,
+        "transferRatioToControl": 3.679,
+        "decodeRatioToControl": 0.692
+      },
+      {
+        "archetype": "SPIN",
+        "state": "approved-logo",
+        "spriteBytes": 170626,
+        "frameCount": 24,
+        "trials": [
+          1500,
+          1524,
+          1516,
+          1524,
+          1524
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1524,
+        "measuredLcpMinMs": 1500,
+        "measuredLcpMaxMs": 1524,
+        "transferTrials": [
+          985.1999999880791,
+          985.7999999523163,
+          986.2999999523163,
+          998,
+          988
+        ],
+        "transferMedianMs": 986.3,
+        "decodeTrials": [
+          305.4000000357628,
+          341.4000000357628,
+          316.5,
+          318.89999997615814,
+          325.89999997615814
+        ],
+        "decodeMedianMs": 318.9,
+        "wallClockMedianMs": 1535,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.213,
+        "transferRatioToControl": 1.356,
+        "decodeRatioToControl": 0.997
+      },
+      {
+        "archetype": "SPIN",
+        "state": "no-logo",
+        "spriteBytes": 171676,
+        "frameCount": 24,
+        "trials": [
+          1500,
+          1528,
+          1568,
+          1556,
+          1556
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1556,
+        "measuredLcpMinMs": 1500,
+        "measuredLcpMaxMs": 1568,
+        "transferTrials": [
+          982.5,
+          991.5,
+          982.3999999761581,
+          997.5,
+          987.5
+        ],
+        "transferMedianMs": 987.5,
+        "decodeTrials": [
+          316.69999998807907,
+          334.19999998807907,
+          315.60000002384186,
+          349.19999998807907,
+          356
+        ],
+        "decodeMedianMs": 334.2,
+        "wallClockMedianMs": 1575,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.239,
+        "transferRatioToControl": 1.357,
+        "decodeRatioToControl": 1.045
+      },
+      {
+        "archetype": "TRANSFORM",
+        "state": "approved-logo",
+        "spriteBytes": 276076,
+        "frameCount": 32,
+        "trials": [
+          1856,
+          1852,
+          1872,
+          1924,
+          1968
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1872,
+        "measuredLcpMinMs": 1852,
+        "measuredLcpMaxMs": 1968,
+        "transferTrials": [
+          1494.6000000238419,
+          1493.6000000238419,
+          1493.0999999642372,
+          1490.300000011921,
+          1494
+        ],
+        "transferMedianMs": 1493.6,
+        "decodeTrials": [
+          155.80000001192093,
+          153,
+          162.10000002384186,
+          174.80000001192093,
+          193.69999998807907
+        ],
+        "decodeMedianMs": 162.1,
+        "wallClockMedianMs": 1880,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.49,
+        "transferRatioToControl": 2.053,
+        "decodeRatioToControl": 0.507
+      },
+      {
+        "archetype": "TRANSFORM",
+        "state": "no-logo",
+        "spriteBytes": 265370,
+        "frameCount": 32,
+        "trials": [
+          1836,
+          1820,
+          1832,
+          1824,
+          1896
+        ],
+        "validTrials": 5,
+        "measuredLcpMedianMs": 1832,
+        "measuredLcpMinMs": 1820,
+        "measuredLcpMaxMs": 1896,
+        "transferTrials": [
+          1449.3999999761581,
+          1456.0999999642372,
+          1463.8999999761581,
+          1448.5,
+          1459.3999999761581
+        ],
+        "transferMedianMs": 1456.1,
+        "decodeTrials": [
+          161.20000004768372,
+          157.30000001192093,
+          173.80000001192093,
+          169,
+          222.10000002384186
+        ],
+        "decodeMedianMs": 169,
+        "wallClockMedianMs": 1849,
+        "controlMedianMs": 1256,
+        "ratioToControl": 1.459,
+        "transferRatioToControl": 2.001,
+        "decodeRatioToControl": 0.528
+      }
+    ]
+  }
+}

@@ -5,19 +5,37 @@
     "spriteBytes": 887186,
     "frameCount": 96,
     "trials": [
-      6160,
-      6204,
-      6080,
-      6184,
-      6200
+      5188,
+      5224,
+      5216,
+      5164,
+      5224
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 6184,
-    "measuredLcpMinMs": 6080,
-    "measuredLcpMaxMs": 6204,
-    "wallClockMedianMs": 6216,
-    "controlMedianMs": 1692,
-    "ratioToControl": 3.655
+    "measuredLcpMedianMs": 5216,
+    "measuredLcpMinMs": 5164,
+    "measuredLcpMaxMs": 5224,
+    "transferTrials": [
+      4439.5,
+      4429.800000011921,
+      4452.899999976158,
+      4431.900000035763,
+      4417.300000011921
+    ],
+    "transferMedianMs": 4431.9,
+    "decodeTrials": [
+      497.30000001192093,
+      535.1999999880791,
+      491.80000001192093,
+      476.5999999642372,
+      538.8999999761581
+    ],
+    "decodeMedianMs": 497.3,
+    "wallClockMedianMs": 5234,
+    "controlMedianMs": 1400,
+    "ratioToControl": 3.726,
+    "transferRatioToControl": 6.121,
+    "decodeRatioToControl": 1.144
   },
   {
     "archetype": "ASSEMBLE",
@@ -25,19 +43,37 @@
     "spriteBytes": 842106,
     "frameCount": 96,
     "trials": [
-      5524,
-      6516,
-      6060,
-      5388,
-      6088
+      5264,
+      5396,
+      4896,
+      4936,
+      5152
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 6060,
-    "measuredLcpMinMs": 5388,
-    "measuredLcpMaxMs": 6516,
-    "wallClockMedianMs": 6102,
-    "controlMedianMs": 1692,
-    "ratioToControl": 3.582
+    "measuredLcpMedianMs": 5152,
+    "measuredLcpMinMs": 4896,
+    "measuredLcpMaxMs": 5396,
+    "transferTrials": [
+      4204.800000011921,
+      4251.799999952316,
+      4223.599999964237,
+      4225.199999988079,
+      4230
+    ],
+    "transferMedianMs": 4225.2,
+    "decodeTrials": [
+      757.6000000238419,
+      924.2000000476837,
+      412,
+      446.69999998807907,
+      670.3999999761581
+    ],
+    "decodeMedianMs": 670.4,
+    "wallClockMedianMs": 5166,
+    "controlMedianMs": 1400,
+    "ratioToControl": 3.68,
+    "transferRatioToControl": 5.836,
+    "decodeRatioToControl": 1.542
   },
   {
     "archetype": "FLYTHROUGH",
@@ -45,19 +81,37 @@
     "spriteBytes": 1499590,
     "frameCount": 72,
     "trials": [
-      8668,
-      8496,
-      8896,
-      8672,
-      8536
+      8004,
+      8076,
+      8052,
+      8004,
+      7984
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 8668,
-    "measuredLcpMinMs": 8496,
-    "measuredLcpMaxMs": 8896,
-    "wallClockMedianMs": 8705,
-    "controlMedianMs": 1692,
-    "ratioToControl": 5.123
+    "measuredLcpMedianMs": 8004,
+    "measuredLcpMinMs": 7984,
+    "measuredLcpMaxMs": 8076,
+    "transferTrials": [
+      7328.600000023842,
+      7384.300000011921,
+      7354.5,
+      7357.399999976158,
+      7355
+    ],
+    "transferMedianMs": 7355,
+    "decodeTrials": [
+      425.5,
+      442.0999999642372,
+      445.2000000476837,
+      400.30000001192093,
+      380.5
+    ],
+    "decodeMedianMs": 425.5,
+    "wallClockMedianMs": 8027,
+    "controlMedianMs": 1400,
+    "ratioToControl": 5.717,
+    "transferRatioToControl": 10.159,
+    "decodeRatioToControl": 0.979
   },
   {
     "archetype": "FLYTHROUGH",
@@ -65,19 +119,37 @@
     "spriteBytes": 1465006,
     "frameCount": 72,
     "trials": [
-      8204,
-      8468,
-      8264,
-      8080,
-      8708
+      7740,
+      7672,
+      7756,
+      7716,
+      7704
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 8264,
-    "measuredLcpMinMs": 8080,
-    "measuredLcpMaxMs": 8708,
-    "wallClockMedianMs": 8305,
-    "controlMedianMs": 1692,
-    "ratioToControl": 4.884
+    "measuredLcpMedianMs": 7716,
+    "measuredLcpMinMs": 7672,
+    "measuredLcpMaxMs": 7756,
+    "transferTrials": [
+      7218.5,
+      7206.800000011921,
+      7202.300000011921,
+      7163.800000011921,
+      7161.300000011921
+    ],
+    "transferMedianMs": 7202.3,
+    "decodeTrials": [
+      301.5,
+      263.39999997615814,
+      294.4000000357628,
+      310.80000001192093,
+      290.5999999642372
+    ],
+    "decodeMedianMs": 294.4,
+    "wallClockMedianMs": 7730,
+    "controlMedianMs": 1400,
+    "ratioToControl": 5.511,
+    "transferRatioToControl": 9.948,
+    "decodeRatioToControl": 0.677
   },
   {
     "archetype": "INTERFACE",
@@ -85,19 +157,37 @@
     "spriteBytes": 129802,
     "frameCount": 48,
     "trials": [
-      1764,
-      1904,
-      1844,
-      1908,
-      1812
+      1384,
+      1336,
+      1324,
+      1412,
+      1368
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1844,
-    "measuredLcpMinMs": 1764,
-    "measuredLcpMaxMs": 1908,
-    "wallClockMedianMs": 1899,
-    "controlMedianMs": 1692,
-    "ratioToControl": 1.09
+    "measuredLcpMedianMs": 1368,
+    "measuredLcpMinMs": 1324,
+    "measuredLcpMaxMs": 1412,
+    "transferTrials": [
+      786.6999999880791,
+      796,
+      777.5,
+      805.5999999642372,
+      783.2999999523163
+    ],
+    "transferMedianMs": 786.7,
+    "decodeTrials": [
+      343.60000002384186,
+      339.19999998807907,
+      341.5,
+      348.60000002384186,
+      336.2000000476837
+    ],
+    "decodeMedianMs": 341.5,
+    "wallClockMedianMs": 1379,
+    "controlMedianMs": 1400,
+    "ratioToControl": 0.977,
+    "transferRatioToControl": 1.087,
+    "decodeRatioToControl": 0.785
   },
   {
     "archetype": "INTERFACE",
@@ -105,19 +195,37 @@
     "spriteBytes": 115958,
     "frameCount": 48,
     "trials": [
-      1728,
-      1768,
-      2028,
-      2040,
-      1768
+      1260,
+      1324,
+      1300,
+      1316,
+      1296
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1768,
-    "measuredLcpMinMs": 1728,
-    "measuredLcpMaxMs": 2040,
-    "wallClockMedianMs": 1834,
-    "controlMedianMs": 1692,
-    "ratioToControl": 1.045
+    "measuredLcpMedianMs": 1300,
+    "measuredLcpMinMs": 1260,
+    "measuredLcpMaxMs": 1324,
+    "transferTrials": [
+      714.1999999880791,
+      732.1000000238419,
+      746.1999999880791,
+      719.6999999880791,
+      714
+    ],
+    "transferMedianMs": 719.7,
+    "decodeTrials": [
+      333.10000002384186,
+      339.19999998807907,
+      347.30000001192093,
+      341.10000002384186,
+      333.0999999642372
+    ],
+    "decodeMedianMs": 339.2,
+    "wallClockMedianMs": 1315,
+    "controlMedianMs": 1400,
+    "ratioToControl": 0.929,
+    "transferRatioToControl": 0.994,
+    "decodeRatioToControl": 0.78
   },
   {
     "archetype": "REVEAL",
@@ -125,19 +233,37 @@
     "spriteBytes": 545346,
     "frameCount": 48,
     "trials": [
-      3704,
-      3664,
-      3664,
-      3872,
-      3884
+      3308,
+      3280,
+      3280,
+      3284,
+      3284
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 3704,
-    "measuredLcpMinMs": 3664,
-    "measuredLcpMaxMs": 3884,
-    "wallClockMedianMs": 3730,
-    "controlMedianMs": 1692,
-    "ratioToControl": 2.189
+    "measuredLcpMedianMs": 3284,
+    "measuredLcpMinMs": 3280,
+    "measuredLcpMaxMs": 3308,
+    "transferTrials": [
+      2816.5,
+      2780.399999976158,
+      2790.699999988079,
+      2782.100000023842,
+      2809.099999964237
+    ],
+    "transferMedianMs": 2790.7,
+    "decodeTrials": [
+      228.79999995231628,
+      245.19999998807907,
+      240.30000001192093,
+      257,
+      265
+    ],
+    "decodeMedianMs": 245.2,
+    "wallClockMedianMs": 3304,
+    "controlMedianMs": 1400,
+    "ratioToControl": 2.346,
+    "transferRatioToControl": 3.855,
+    "decodeRatioToControl": 0.564
   },
   {
     "archetype": "REVEAL",
@@ -145,19 +271,37 @@
     "spriteBytes": 518874,
     "frameCount": 48,
     "trials": [
-      3632,
-      3672,
-      3736,
-      3640,
-      3688
+      3084,
+      3136,
+      3096,
+      3188,
+      3100
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 3672,
-    "measuredLcpMinMs": 3632,
-    "measuredLcpMaxMs": 3736,
-    "wallClockMedianMs": 3708,
-    "controlMedianMs": 1692,
-    "ratioToControl": 2.17
+    "measuredLcpMedianMs": 3100,
+    "measuredLcpMinMs": 3084,
+    "measuredLcpMaxMs": 3188,
+    "transferTrials": [
+      2660.800000011921,
+      2661.399999976158,
+      2659.899999976158,
+      2671.600000023842,
+      2666.7000000476837
+    ],
+    "transferMedianMs": 2661.4,
+    "decodeTrials": [
+      221.79999995231628,
+      220.9000000357628,
+      231.10000002384186,
+      263.5,
+      235.89999997615814
+    ],
+    "decodeMedianMs": 231.1,
+    "wallClockMedianMs": 3145,
+    "controlMedianMs": 1400,
+    "ratioToControl": 2.214,
+    "transferRatioToControl": 3.676,
+    "decodeRatioToControl": 0.532
   },
   {
     "archetype": "SPIN",
@@ -165,19 +309,37 @@
     "spriteBytes": 170626,
     "frameCount": 24,
     "trials": [
-      2004,
-      1988,
-      2064,
-      2052,
-      2232
+      1496,
+      1532,
+      1508,
+      1476,
+      1508
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 2052,
-    "measuredLcpMinMs": 1988,
-    "measuredLcpMaxMs": 2232,
-    "wallClockMedianMs": 2087,
-    "controlMedianMs": 1692,
-    "ratioToControl": 1.213
+    "measuredLcpMedianMs": 1508,
+    "measuredLcpMinMs": 1476,
+    "measuredLcpMaxMs": 1532,
+    "transferTrials": [
+      984.4000000357628,
+      985.3999999761581,
+      995.5,
+      969.4000000357628,
+      990.7999999523163
+    ],
+    "transferMedianMs": 985.4,
+    "decodeTrials": [
+      312.5,
+      307.30000001192093,
+      305.60000002384186,
+      307.30000001192093,
+      311.10000002384186
+    ],
+    "decodeMedianMs": 307.3,
+    "wallClockMedianMs": 1517,
+    "controlMedianMs": 1400,
+    "ratioToControl": 1.077,
+    "transferRatioToControl": 1.361,
+    "decodeRatioToControl": 0.707
   },
   {
     "archetype": "SPIN",
@@ -185,78 +347,112 @@
     "spriteBytes": 171676,
     "frameCount": 24,
     "trials": [
-      2044,
-      1952,
-      2080,
-      1964,
-      1916
+      1496,
+      1504,
+      1508,
+      1492,
+      1504
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 1964,
-    "measuredLcpMinMs": 1916,
-    "measuredLcpMaxMs": 2080,
-    "wallClockMedianMs": 1983,
-    "controlMedianMs": 1692,
-    "ratioToControl": 1.161
+    "measuredLcpMedianMs": 1504,
+    "measuredLcpMinMs": 1492,
+    "measuredLcpMaxMs": 1508,
+    "transferTrials": [
+      980.1999999880791,
+      995.3000000119209,
+      995.5999999642372,
+      980.7000000476837,
+      983.3000000119209
+    ],
+    "transferMedianMs": 983.3,
+    "decodeTrials": [
+      310.89999997615814,
+      309.60000002384186,
+      307.10000002384186,
+      301.7999999523163,
+      313.69999998807907
+    ],
+    "decodeMedianMs": 309.6,
+    "wallClockMedianMs": 1517,
+    "controlMedianMs": 1400,
+    "ratioToControl": 1.074,
+    "transferRatioToControl": 1.358,
+    "decodeRatioToControl": 0.712
   },
   {
     "archetype": "TRANSFORM",
     "state": "approved-logo",
-    "spriteBytes": 276076,
+    "spriteBytes": 277394,
     "frameCount": 32,
     "trials": [
-      2624,
-      2224,
-      2548,
-      2480,
-      2400,
-      2320,
-      2712,
-      2616,
-      2520,
-      2352,
-      2396,
-      2728,
-      2556,
-      2924,
-      2460
+      1884,
+      1884,
+      1856,
+      1900,
+      1876
     ],
-    "validTrials": 15,
-    "measuredLcpMedianMs": 2520,
-    "measuredLcpMinMs": 2224,
-    "measuredLcpMaxMs": 2924,
-    "wallClockMedianMs": 2572,
-    "controlMedianMs": 1724,
-    "ratioToControl": 1.462
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1884,
+    "measuredLcpMinMs": 1856,
+    "measuredLcpMaxMs": 1900,
+    "transferTrials": [
+      1508.199999988079,
+      1493.199999988079,
+      1493.1000000238419,
+      1526.5,
+      1497.199999988079
+    ],
+    "transferMedianMs": 1497.2,
+    "decodeTrials": [
+      159.69999998807907,
+      178.0999999642372,
+      162.0999999642372,
+      156.9000000357628,
+      164.30000001192093
+    ],
+    "decodeMedianMs": 162.1,
+    "wallClockMedianMs": 1896,
+    "controlMedianMs": 1400,
+    "ratioToControl": 1.346,
+    "transferRatioToControl": 2.068,
+    "decodeRatioToControl": 0.373
   },
   {
     "archetype": "TRANSFORM",
     "state": "no-logo",
-    "spriteBytes": 265370,
+    "spriteBytes": 264236,
     "frameCount": 32,
     "trials": [
-      2236,
-      2800,
-      2152,
-      2252,
-      2300,
-      2668,
-      2496,
-      2364,
-      2232,
-      2180,
-      2248,
-      2600,
-      2148,
-      2860,
-      2472
+      1772,
+      1780,
+      1772,
+      1856,
+      1804
     ],
-    "validTrials": 15,
-    "measuredLcpMedianMs": 2300,
-    "measuredLcpMinMs": 2148,
-    "measuredLcpMaxMs": 2860,
-    "wallClockMedianMs": 2329,
-    "controlMedianMs": 1724,
-    "ratioToControl": 1.334
+    "validTrials": 5,
+    "measuredLcpMedianMs": 1780,
+    "measuredLcpMinMs": 1772,
+    "measuredLcpMaxMs": 1856,
+    "transferTrials": [
+      1426.8999999761581,
+      1434.1000000238419,
+      1424.5,
+      1442.199999988079,
+      1440.800000011921
+    ],
+    "transferMedianMs": 1434.1,
+    "decodeTrials": [
+      147.10000002384186,
+      141.10000002384186,
+      144.60000002384186,
+      153.80000001192093,
+      150.89999997615814
+    ],
+    "decodeMedianMs": 147.1,
+    "wallClockMedianMs": 1817,
+    "controlMedianMs": 1400,
+    "ratioToControl": 1.271,
+    "transferRatioToControl": 1.981,
+    "decodeRatioToControl": 0.338
   }
 ]

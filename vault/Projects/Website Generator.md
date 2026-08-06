@@ -3647,6 +3647,211 @@ bug - but means a reader diffing against this file later should check which inve
 a given row before treating its figure as "the" current shipped measurement, rather than one data
 point among several taken this session for a specific comparison.
 
+**RESOLVED 2026-08-06 (later, same day) - see LCP BASELINE RESTORED below: this caveat is no longer
+live.** The stored file no longer holds whichever experiment happened to run last; loaded-run and
+15-trial data were moved to their own files and the stored figure was re-measured clean under idle
+conditions specifically to be the baseline again. Kept here as historical record of the problem that
+motivated the fix.
+
+### LCP BASELINE RESTORED; LOAD/TRIALS DATA MOVED TO THEIR OWN FILES (2026-08-06, later)
+
+**The problem, stated by the task that caught it: `lcp-measured-results.json` was holding the LOADED
+six-archetype run's figures for five archetypes and a 15-trial run's figures for TRANSFORM - neither
+is the right thing to call "the stored baseline."** The loaded run's numbers are sandbagged by design
+(a deliberate stressor was running); comparing any future measurement against them would show a fake
+improvement the moment the stressor isn't there. A caveat telling readers to check provenance, which
+is what the section above did, is not a substitute for storing the right number in the first place.
+
+**Fixed structurally, not just re-labeled:** loaded-run data now lives in
+`test/cost-study/lcp-load-experiment.json` (both replications - the original pre-decomposition run
+and the later decomposed one, see below); the 15-trial TRANSFORM investigation's data lives in
+`test/cost-study/lcp-trials-experiment.json`. `lcp-measured-results.json` holds only idle,
+standard-5-trial readings from here on - the same contract the file always implied, now actually true.
+
+**A real snag, disclosed rather than worked around silently: the ORIGINAL idle run's raw per-trial
+data was already gone.** It had been overwritten by the loaded run's write before this task started,
+and only console-level medians survived (in the vault table above, not full trial arrays). Rather than
+reconstruct an incomplete record, re-measured idle fresh - the honest fix when data is actually lost,
+not a shortcut. That fresh run is what's stored now.
+
+Full method: `measure-lcp.js`, unchanged mechanism, run under idle conditions with the load-sweep
+script not running. Control: 1400ms (1324-1436ms, spread 112ms). Six-archetype table, superseding the
+one under LCP MEASUREMENT METHODOLOGY above (that one was itself already a mix of idle and, by the
+next session, partially loaded data - this is the first fully clean, fully-idle, fully-decomposed
+version):
+
+| Archetype | State | Median LCP | Sprite | Ratio to control | Transfer (ratio) | Decode (ratio) | Verdict |
+|---|---|---|---|---|---|---|---|
+| ASSEMBLE | no-logo | 5152ms | 822.4KB | 3.68x | 4225ms (5.84x) | 670ms (1.54x) | Poor |
+| ASSEMBLE | approved-logo | 5216ms | 866.4KB | 3.73x | 4432ms (6.12x) | 497ms (1.14x) | Poor |
+| REVEAL | no-logo | 3100ms | 506.7KB | 2.21x | 2661ms (3.68x) | 231ms (0.53x) | Needs Improvement |
+| REVEAL | approved-logo | 3284ms | 532.6KB | 2.35x | 2791ms (3.86x) | 245ms (0.56x) | Needs Improvement |
+| SPIN | no-logo | 1504ms | 167.7KB | 1.07x | 983ms (1.36x) | 310ms (0.71x) | Good |
+| SPIN | approved-logo | 1508ms | 166.6KB | 1.08x | 985ms (1.36x) | 307ms (0.71x) | Good |
+| TRANSFORM | no-logo | 1780ms | 258.0KB | 1.27x | 1434ms (1.98x) | 147ms (0.34x) | Good |
+| TRANSFORM | approved-logo | 1884ms | 270.9KB | 1.35x | 1497ms (2.07x) | 162ms (0.37x) | Good |
+| FLYTHROUGH | no-logo | 7716ms | 1430.7KB | 5.51x | 7202ms (9.95x) | 294ms (0.68x) | Poor |
+| FLYTHROUGH | approved-logo | 8004ms | 1464.4KB | 5.72x | 7355ms (10.16x) | 426ms (0.98x) | Poor |
+| INTERFACE | no-logo | 1300ms | 113.2KB | 0.93x | 720ms (0.99x) | 339ms (0.78x) | Good |
+| INTERFACE | approved-logo | 1368ms | 126.8KB | 0.98x | 787ms (1.09x) | 342ms (0.79x) | Good |
+
+**No verdict bucket changed from any prior clean measurement** - the whole point of the control
+mechanism holding up. TRANSFORM's own figures here (1780ms/1884ms, margins 720ms/616ms) are
+noticeably more comfortable than the earlier thin-margin reading that triggered the 15-trial
+investigation - consistent with everything this whole methodology effort has found: session-to-session
+absolute drift is large enough that a single reading, even a careful one, shouldn't be over-trusted -
+see the lever-testing section below, which resolves this more concretely than another measurement
+alone could.
+
+### RATIO-TO-CONTROL: THE PX/BYTE MECHANISM DOES NOT REPLICATE - DECOMPOSITION SHOWS WHAT ACTUALLY DRIVES IT (2026-08-06, later)
+
+**Checked before building anything, per the task's own instruction.** The proposed mechanism: ASSEMBLE
+(92.2 megapixels across its 12x8 grid, 109.5 px/byte) is decode-dominated and should drift more under
+CPU load; FLYTHROUGH (58.3 megapixels, 39.8 px/byte, a much bigger file for fewer pixels because its
+content compresses worse) is download-dominated and should drift less. **Checked against the existing
+round-1 data first: it fit well** - ASSEMBLE moved +12.0% under load, FLYTHROUGH +2.3-2.4%, matching
+the predicted ordering almost exactly.
+
+**Then it was implemented as real instrumentation (`measure-lcp.js` now splits every measurement into
+`transferMs` - Resource Timing's `responseEnd - startTime` for the sprite specifically - and
+`decodeMs` - Element Timing's `renderTime` minus that same `responseEnd`, i.e. decode+paint after the
+bytes arrive) and RE-TESTED with a second, independent idle-vs-loaded pair. It did not replicate.**
+Second pair: ASSEMBLE moved only +1.03-1.26%, FLYTHROUGH +1.57-3.23% - both small, comparable to each
+other, nothing like round 1's dramatic 12%-vs-2.4% split. The load-sweep stressor was confirmed
+genuinely active throughout both loaded runs (continuous capture-completion logging, ~9-12s/iteration,
+no gaps) - this isn't an inactive-stressor artifact. **Said plainly, per the task's own instruction:
+the px/byte mechanism is not well supported. Retracted, not quietly kept.**
+
+**What the decomposed data actually shows, and it's a cleaner, more mechanistically obvious story than
+the retracted one** (idle2 vs loaded2, the matched decomposed pair, control 1236ms->1256ms):
+
+| Archetype | State | Δtransfer | Δtransfer % | Δdecode | Δdecode % |
+|---|---|---|---|---|---|
+| ASSEMBLE | no-logo | -27ms | -0.6% | +31ms | +10.1% |
+| ASSEMBLE | approved-logo | +22ms | +0.5% | +7ms | +1.8% |
+| REVEAL | no-logo | +22ms | +0.8% | +35ms | +18.9% |
+| REVEAL | approved-logo | +10ms | +0.4% | +43ms | +21.4% |
+| SPIN | no-logo | +1ms | +0.1% | +65ms | +24.0% |
+| SPIN | approved-logo | -5ms | -0.5% | +50ms | +18.4% |
+| TRANSFORM | no-logo | +1ms | +0.05% | +42ms | +33.0% |
+| TRANSFORM | approved-logo | +1ms | +0.09% | +38ms | +30.9% |
+| FLYTHROUGH | no-logo | +26ms | +0.4% | +89ms | +41.7% |
+| FLYTHROUGH | approved-logo | +19ms | +0.3% | +212ms | +95.8% |
+| INTERFACE (self) | no-logo | -1ms | -0.2% | +124ms | +42.2% |
+| INTERFACE (self) | approved-logo | +8ms | +1.0% | +153ms | +51.8% |
+| control | - | +12ms | +1.7% | +25ms | +8.5% |
+
+**Transfer time is essentially unaffected by CPU load - every single archetype, ≤1.7% movement,
+including the control.** This is exactly what CDP's `Network.emulateNetworkConditions` should produce:
+a throttle on bandwidth/RTT, not on the render thread, so it shouldn't care what else the CPU is
+doing - and the data confirms it doesn't, cleanly and consistently, not just for the two archetypes
+the retracted mechanism singled out. **Decode time is NOT stable - every archetype moved
+substantially (+10% to +96%), including the control (+8.5%)** - it directly competes with the
+stressor for the same render thread.
+
+**So why did the BLENDED ratio move a lot for some archetypes and little for others (the original
+observation this whole investigation started from)? Because decode is a small and wildly variable
+fraction of each archetype's total time, and that fraction - not pixel count or file size - is what
+determines how much a stable-transfer, unstable-decode split shows up in the blended number.**
+ASSEMBLE and FLYTHROUGH's decode is 2.8-6.5% of their total (both are transfer-dominated, contrary to
+the retracted mechanism's own premise that ASSEMBLE was decode-dominated); SPIN and INTERFACE's decode
+is 18-24% of total. Archetypes with a small decode fraction show small blended movement no matter how
+much decode itself moves proportionally (a big % change of a small absolute number is still small);
+archetypes with a bigger decode fraction show more. This explains the DIRECTION of blended movement
+well. It does NOT reliably predict MAGNITUDE from one session pair to the next, because decode times
+are small absolute numbers (100-450ms) riding on top of real OS/thread-scheduling noise, which is
+exactly why round 1 and round 2 gave different-looking blended results from nominally the same
+stressor - the mechanism (decode competes with CPU load) is real and confirmed; its exact
+session-to-session magnitude is not something two replications can pin down precisely.
+
+**Does decomposition produce a MORE stable cross-session metric? Only for transfer, and even that
+imperfectly.** Transfer-ratio deltas (idle2 vs loaded2) range 0.008-0.143 - smaller than the blended
+ratio's round-1 extremes (0.235-0.253) but the reduction scales with an archetype's own baseline
+ratio magnitude (ASSEMBLE/FLYTHROUGH sit at 6-10x control, so the same ~1% underlying transfer-time
+noise produces a bigger absolute ratio swing for them than for a near-1x archetype like SPIN or
+TRANSFORM - an arithmetic consequence of ratio-ing against a small denominator, not a new instability).
+**Decode-ratio is NOT more stable - it's LESS stable than the blended ratio was**, moving 0.02-0.60
+between idle and loaded (INTERFACE's own decode self-ratio swung from 1.000 to 1.309 - a "should be
+exactly 1.0" sanity check landing 31% off), because decode's small absolute size makes it acutely
+sensitive to the same noise that barely dents a multi-second blended figure.
+
+**Correcting the previous section's proposal, not just adding to it: option (a), a second heavy
+control, is very likely the wrong fix - the task's own suspicion, checked against real data rather
+than assumed.** "Heavy" isn't the axis that determines ratio stability; decode-time SHARE-of-total is,
+and both round-1 outliers (ASSEMBLE, FLYTHROUGH) turned out to be transfer-dominated (decode
+2.8-6.5% of total), not decode-dominated as first assumed - a second heavy/download-dominated control
+would sit on the SAME side of this axis as the two archetypes it was meant to fix, not a different
+one. **Option (b), decomposition, is implemented and DOES deliver one genuinely more trustworthy
+cross-session number (transfer-ratio) but does not deliver a stable blended ratio for every
+archetype** - the practical upshot is unchanged from before: lean on the raw-ms-vs-noise-floor method
+for cross-session judgment calls generally, and now specifically also trust transfer-ratio (not
+decode-ratio, not blended-ratio) as a secondary check when network cost specifically is the question.
+
+Full method: `measure-lcp.js`'s new transfer/decode split (Resource Timing + Element Timing, see code
+comments). Raw data: `test/cost-study/lcp-load-experiment.json` (`replication2`, the decomposed
+idle-vs-loaded pair) and `lcp-control-log.json` (all control readings, decomposed from this session
+onward).
+
+### TRANSFORM HEADROOM: THREE UNTRIED LEVERS MEASURED (2026-08-06, later)
+
+**Fresh 15-trial baseline (shipped code, unmodified), same-session reference point for every lever
+below:** control 1284ms (1220-1452ms) - TRANSFORM no-logo 1792ms (ratio 1.396x, transfer 1448ms/2.01x,
+decode 143ms/0.44x), approved-logo 1836ms (ratio 1.430x, transfer 1496ms/2.08x, decode 141ms/0.43x).
+Comfortably Good this particular run (708ms/664ms margin) - underscoring, yet again, that TRANSFORM's
+verdict genuinely does swing between comfortable and borderline across sessions with zero code change,
+exactly what the prior section found.
+
+**Each lever tested independently, in isolation, temporarily patched and reverted (never left applied
+without sign-off - see the recommendation at the end), regenerated against the real Birds Barbershop
+fixture, and re-verified against sheet-integrity/frustum/occlusion before measuring:**
+
+| Lever | Sprite (no-logo/approved) | LCP (no-logo/approved) | Ratio | ms recovered | Frame16/31 std | Visual cost |
+|---|---|---|---|---|---|---|
+| Shipped (0.8 quality, 32 frames, 1200px) | 259.2/269.6KB | 1792/1836ms | 1.40x/1.43x | - | 97.9/6.24 | - baseline |
+| WebP quality 0.6 | 190.8/196.7KB (-26%) | 1588/1620ms | 1.23x/1.25x | 204/216ms | 97.9/6.06 | none visible, confirmed by screenshot |
+| Frame count 16 (from 32) | 129.3/136.5KB (-50%) | 1168/1196ms | 0.89x/0.91x | 624/640ms | 96.8/6.29 | texture unaffected; animation is 2x choppier per step (same precedent as SPIN's own accepted 24->16 reduction) |
+| Resolution 900x600 (from 1200x800) | 177.7/190.5KB (-31%) | 1428/1488ms | 0.99x/1.04x | 364/348ms | 98.0/6.03 | **texture fine, but real cost: CSS serves the hero at up to 1200px wide (`width: min(90vw, 1200px)`) - most desktop viewports trigger that ceiling, so a 900px source gets upscaled ~33%, visibly softer. Directly contradicts this project's own prior "crisp rendering needs ~2x resolution" finding (RESOLVED Flipbook Alternative section) - rejected on this basis, not measured out** |
+
+**Combination tested: WebP quality 0.6 + frame count 16, resolution left untouched (the one lever with
+a real visual cost is excluded from the combination, not averaged into it):**
+
+| | Sprite | LCP | Ratio | ms recovered vs. shipped |
+|---|---|---|---|---|
+| no-logo | 97.9KB (-62%) | 1008ms | 0.72x | 784ms |
+| approved-logo | 100.5KB (-63%) | 1068ms | 0.76x | 768ms |
+
+**Texture confirmed preserved, not assumed - std and screenshot both checked at the combination's own
+frame indices (8=new midpoint, 15=new end, equivalent to the shipped 16/31):** std 96.9 (mid) / 5.97
+(end) vs. shipped's 97.9/6.24 - a ~4% difference, well within what quality/frame-count alone already
+showed individually. Screenshots of both frames confirmed visually indistinguishable from the shipped
+version - the grain and streak texture is fully intact, not thinned out by the combination.
+
+**Recommendation: apply the quality 0.6 + frame count 16 combination.** 1008ms/1068ms against 2.5s is
+a 1492ms/1432ms margin - roughly 7x the largest single noise figure measured anywhere in this whole
+investigation (the 228ms cross-run control spread, or even the 648ms all-trial spread), not a thin
+margin dressed up as a safe one. This clears the bar the task set: clearly clear of 2.5s, with margin
+beyond the measured noise floor, keeping the texture. **Not applied yet - reported for sign-off,
+per this project's own established pattern (materials/parameters aren't changed without it,
+e.g. REVEAL's untouched materials, SPIN's reported-not-applied frame-count idea).** New TASKS.md entry
+tracks the decision.
+
+**What wasn't tried and is the more honest caveat here: only ONE alternate value per lever was
+tested (quality 0.6, 16 frames, 900px), not a sweep.** A slightly less aggressive combination (e.g.
+quality 0.7 + 24 frames) might also clear the bar with an even smaller visual/temporal-smoothness
+delta from shipped - not measured, since the tested combination already clears with very large margin
+and the task asked for a recommendation, not an optimum. If the temporal choppiness of 16 frames
+turns out to matter more than this write-up's reasoning-by-precedent suggests once actually seen
+scrolling (not just as static frames), a smaller frame-count cut (e.g. 24) combined with the quality
+change alone would still likely clear 2.5s with real margin - flagged as the fallback if 16 frames is
+rejected on smoothness grounds specifically, not re-measured here since it wasn't asked for.
+
+Full method: `src/composite.js` (`WEBP_QUALITY`, temporarily patched per test), `src/archetypes.js`
+(TRANSFORM's `frameCount`/`dims`/`fallbackFrame`, temporarily patched per test), both reverted via
+`git checkout` after each measurement; `measure-lcp.js --trials=15` for every reading;
+`src/sheet-integrity.js` for std; frame extraction via a one-off script (not shipped) reading the
+composited `sprite.webp` directly, since raw captured PNG frames are lossless and don't show WebP
+compression artifacts.
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

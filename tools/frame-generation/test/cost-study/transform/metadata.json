@@ -23,11 +23,11 @@
     "format": "webp",
     "width": 6000,
     "height": 5600,
-    "bytes": 265370
+    "bytes": 264236
   },
   "capture": {
-    "elapsedMs": 9490,
-    "msPerFrame": 296.56
+    "elapsedMs": 7156,
+    "msPerFrame": 223.63
   },
   "logo": {
     "logoText": "",

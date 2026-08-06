@@ -106,18 +106,43 @@ ${metadata.css}
 <body>
 ${html}
 <script>
+// Decomposition (added 2026-08-06): a blended end-to-end renderTime conflates two components with
+// different load sensitivity - network transfer (throttled bandwidth + fixed 150ms RTT, barely
+// touched by CPU contention) and render/decode (competes directly with a CPU stressor). Resource
+// Timing gives the sprite image's own fetch window; Element Timing gives the paint. transferMs =
+// responseEnd - startTime (DNS/connect/request/download for the sprite specifically); decodeMs =
+// renderTime - responseEnd (whatever happens after the bytes arrive: image decode + paint). The two
+// sum with the resource's own startTime (HTML-parse-to-fetch-start) to exactly the blended
+// renderTime already measured - no time is double-counted or dropped.
 window.__getEntry = () => new Promise((resolve) => {
+  let elementEntry = null, resourceEntry = null;
+  let done = false;
+  function tryResolve() {
+    if (done || !elementEntry || !resourceEntry) return; // wait for both - resolving on elementEntry alone would silently drop the decomposition on the (rare) race where the resource observer callback hasn't run yet
+    done = true;
+    resolve({
+      renderTime: elementEntry.renderTime, loadTime: elementEntry.loadTime, startTime: elementEntry.startTime,
+      resourceStartTime: resourceEntry ? resourceEntry.startTime : null,
+      resourceResponseEnd: resourceEntry ? resourceEntry.responseEnd : null,
+    });
+  }
   const po = new PerformanceObserver((list) => {
     for (const e of list.getEntries()) {
-      if (e.identifier === 'hero-sprite') {
-        resolve({ renderTime: e.renderTime, loadTime: e.loadTime, startTime: e.startTime });
-        po.disconnect();
-        return;
-      }
+      if (e.identifier === 'hero-sprite') { elementEntry = e; tryResolve(); }
     }
   });
   po.observe({ type: 'element', buffered: true });
-  setTimeout(() => resolve(null), 40000); // safety timeout under combined CPU+network throttle
+  const ro = new PerformanceObserver((list) => {
+    for (const e of list.getEntries()) {
+      if (e.name.endsWith('.webp') || e.name.endsWith('.png')) { resourceEntry = e; tryResolve(); }
+    }
+  });
+  ro.observe({ type: 'resource', buffered: true });
+  setTimeout(() => { done = true; resolve(elementEntry ? {
+    renderTime: elementEntry.renderTime, loadTime: elementEntry.loadTime, startTime: elementEntry.startTime,
+    resourceStartTime: resourceEntry ? resourceEntry.startTime : null,
+    resourceResponseEnd: resourceEntry ? resourceEntry.responseEnd : null,
+  } : null); }, 40000); // safety timeout under combined CPU+network throttle
 });
 </script>
 </body></html>`;
@@ -176,6 +201,8 @@ async function measureArchetypeState(browser, base, archName, state) {
   const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
 
   const renderTimes = [];
+  const transferTimes = []; // resourceResponseEnd - resourceStartTime: network component
+  const decodeTimes = [];   // renderTime - resourceResponseEnd: decode+paint component
   const wallClocks = [];
   for (let i = 0; i < TRIALS; i++) {
     const { entry, wallClockMs } = await measureOne(browser, archDir, metadata);
@@ -187,9 +214,19 @@ async function measureArchetypeState(browser, base, archName, state) {
     } else {
       renderTimes.push(null);
     }
+    if (entry && entry.resourceStartTime != null && entry.resourceResponseEnd != null) {
+      transferTimes.push(entry.resourceResponseEnd - entry.resourceStartTime);
+      const total = entry.renderTime || entry.loadTime;
+      decodeTimes.push(total != null ? total - entry.resourceResponseEnd : null);
+    } else {
+      transferTimes.push(null);
+      decodeTimes.push(null);
+    }
   }
 
   const valid = renderTimes.filter((v) => v !== null);
+  const validTransfer = transferTimes.filter((v) => v !== null);
+  const validDecode = decodeTimes.filter((v) => v !== null);
   return {
     archetype: archName.toUpperCase(),
     state,
@@ -200,6 +237,10 @@ async function measureArchetypeState(browser, base, archName, state) {
     measuredLcpMedianMs: valid.length ? +median(valid).toFixed(1) : null,
     measuredLcpMinMs: valid.length ? +Math.min(...valid).toFixed(1) : null,
     measuredLcpMaxMs: valid.length ? +Math.max(...valid).toFixed(1) : null,
+    transferTrials: transferTimes,
+    transferMedianMs: validTransfer.length ? +median(validTransfer).toFixed(1) : null,
+    decodeTrials: decodeTimes,
+    decodeMedianMs: validDecode.length ? +median(validDecode).toFixed(1) : null,
     wallClockMedianMs: +median(wallClocks).toFixed(1),
   };
 }
@@ -250,7 +291,8 @@ async function main() {
     console.log(
       `CONTROL ${control.archetype}/${control.state}  median=${control.measuredLcpMedianMs}ms ` +
       `(min=${control.measuredLcpMinMs}, max=${control.measuredLcpMaxMs}, spread=${spread.toFixed(1)}ms) ` +
-      `sprite=${(control.spriteBytes / 1024).toFixed(1)}KB  [logged to ${path.basename(CONTROL_LOG_PATH)}]`
+      `sprite=${(control.spriteBytes / 1024).toFixed(1)}KB  [transfer=${control.transferMedianMs}ms decode=${control.decodeMedianMs}ms]  ` +
+      `[logged to ${path.basename(CONTROL_LOG_PATH)}]`
     );
 
     if (controlOnly) {
@@ -277,11 +319,21 @@ async function main() {
         row.ratioToControl = row.measuredLcpMedianMs != null && control.measuredLcpMedianMs
           ? +(row.measuredLcpMedianMs / control.measuredLcpMedianMs).toFixed(3)
           : null;
+        // Component ratios - each against the control's OWN matching component, not the control's
+        // blended figure, so a network-heavy archetype's transfer time is judged against the
+        // control's transfer time specifically, not diluted by the control's own decode cost.
+        row.transferRatioToControl = row.transferMedianMs != null && control.transferMedianMs
+          ? +(row.transferMedianMs / control.transferMedianMs).toFixed(3)
+          : null;
+        row.decodeRatioToControl = row.decodeMedianMs != null && control.decodeMedianMs
+          ? +(row.decodeMedianMs / control.decodeMedianMs).toFixed(3)
+          : null;
         results.push(row);
         console.log(
           `${arch.padEnd(11)} ${state.padEnd(14)} measuredLCP median=${row.measuredLcpMedianMs}ms ` +
           `(min=${row.measuredLcpMinMs}, max=${row.measuredLcpMaxMs}, n=${row.validTrials}/${TRIALS}) ` +
-          `sprite=${(row.spriteBytes/1024).toFixed(1)}KB  ratioToControl=${row.ratioToControl}x`
+          `sprite=${(row.spriteBytes/1024).toFixed(1)}KB  ratioToControl=${row.ratioToControl}x  ` +
+          `[transfer=${row.transferMedianMs}ms(${row.transferRatioToControl}x) decode=${row.decodeMedianMs}ms(${row.decodeRatioToControl}x)]`
         );
       }
     }
