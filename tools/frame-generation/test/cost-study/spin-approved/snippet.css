@@ -7,7 +7,7 @@
   background-image: url('sprite.webp');
   background-repeat: no-repeat;
   background-size: 500% 500%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position: 75% 100%; /* unconditional base state: the actual last frame's grid cell (3,4) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
+  background-position: 0% 0%; /* unconditional base state: the chosen fallback frame's grid cell (0,0), frame index 0 - per-archetype choice (src/archetypes.js), not always the last frame and NOT always "100% 100%" even when it is, since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {
@@ -47,6 +47,6 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-sprite {
     animation: none !important;
-    background-position: 75% 100%;
+    background-position: 0% 0%;
   }
 }

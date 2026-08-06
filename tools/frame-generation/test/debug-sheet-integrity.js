@@ -69,7 +69,7 @@ async function main() {
 
   try {
     const result = await verifySheetIntegrity({
-      sheetPath, frameCount: archetype.frameCount, dims: archetype.dims, grid,
+      sheetPath, frameCount: archetype.frameCount, dims: archetype.dims, grid, fallbackFrame: archetype.fallbackFrame,
     });
     console.log(JSON.stringify(result, null, 2));
     console.log(result.ok ? '\nPASS' : '\nFAIL (see problems above)');

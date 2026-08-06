@@ -21,6 +21,15 @@
 //   3. Adjacent (temporally sequential) cells aren't ALL near-identical -
 //      NOT a per-pair requirement (see below for why), but a ceiling on
 //      what fraction of adjacent pairs may be near-identical.
+//   4. The caller's chosen fallbackFrame (optional param - src/archetypes.js
+//      per-archetype choice, see that file's own header) is checked AGAIN,
+//      separately and by name, against the same non-uniform floor as check
+//      2 - not because the math differs, but because this ONE frame is the
+//      entire hero image for every visitor who never sees the animation at
+//      all (src/metadata.js points both the unconditional base state and
+//      prefers-reduced-motion at it). A blank fallback frame deserves its
+//      own named failure, not a slot in check 2's generic list where its
+//      severity could be missed.
 //
 // WHY THE ADJACENT-PAIR CHECK IS A FRACTION CEILING, NOT A PER-PAIR FLOOR:
 // tested a strict "every adjacent pair must differ above some floor" rule
@@ -86,7 +95,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 const { startServer } = require('./static-server');
 
-async function verifySheetIntegrity({ sheetPath, frameCount, dims, grid }) {
+async function verifySheetIntegrity({ sheetPath, frameCount, dims, grid, fallbackFrame }) {
   const sheetDir = path.dirname(sheetPath);
   const sheetName = path.basename(sheetPath);
   const composeRoot = path.join(__dirname, '..', 'compose');
@@ -133,6 +142,31 @@ async function verifySheetIntegrity({ sheetPath, frameCount, dims, grid }) {
       );
     }
 
+    // The fallback frame's own cell gets a SEPARATE, named check, not just
+    // a slot in the generic flatCells list above. It carries more weight
+    // than every other frame combined: src/metadata.js points BOTH the
+    // unconditional @supports base state AND prefers-reduced-motion at it,
+    // so it is the entire hero image for every visitor who never runs the
+    // animation at all - exactly the failure mode that shipped undetected
+    // before this guard existed (see vault: SHEET INTEGRITY GUARD's
+    // FLYTHROUGH finding, a real blank frame that was the fallback for
+    // every such visitor). A generic "N cells are flat" message could
+    // easily be misread as low-severity; this can't be.
+    let fallbackFrameOk = true;
+    if (fallbackFrame != null) {
+      const fbStd = result.cellStds[fallbackFrame];
+      fallbackFrameOk = fbStd != null && fbStd > NON_UNIFORM_STD_FLOOR;
+      if (!fallbackFrameOk) {
+        problems.push(
+          `FALLBACK FRAME IS BLANK: frame index ${fallbackFrame} (std=${fbStd}, floor=${NON_UNIFORM_STD_FLOOR}) is a flat fill. ` +
+          `This is the frame src/metadata.js uses for the unconditional base state AND prefers-reduced-motion - ` +
+          `every Firefox visitor and every reduced-motion visitor sees THIS frame as the entire hero image. ` +
+          `Do not ship this sheet - fix the scene/camera at this frame fraction, or reconsider the archetype's ` +
+          `fallbackFrame choice in src/archetypes.js if the frame itself is inherently unsuitable.`
+        );
+      }
+    }
+
     const nearZeroPairs = result.adjacentDiffs.filter((d) => d <= NEAR_ZERO_MEAN_DIFF).length;
     const nearZeroFraction = result.adjacentDiffs.length > 0 ? nearZeroPairs / result.adjacentDiffs.length : 0;
     if (nearZeroFraction > NEAR_ZERO_FRACTION_CEILING) {
@@ -149,6 +183,9 @@ async function verifySheetIntegrity({ sheetPath, frameCount, dims, grid }) {
       dimsOk: result.dimsOk,
       flatCellCount: flatCells.length,
       flatCellIndices: flatCells.map((c) => c.i),
+      fallbackFrame: fallbackFrame != null ? fallbackFrame : null,
+      fallbackFrameOk,
+      fallbackFrameStd: fallbackFrame != null ? result.cellStds[fallbackFrame] : null,
       nearZeroPairCount: nearZeroPairs,
       nearZeroPairFraction: +nearZeroFraction.toFixed(3),
       cellStds: result.cellStds,

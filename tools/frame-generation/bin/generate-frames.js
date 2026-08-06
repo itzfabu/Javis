@@ -79,6 +79,7 @@ async function main() {
     dims: capture.dims,
     grid: capture.archetype.grid,
     outPath: spriteSheetPath,
+    fallbackFrame: capture.archetype.fallbackFrame,
   });
   console.log(`  wrote ${spriteSheetPath} (${spriteSheet.width}x${spriteSheet.height}, ${(spriteSheet.bytes / 1024).toFixed(1)}KB)`);
 

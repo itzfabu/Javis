@@ -56,10 +56,35 @@ scene.add(signboard);
 window.__frustumCheck = () => FrameScene.checkFrustum(camera, signboard);
 window.__occlusionCheck = (opts) => FrameScene.checkOcclusion(renderer, scene, camera, signboard, opts);
 
-camera.position.set(0, 0.1, 1.5);
+// CAMERA PATH - fixed 2026-08-06, see vault: SHEET INTEGRITY GUARD's
+// FLYTHROUGH finding and the follow-up fix note. The old path
+// (totalDepth = (N_ARCHES-1)*SPACING = 11.0, ending at camera z=-9.5) left
+// the last frame (t=1.0) completely blank - not a rendering bug, a real
+// geometry/FOV interaction verified directly (three.js Vector3.project()
+// on ring 5's own tube vertices, not assumed): every ring, including this
+// one, has a narrow VISIBILITY WINDOW while the camera approaches it - it
+// grows to fill the frame, then vanishes entirely once the camera is close
+// enough that the ring's own angular size (tube radius ~1.24 world units)
+// exceeds the ~17.5 degree half-FOV in every direction at once, at which
+// point every point on the tube's circumference projects outside the
+// [-1,1] NDC screen bounds simultaneously - not a partial crop, a total
+// disappearance. Measured directly: ring 5's own vanish point is around
+// distance 1.9-2.0 from its z position (visible at distance 2.05, gone by
+// 1.83). The old path drove the camera to distance 1.5 from the last ring
+// at t=1.0 - INSIDE the vanished zone, with nothing beyond ring 5 (no
+// ring 6) to fill the frame instead, unlike every earlier ring's vanish
+// point, which is immediately followed by the next ring coming into view.
+// Fix: stop the camera at a distance from the last ring that's
+// comfortably inside its confirmed-visible range, not at a fixed total
+// travel distance that happens to overshoot it.
+const START_DISTANCE = 1.5; // matches the scene's original starting offset before ring 0
+const END_DISTANCE = 2.5; // stops with real margin above ring 5's measured ~1.9-2.0 vanish threshold
+const lastRingZ = -(N_ARCHES - 1) * SPACING;
+
+camera.position.set(0, 0.1, START_DISTANCE);
 camera.lookAt(0, 0, -1);
 
-const totalDepth = (N_ARCHES - 1) * SPACING;
+const totalDepth = START_DISTANCE - (lastRingZ + END_DISTANCE);
 
 window.__renderFrame = function (t) {
   camera.position.z = 1.5 - totalDepth * t;

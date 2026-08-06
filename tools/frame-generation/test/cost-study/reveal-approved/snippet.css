@@ -7,7 +7,7 @@
   background-image: url('sprite.webp');
   background-repeat: no-repeat;
   background-size: 800% 600%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position: 100% 100%; /* unconditional base state: the actual last frame's grid cell (7,5) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
+  background-position: 100% 100%; /* unconditional base state: the chosen fallback frame's grid cell (7,5), frame index 47 - per-archetype choice (src/archetypes.js), not always the last frame and NOT always "100% 100%" even when it is, since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {

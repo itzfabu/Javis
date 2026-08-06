@@ -2962,6 +2962,112 @@ capture-stage guards report a failure without erasing the evidence. A reusable f
 archetype's real shipped sheet, or with `--reconstruct-broken-strip` to re-run the historical-bug
 reconstruction test on demand.
 
+### FLYTHROUGH BLANK FRAME FIX + FALLBACK FRAME (2026-08-06)
+
+Three follow-ups on the FLYTHROUGH bug the sheet-integrity guard's first real run caught, raised in
+severity: the static fallback and `prefers-reduced-motion` states both render `lastFrameCell`, so a
+blank last frame isn't a truncated animation for a slice of visitors - it's a blank hero for every
+Firefox visitor and every reduced-motion visitor.
+
+**1. Camera path fixed - root cause found by direct measurement, not guessed.** `scenes/flythrough.html`
+drove the camera to `z=-9.5` at `t=1.0`, 1.5 units short of the last ring's own position (`z=-11.0`).
+That looked geometrically close enough to assume the ring would still be in view. It wasn't. Projected
+ring 5's own tube vertices through the live camera via `THREE.Vector3.project()` (not a bounding-sphere
+frustum test, which gave a false "intersects" - a sphere test passes as soon as ANY part of the sphere
+volume overlaps the frustum, even the empty space inside a torus's own hole) and found every sampled
+point landed outside the `[-1,1]` NDC screen bounds at `t=1.0`. Swept `t` further and found the real
+mechanism: **every ring in this scene has a narrow visibility window while the camera approaches it -
+it grows to fill the frame, then vanishes entirely once the camera is close enough that the ring's own
+angular size exceeds the ~17.5° half-FOV in every direction simultaneously** (confirmed directly: ring
+5's own vanish point sits around distance 1.9-2.0 from its z position - visible at distance 2.05, gone
+by 1.83). This happens to every ring, not just the last, but every earlier ring's vanish point is
+immediately followed by the NEXT ring coming into view - the last ring's vanish point is followed by
+nothing, since there's no ring 6. The old path drove the camera to distance 1.5 - inside the vanished
+zone - for the final ~5-13% of the sequence, with nothing else to fill the frame.
+
+**Fix:** stop the camera at a distance from the last ring inside its confirmed-visible range (`END_DISTANCE
+= 2.5`, comfortable margin above the measured ~1.9-2.0 threshold), computed from named constants
+(`START_DISTANCE`, `END_DISTANCE`, `lastRingZ`) instead of a bare `totalDepth` number, so the reasoning
+is legible in the code, not just in this note.
+
+**Verified three ways, per the task's own instruction not to trust the guard alone:**
+- Rendered `t=1.0` and every other frame in the sequence, screenshotted, looked at them. The last frame
+  now shows the final ring cleanly framed with the signboard behind it - confirmed visually, not just
+  by a passing check.
+- Computed luma std-dev for all 72 frames directly in-browser: minimum is 43.96 (frame 46), nowhere
+  close to the guard's `NON_UNIFORM_STD_FLOOR=1.0` - no new dead zones introduced anywhere in the
+  shortened path, not just at the end.
+- Regenerated FLYTHROUGH end-to-end through the real pipeline (`bin/generate-frames.js`, both the
+  no-logo and Mark Fisher Fitness approved-logo states) and ran `verifySheetIntegrity()` against the
+  fresh sheet: **passes cleanly, 0 flat cells, last frame std=83.257** (was 0.000). All twelve real
+  fixtures (six archetypes × two logo states) now pass the sheet-integrity guard - FLYTHROUGH was the
+  only failure before this fix. The stale pre-fix `test/cost-study/flythrough[-approved]` fixtures were
+  replaced with fresh output, not left inconsistent with the rest of this document's data.
+
+**Signboard visibility at `appearsAtFrameFraction`, checked as asked - it was never actually the
+problem.** The task's own framing was skeptical of the passing guards ("the frustum and occlusion
+guards pass at that fraction but the geometry clearly leaves view before t=1.0"). Checked directly,
+both before and after the camera fix, with a synthetic text logo AND Mark Fisher Fitness's real logo
+asset: the signboard was already comfortably framed and legible under the OLD camera path too (both
+guards passed with real margin, and a direct screenshot confirms it) - the blank-frame bug was
+specifically about the "no logo present" case (the no-logo fixtures, where the signboard mesh is fully
+transparent per `makeLogoPlane`), where the only remaining content (the ring, floor, background) had
+already left view. **Report: the signboard itself was not the problem, then or now** - re-verified after
+the fix with the real asset (`isolatedLogoPixelCount=9526`, both guards pass with margin, confirmed
+legible on screen: "Speakeasy of Strength").
+
+**2. `fallbackFrame` added as an explicit, justified per-archetype choice - `src/archetypes.js` +
+`src/metadata.js`.** Previously both the unconditional `@supports` base state and
+`prefers-reduced-motion` hardcoded the LAST frame (`lastFrameCell`/`frameCount-1`). Now each archetype
+declares `fallbackFrame` explicitly; `getArchetype()` defaults it to the last frame when unset, so the
+change is additive - every archetype that genuinely wants the last frame still gets it, just stated,
+not implied. `src/metadata.js`'s `buildCssSnippet` takes `fallbackFrame` and uses it for both CSS
+states; the animated `@keyframes` sequence itself is unchanged (it still runs the full, real sequence
+end to end - only the two static/no-animation states point at the chosen frame).
+
+**Each choice made by looking at real captured frames, per the task's instruction, not reasoned from
+the code alone - six separate spot-checks, not a rule applied uniformly:**
+
+| Archetype | fallbackFrame | Reasoning |
+|---|---|---|
+| ASSEMBLE | 95 (last) | Confirmed by inspection: the static (non-tracking) camera keeps every "settled" frame similarly tight-cropped on the top ~2 blocks regardless of tower height - frame 60 and frame 95 look nearly identical in framing. The last frame is still the right pick, not by default but because it's the only frame *guaranteed* fully-assembled with nothing mid-drop (frame 24, for comparison, is a block mid-fall with almost nothing else in view - confirmed a bad candidate directly). |
+| REVEAL | 47 (last) | Confirmed by inspection: frame 0 is an empty table (nothing has fallen yet), frame 47 is the full settled tableau, all spheres in place. Not a close call. |
+| SPIN | 0 | Confirmed by inspection: frame 0 has the label facing the camera, fully legible. Frame 12 (180°, back of the bottle) shows no label at all - a plain, brand-less silhouette. Not an arbitrary angle picked at random - the one angle where the product actually reads. |
+| TRANSFORM | 16 (wipe midpoint, of 32) | The most consequential finding of this pass: the wipe midpoint shows BOTH the "before" and "after" states side by side in one frame, communicating the archetype's entire concept far better than either endpoint alone. The "after" endpoint (frame 31) by itself is a near-blank bright panel with barely any internal contrast (std≈4.99, the lowest legitimate value found across all six archetypes' real frames during the sheet-integrity guard's own calibration pass) - genuinely easy to mistake for an empty or broken image on its own. This was not the obvious choice going in; it only surfaced by actually looking at frames instead of assuming "after = last frame = best." |
+| FLYTHROUGH | 71 (last) | A deliberate tradeoff, stated plainly rather than defaulted into. Direct inspection confirms frame 0 (the full 6-ring tunnel) is visually richer and more dynamic than the single-ring end state - but the client's logo has exactly zero opacity before ~88% through the sequence (the fade window is the final 12%), and every frame in that logo-visible window shows essentially the same single-ring composition (checked frames 63, 65, 71 directly - no meaningfully more dynamic option exists once the logo is present at all). No frame is both dynamic and branded. Chose brand visibility: a fallback frame with zero client branding defeats a real purpose of this pipeline for every visitor who sees only this one frame. |
+| INTERFACE | 47 (last) | Confirmed by inspection: the panel layout is already fully settled by the sequence's midpoint (frame 24 has the same panel position as frame 47, just a smaller counting-up number, "+65%" vs "+128%") - so picking the last frame costs nothing visually versus an earlier one, while avoiding a stat frozen mid-count that would read as wrong or broken (a static "+65%" looks like a bug, not a deliberate number). |
+
+**Regenerated all twelve real fixtures' `metadata.json`/`snippet.css`/`snippet.html`** to reflect the
+new per-archetype fallback (sprite images themselves are unchanged - `fallbackFrame` only changes which
+grid cell two specific CSS states point to, not any captured content). Spot-verified TRANSFORM's output
+directly: `background-position: 25% 50%` (grid cell (1,3), frame index 16) in both the unconditional
+base rule and the `prefers-reduced-motion` block, while the `@keyframes` sequence still runs its full,
+real 0%→100% progression unaffected.
+
+**3. Sheet-integrity guard extended with a fourth, NAMED check for the fallback frame specifically -
+`src/sheet-integrity.js`, `compose/verify-sheet.html` unchanged (reuses the same per-cell std
+measurement, just adds a dedicated pass over one specific index).** `verifySheetIntegrity()` now takes
+an optional `fallbackFrame` param; `compositeSpriteSheet()` and `bin/generate-frames.js` pass
+`archetype.fallbackFrame` through automatically. When that cell fails the same `NON_UNIFORM_STD_FLOOR`
+the generic per-cell check already uses, it produces a **separate, prominently-worded problem** -
+`FALLBACK FRAME IS BLANK: frame index N ... every Firefox visitor and every reduced-motion visitor sees
+THIS frame as the entire hero image` - rather than being one more index buried in the generic "N/72
+cells are flat" list, where its severity relative to every other frame could be missed. Same
+non-uniform floor, same math as check 2 - the point of the separate check is visibility of the failure
+mode, not a different or looser threshold.
+
+**Verified it actually fires, using the exact historical broken-strip reconstruction already built for
+this guard (`test/debug-sheet-integrity.js --reconstruct-broken-strip`), not a new synthetic case:**
+rebuilt ASSEMBLE's known-broken 1xN strip and ran the check with `fallbackFrame=95` - produces a
+distinct `FALLBACK FRAME IS BLANK: frame index 95 (std=0, floor=1)` problem, alongside (not instead of)
+the existing generic flat-cell and near-zero-pair findings. **Re-verified all twelve real fixtures still
+pass** with the new check included, including the regenerated FLYTHROUGH ones (`fallbackFrameOk: true`
+throughout) - no false positives introduced on real, correctly-chosen fallback frames.
+
+Full method: `scenes/flythrough.html` (camera path constants), `src/archetypes.js` (fallbackFrame per
+archetype), `src/metadata.js` (both CSS states), `src/sheet-integrity.js` (named check),
+`test/debug-sheet-integrity.js` (reusable verification, now checks fallbackFrame too).
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

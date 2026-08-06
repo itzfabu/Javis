@@ -11,7 +11,7 @@ const { verifySheetIntegrity } = require('./sheet-integrity');
 const COMPOSE_ROOT = path.join(__dirname, '..', 'compose');
 const WEBP_QUALITY = 0.8; // matches the quality used in this project's own cost-study measurements, for a fair before/after comparison
 
-async function compositeSpriteSheet({ framesDir, frameCount, dims, grid, outPath }) {
+async function compositeSpriteSheet({ framesDir, frameCount, dims, grid, outPath, fallbackFrame }) {
   const server = await startServer({
     '/compose/': COMPOSE_ROOT,
     '/frames/': framesDir,
@@ -55,7 +55,7 @@ async function compositeSpriteSheet({ framesDir, frameCount, dims, grid, outPath
     // for the historical bug (a mostly-blank sheet written to disk with
     // nothing catching it) that motivated it.
     const integrity = await verifySheetIntegrity({
-      sheetPath: outPath, frameCount, dims, grid,
+      sheetPath: outPath, frameCount, dims, grid, fallbackFrame,
     });
     if (!integrity.ok) {
       throw new Error(

@@ -27,8 +27,6 @@
 // only the portrait 2:3 case (ASSEMBLE) was tested end-to-end with a height
 // cap. Landscape archetypes are capped by width instead.
 
-const { lastFrameCell } = require('./archetypes');
-
 function frameBackgroundPosition(index, grid) {
   const col = index % grid.cols;
   const row = Math.floor(index / grid.cols);
@@ -37,7 +35,7 @@ function frameBackgroundPosition(index, grid) {
   return { x: +x.toFixed(3), y: +y.toFixed(3) };
 }
 
-function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, grid, spriteSheetRelPath }) {
+function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, grid, spriteSheetRelPath, fallbackFrame }) {
   const [w, h] = aspectRatio;
   const isLandscape = w > h;
   const capRule = isLandscape
@@ -46,8 +44,15 @@ function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, grid, spriteSh
   const bgSizeXPercent = 100 * grid.cols;
   const bgSizeYPercent = 100 * grid.rows;
 
-  const last = lastFrameCell(frameCount, grid);
-  const lastPos = frameBackgroundPosition(frameCount - 1, grid);
+  // fallbackFrame (default: the last frame, via getArchetype()) is what
+  // renders for every visitor who never sees the animation at all - the
+  // unconditional base state below AND the prefers-reduced-motion state
+  // both use it, per src/archetypes.js's own per-archetype reasoning (a
+  // deliberate choice looked at frame-by-frame, not always the last frame -
+  // see the vault's FALLBACK FRAME section).
+  const fbIndex = fallbackFrame != null ? fallbackFrame : frameCount - 1;
+  const fallbackCell = { col: fbIndex % grid.cols, row: Math.floor(fbIndex / grid.cols) };
+  const fallbackPos = frameBackgroundPosition(fbIndex, grid);
   const animName = `hero-scrub-${archetypeKey.toLowerCase()}`;
 
   const keyframeLines = [];
@@ -66,7 +71,7 @@ function buildCssSnippet({ archetypeKey, frameCount, aspectRatio, grid, spriteSh
   background-image: url('${spriteSheetRelPath}');
   background-repeat: no-repeat;
   background-size: ${bgSizeXPercent}% ${bgSizeYPercent}%; /* percentage, not px - required, see this project's own bleed-bug finding */
-  background-position: ${lastPos.x}% ${lastPos.y}%; /* unconditional base state: the actual last frame's grid cell (${last.col},${last.row}) - NOT always "100% 100%", since frameCount doesn't always fill the grid exactly */
+  background-position: ${fallbackPos.x}% ${fallbackPos.y}%; /* unconditional base state: the chosen fallback frame's grid cell (${fallbackCell.col},${fallbackCell.row}), frame index ${fbIndex} - per-archetype choice (src/archetypes.js), not always the last frame and NOT always "100% 100%" even when it is, since frameCount doesn't always fill the grid exactly */
 }
 
 @supports (animation-timeline: scroll()) {
@@ -83,7 +88,7 @@ ${keyframeLines.join('\n')}
 @media (prefers-reduced-motion: reduce) {
   .hero-sprite {
     animation: none !important;
-    background-position: ${lastPos.x}% ${lastPos.y}%;
+    background-position: ${fallbackPos.x}% ${fallbackPos.y}%;
   }
 }
 `;
@@ -100,6 +105,7 @@ function buildMetadata({ archetype, capture, spriteSheet, spriteSheetRelPath }) 
     aspectRatio: archetype.aspectRatio,
     grid: archetype.grid,
     spriteSheetRelPath,
+    fallbackFrame: archetype.fallbackFrame,
   });
 
   return {
@@ -110,6 +116,7 @@ function buildMetadata({ archetype, capture, spriteSheet, spriteSheetRelPath }) 
     aspectRatio: archetype.aspectRatio,
     frameDims: capture.dims,
     grid: archetype.grid,
+    fallbackFrame: archetype.fallbackFrame,
     spriteSheet: {
       path: spriteSheetRelPath,
       format: 'webp',
