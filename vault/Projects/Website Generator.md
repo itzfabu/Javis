@@ -2741,29 +2741,50 @@ pipeline change since nothing needs to change: `src/composite.js` already only e
 
 **The LZ77/row-boundary hypothesis (stated: only frames at row boundaries lose the previous-frame
 match, since frames wrap left-to-right within a row and the match distance stays inside zlib's 32KB
-window) — confirmed in direction for 4 of 6 archetypes, contradicted for 2.** Reasoning behind the
-hypothesis holds up structurally: in a grid, frame *i*'s raw scanline data sits directly adjacent to
-frame *i-1*'s in the byte stream whenever both are in the same row (col>0) — the identical adjacency
-a 1xN strip has for every frame — but a frame starting a new row (col=0) has its immediate
-byte-stream predecessor be the *end of the previous row*, a dissimilar, non-adjacent animation frame,
-losing the short-distance match. Measured row-boundary frame counts (`grid.rows - 1`, the number of
-row-starts after the first) range 7.3% of frames (ASSEMBLE) to 18.8% (TRANSFORM/INTERFACE) — small,
-consistent with "only some frames lose the match." **Grid came out larger than strip, as the
-hypothesis predicts, for ASSEMBLE (+9.7%), SPIN (+6.2%), TRANSFORM (+21.0%), INTERFACE (+25.2%).**
-**But REVEAL (-7.4%) and FLYTHROUGH (-3.6%) came out SMALLER under grid, contradicting it outright.**
-Both of the contradicting cases are archetypes already known from COST STUDY to get little-to-no net
-benefit from any cross-frame compositing at all — REVEAL's strip was already *larger* than its own
-frame-sum, and this session found FLYTHROUGH's strip/grid PNG (9962.7KB/9605.9KB) is now *also*
-larger than its per-frame independent sum (9329.0KB, measured directly from the individual captured
-files) — meaning there is no real cross-frame redundancy being exploited in strip form for either of
-these two to begin with, so a model that predicts loss *from* redundancy has nothing to act on.
-**Honest conclusion: the row-boundary mechanism is real and directionally correct where cross-frame
-redundancy exists to lose, but it is not the dominant or sole factor in overall byte count — some
-other scanline-width-dependent effect (deflate match-finder or PNG filter-heuristic behavior on a
-much shorter overall byte stream) plays a comparable or larger role for at least two archetypes.**
-This doesn't change the format recommendation above (WebP wins outright, independent of layout, for
-every archetype) — it only means the hypothesis shouldn't be trusted as a complete predictive model
-if PNG were ever reconsidered later.
+window) — confirmed for 4 of 5 archetypes with a trustworthy comparison, contradicted for 1, one
+excluded as inconclusive.** Reasoning behind the hypothesis holds up structurally: in a grid, frame
+*i*'s raw scanline data sits directly adjacent to frame *i-1*'s in the byte stream whenever both are
+in the same row (col>0) — the identical adjacency a 1xN strip has for every frame — but a frame
+starting a new row (col=0) has its immediate byte-stream predecessor be the *end of the previous
+row*, a dissimilar, non-adjacent animation frame, losing the short-distance match. Measured
+row-boundary frame counts (`grid.rows - 1`, the number of row-starts after the first) range 7.3% of
+frames (ASSEMBLE) to 18.8% (TRANSFORM/INTERFACE) — small, consistent with "only some frames lose the
+match." **Grid came out larger than strip, as the hypothesis predicts, for ASSEMBLE (+9.7%), SPIN
+(+6.2%), TRANSFORM (+21.0%), INTERFACE (+25.2%). REVEAL (-7.4%) came out SMALLER under grid,
+contradicting it outright.**
+
+**FLYTHROUGH (-3.6%) is NOT counted in that tally — correction from an earlier pass of this
+write-up, which reported it as a second contradiction without accounting for a measurement
+mismatch.** ASSEMBLE and FLYTHROUGH's strip-PNG figures were both measured via Pillow, calibrated
+against Chromium's own screenshot encoder (÷1.0544, the average of two measured ratios: 5.97% and
+4.91%, see FORMAT/LAYOUT CELL FILLED above) — their grid-PNG figures were measured directly via
+Chromium's screenshot encoder, uncalibrated. Both comparisons technically cross encoders, but the
+two calibration measurements themselves only agreed to within about 1 percentage point of each
+other, and were taken on one archetype (TRANSFORM); extrapolating that exact factor to very
+different content (ASSEMBLE's blocks, FLYTHROUGH's rings) carries real residual uncertainty, not
+just the small spread between the two calibration runs. **ASSEMBLE's effect (+9.7%) clears that
+uncertainty with room and is kept in the tally. FLYTHROUGH's (-3.6%) does not — it is smaller than
+the raw 4.9-6.0% cross-encoder gap the calibration was trying to correct for, so the measurement
+cannot distinguish a real negative layout effect from residual encoder noise in either direction.**
+Re-measuring FLYTHROUGH's strip through the same encoder as its grid (Chromium's own, not Pillow)
+would resolve this, but that requires working around the ~65,535-76,800px canvas cap directly (e.g.
+compositing in width-limited sections and stitching the results) — not attempted here, out of scope
+for this correction.
+
+**Revised tally: 4 of 5 archetypes with a trustworthy single-encoder-or-clears-noise comparison
+(ASSEMBLE, SPIN, TRANSFORM, INTERFACE) confirm the hypothesis's direction; REVEAL is the one clean
+contradiction; FLYTHROUGH is excluded as inconclusive, not counted either way.** REVEAL's
+contradiction still traces to the same root cause as before: it's already known from COST STUDY to
+get no net benefit from cross-frame compositing at all — its strip was already *larger* than its own
+frame-sum — so a model that predicts loss *from* redundancy has nothing to act on. **Honest
+conclusion, revised: the row-boundary mechanism is real and directionally correct where cross-frame
+redundancy exists to lose (confirmed on 4 of 5 trustworthy comparisons), but it is not the sole
+factor even then, and REVEAL shows a real case where some other scanline-width-dependent effect
+(deflate match-finder or PNG filter-heuristic behavior on a much shorter overall byte stream)
+dominates instead.** This doesn't change the format recommendation above (WebP wins outright,
+independent of layout, for every archetype) — it only means the hypothesis shouldn't be trusted as a
+complete predictive model if PNG were ever reconsidered later, and FLYTHROUGH's own direction
+specifically remains unmeasured, not merely uncertain in magnitude.
 
 **Measured LCP replaces the file-size/200KB/s estimate.** `measure-lcp.js` extends the already-
 validated Element Timing method from COST STUDY (CPU throttle 4x via CDP, same as before) by adding
@@ -2847,6 +2868,99 @@ a latent crash along the way, since the old error-formatting code called
 Full method/scripts: `test/measure-format-layout.js`, `test/strip-png-pil.py`, `test/measure-lcp.js`;
 raw data in `test/cost-study/format-layout-results.json`, `strip-png-pil-results.json`,
 `lcp-measured-results.json`.
+
+### SHEET INTEGRITY GUARD (2026-08-06) — closes the gap the blank-canvas bug exposed
+
+**The problem, stated precisely:** every existing regression guard (frustum, occlusion) runs during
+*capture*, checking the scene before any frame is ever composited. None of them can catch a bug that
+happens *during compositing itself* - and the blank-canvas bug found while filling in the PNG+grid
+measurement cell (above) happened at exactly that stage, in the original pre-rework `composite.js`,
+and produced real shipped sprite sheets that were mostly blank with nothing catching it. Added
+`src/sheet-integrity.js` + `compose/verify-sheet.html`, wired into `src/composite.js` to run
+automatically after every write and throw loudly on failure - the same pattern the capture-stage
+guards already use.
+
+**Method:** re-loads the ACTUAL WRITTEN sheet file (not the in-memory pre-encode canvas
+`composite.html` builds - the historical bug happens during the screenshot/encode step, so only a
+check on the real on-disk file can see it) and checks three things against what the caller
+(`compositeSpriteSheet`'s own `frameCount`/`dims`/`grid` arguments, the same values that go into
+`metadata.json`) expects: sheet dimensions match `cols*width x rows*height` exactly; every frame cell
+is non-uniform (a luma std-dev floor); adjacent (temporally sequential) cells aren't overwhelmingly
+near-identical.
+
+**A design correction made from real data before shipping, not after - per the task's own
+instruction to measure first:** the adjacent-cell check was originally imagined as "every pair must
+differ above a floor." Tested directly against all six archetypes' real captured frames first. It
+fails immediately: ASSEMBLE has 19 of 95 adjacent pairs that are **byte-identical** (its
+mostly-static-until-triggered blocks genuinely hold the same frame while nothing is dropping yet) and
+REVEAL has 6 of 47 (a held start before elements begin falling) - both real, both legitimate content,
+both would false-positive under a strict per-pair rule. **A per-pair floor is the wrong check, not a
+floor that needed tuning** - stated plainly rather than forcing the originally-imagined design to
+"pass" by picking degenerate numbers. Redesigned as a fraction-ceiling instead: what share of
+adjacent pairs may be near-identical before the sheet is treated as blank/duplicated, not whether any
+single pair may be.
+
+**Floors, calibrated from real data (`test/cost-study/*/frames/`, all six archetypes), not guessed:**
+- **`NEAR_ZERO_MEAN_DIFF = 0.05`** (mean absolute per-channel luma difference, 0-255 scale, below
+  which two adjacent cells count as near-identical). Chosen from SPIN specifically, per the task's
+  own instinct that it's the tightest case: a continuous 360° rotation with no static holds, so its
+  slowest-changing real adjacent pair is the tightest legitimate case measured across all six
+  archetypes - **0.209** (pair 15→16 of 24 frames). `0.05` sits with >4x margin below that, so genuine
+  SPIN motion is never misclassified as a duplicate, while sitting decisively above true
+  byte-identical duplicates (`0.0000`, measured on ASSEMBLE/REVEAL's real static-hold pairs).
+- **`NEAR_ZERO_FRACTION_CEILING = 0.5`** (fraction of adjacent pairs allowed to be near-identical
+  before the sheet fails). ASSEMBLE's real worst legitimate case is 24/95 (~25.3%); REVEAL's is 6/47
+  (~12.8%). `0.5` sits with ~2x margin above the highest real legitimate case, while a genuinely
+  blank/corrupted sheet shows close to 100% (confirmed below, not assumed).
+- **`NON_UNIFORM_STD_FLOOR = 1.0`** (a cell's own luma std-dev must exceed this to count as real
+  content). The lowest real, legitimate per-frame std measured across all six archetypes is
+  TRANSFORM's final frame at ~4.99 (a bright, mostly-flat "after" surface with subtle real shading) -
+  `1.0` sits with ~5x margin below that. **Deliberately excluded from this calibration: FLYTHROUGH's
+  own final captured frame, which measured std=0.000** - not a legitimate low-variance case but a
+  genuine, previously undiscovered bug this same calibration pass surfaced (below) - using it to
+  justify a looser floor would have laundered a real bug into the guard's own calibration data.
+
+**Unrequested but the most important thing this task found: FLYTHROUGH's real, currently-shipped
+sprite sheet fails the guard right now.** Running the finished guard against all six archetypes'
+actual shipped `sprite.webp` files (not a reconstruction) - ASSEMBLE, REVEAL, SPIN, TRANSFORM, and
+INTERFACE all pass cleanly. **FLYTHROUGH fails: frame index 71, its very last frame, is a flat,
+perfectly uniform white cell (std=0.000).** Traced to the source: `frames/frame-0071.png` (the raw
+capture, before compositing) is itself completely blank (255,255,255 at every sampled pixel) while
+`frame-0070.png` has real, varied content (extrema 24-255) - **the camera has traveled far enough
+past the scene geometry by t=1.0 that nothing is left in view.** This is a genuine scene/camera bug
+in `scenes/flythrough.html`, not a compositing or guard bug, and it sits at exactly the frame fraction
+(`t=1.0`) where the logo signboard is supposed to be fully visible - worth flagging plainly: this is a
+new, real, unfixed problem, not something this task's guard was built to fix, and it was **not**
+touched here (out of scope - the task was to build the guard, not chase everything it finds). Not yet
+added as its own TASKS.md item; worth one before FLYTHROUGH's frames are next regenerated.
+
+**Verified the guard catches the historical bug, exactly as the task asked - reconstructed a 1xN
+strip for ASSEMBLE via `locator.screenshot()` (the exact broken path the pre-rework `composite.js`
+used), ran the guard, discarded it.** Correctly rejected: `96/96` frame cells flagged flat and `95/95`
+(100%) of adjacent pairs near-identical. **A real correction to last session's account of this bug
+surfaced while building this**, worth stating rather than quietly folding in: the earlier
+characterization ("frame 0 paints correctly, everything else is blank") undersold it. A first attempt
+at reading the reconstructed strip back (via one canvas sized to the whole 76,800px sheet) returned
+all-zero data for every cell including cell 0, which looked like it might be *hiding* real content
+near the origin - cross-checked directly against Pillow's independent read of the exact same on-disk
+file to settle it, and Pillow found the same thing a corrected per-cell reader then also found: cell
+0 is real data, but **99.99% of its own pixels are white**, with only a sparse scattering (well under
+1% of pixels) of darker values surviving - severely degraded, not intact. The verification tool
+(`compose/verify-sheet.html`) reads each cell through its own small, reused canvas with a cropped
+`drawImage` call rather than one canvas sized to the whole sheet, which matches Pillow's ground-truth
+reading exactly at every offset tested (cols 1, 50, and 95 of a 96-frame strip) - not because the
+one-giant-canvas reader was hiding real content (it wasn't - there was very little real content left
+to hide), but because it's independently verified correct where the alternative wasn't. Net effect:
+this project's characterization of how bad the historical PNG-strip corruption actually was should be
+read as *worse* than previously stated, not merely "everything past frame 0."
+
+**Wiring:** `src/composite.js`'s `compositeSpriteSheet()` calls `verifySheetIntegrity()` immediately
+after writing the sheet file and throws `SHEET INTEGRITY CHECK FAILED` with the specific problems
+found if it doesn't pass - the file is left on disk for inspection (not deleted), matching how the
+capture-stage guards report a failure without erasing the evidence. A reusable fast-iteration tool,
+`test/debug-sheet-integrity.js`, mirrors `debug-frustum.js`/`debug-occlusion.js`: run it against any
+archetype's real shipped sheet, or with `--reconstruct-broken-strip` to re-run the historical-bug
+reconstruction test on demand.
 
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)

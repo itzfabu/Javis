@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 const { startServer } = require('./static-server');
+const { verifySheetIntegrity } = require('./sheet-integrity');
 
 const COMPOSE_ROOT = path.join(__dirname, '..', 'compose');
 const WEBP_QUALITY = 0.8; // matches the quality used in this project's own cost-study measurements, for a fair before/after comparison
@@ -44,9 +45,29 @@ async function compositeSpriteSheet({ framesDir, frameCount, dims, grid, outPath
 
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     fs.writeFileSync(outPath, buffer);
-
     await page.close();
-    return { outPath, width: grid.sheetWidth, height: grid.sheetHeight, bytes: buffer.length };
+
+    // Sheet-integrity guard: re-loads the file JUST WRITTEN (not the
+    // in-memory canvas above) and checks it against what this call expects
+    // the sheet to be. Runs after every composite, the same way the
+    // frustum/occlusion guards run after every capture - see
+    // src/sheet-integrity.js for what this catches and why, and the vault
+    // for the historical bug (a mostly-blank sheet written to disk with
+    // nothing catching it) that motivated it.
+    const integrity = await verifySheetIntegrity({
+      sheetPath: outPath, frameCount, dims, grid,
+    });
+    if (!integrity.ok) {
+      throw new Error(
+        `SHEET INTEGRITY CHECK FAILED for ${outPath}:\n  - ` +
+        integrity.problems.join('\n  - ') +
+        `\nThis sheet was written to disk but failed verification - do not ship it. ` +
+        `Re-run the composite step, and if it fails again, investigate the capture/composite ` +
+        `pipeline rather than loosening the check's floors (see src/sheet-integrity.js for how they were calibrated).`
+      );
+    }
+
+    return { outPath, width: grid.sheetWidth, height: grid.sheetHeight, bytes: buffer.length, integrity };
   } finally {
     await browser.close();
     await server.close();
