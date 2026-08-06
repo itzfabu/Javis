@@ -53,6 +53,10 @@
                       "project":  "website-generator"
                   },
                   {
+                      "text":  "Apply TRANSFORM\u0027s measured headroom fix: WebP quality 0.8-\u003e0.6 + frame count 32-\u003e16 (needs sign-off - a real product change to the shipped archetype, not just a measurement) | priority: medium | #website-generator",
+                      "project":  "website-generator"
+                  },
+                  {
                       "text":  "Close ASSEMBLE and FLYTHROUGH\u0027s LCP gap (measured: ASSEMBLE 4.72s no-logo / 4.94s approved-logo; FLYTHROUGH 7.84s no-logo / 8.07s approved-logo - both Poor against the 2.5s Good threshold) | priority: high | #website-generator",
                       "project":  "website-generator"
                   },
