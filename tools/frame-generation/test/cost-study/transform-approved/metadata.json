@@ -23,16 +23,16 @@
     "format": "webp",
     "width": 6000,
     "height": 5600,
-    "bytes": 304732
+    "bytes": 274664
   },
   "capture": {
-    "elapsedMs": 6631,
-    "msPerFrame": 207.22
+    "elapsedMs": 9930,
+    "msPerFrame": 310.31
   },
   "logo": {
     "logoText": "",
     "logoAssetUrl": "/asset/logo.jpg",
-    "assetDir": "test\\_regen-transform-approved3\\assets",
+    "assetDir": "test\\cost-study\\transform-approved\\assets",
     "logoFraction": 1,
     "note": "reviewed logo asset composited"
   },

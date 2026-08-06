@@ -70,8 +70,27 @@ const clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -PLANE_W / 2);
 // rendered plane, produces a visually similar soft grain (adjacent rendered
 // pixels are interpolated from a coarser noise field, not independently
 // random) at a fraction of the entropy cost - measured below, not assumed.
-function makeGrainTexture() {
+// Same luma formula compose/verify-sheet.html's sheet-integrity guard already uses for its own
+// "is this flat?" std-dev check - one definition of "how bright" reused, not a second one invented.
+function relativeLuminance(hexColor) {
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+// The wash-out this grain fixes (see comment above) is specifically a LIGHT-palette problem: a dark
+// primary under the same glossy finish already gets real tonal contrast from the specular highlight
+// against its dark base, without needing any grain at all (confirmed below against a real dark
+// fixture, not assumed from this reasoning alone). Scaling the 40-unit range by luminance means every
+// client pays only for the grain their own palette actually needs - full 215-255 range at luma 1.0
+// (white), shrinking toward zero variance (a flat 255, i.e. no texture contribution beyond the streaks
+// below) as luma approaches 0 (black).
+function makeGrainTexture(primaryLuma) {
   const size = 64;
+  const rangeWidth = Math.round(40 * primaryLuma);
+  const low = 255 - rangeWidth;
   const c = document.createElement('canvas');
   c.width = size; c.height = size;
   const ctx = c.getContext('2d');
@@ -79,7 +98,7 @@ function makeGrainTexture() {
   ctx.fillRect(0, 0, size, size);
   const img = ctx.getImageData(0, 0, size, size);
   for (let i = 0; i < img.data.length; i += 4) {
-    const v = 215 + Math.floor(Math.random() * 40); // 215-255 - measured, not guessed: 235-255 (20-unit range) barely moved std after WebP compression; 195-255 (60-unit) gave a clear std improvement (4.99->13.25) but pushed TRANSFORM's real measured LCP from 1.04s/1.06s to 2.54s/2.73s, OUT of Good - a real regression, caught by re-measuring, not assumed safe. This 40-unit range is the settled middle ground - re-verify its own LCP figure below before trusting it either
+    const v = low + Math.floor(Math.random() * Math.max(1, rangeWidth)); // range scaled by primaryLuma - see above; the base 215-255 (40-unit) split was itself measured, not guessed: 235-255 (20-unit) barely moved std after WebP compression; 195-255 (60-unit) gave a clear std improvement (4.99->13.25) but pushed TRANSFORM's real measured LCP from 1.04s/1.06s to 2.54s/2.73s, OUT of Good - a real regression, caught by re-measuring, not assumed safe. 40 units is the settled full-strength width for the lightest palettes; Math.max(1,...) avoids a 0-width Math.random() multiply, not a behavior change - rangeWidth 0 still yields v=low=255 either way
     img.data[i] = v; img.data[i + 1] = v; img.data[i + 2] = v; img.data[i + 3] = 255;
   }
   ctx.putImageData(img, 0, 0);
@@ -115,7 +134,7 @@ function makeGrainTexture() {
 const afterGeo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
 const afterMat = new THREE.MeshStandardMaterial({
   color: P.primary,
-  map: makeGrainTexture(),
+  map: makeGrainTexture(relativeLuminance(P.primary)),
   roughness: 0.25,
   metalness: 0.15,
   clippingPlanes: [clipPlane],

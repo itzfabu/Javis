@@ -75,21 +75,40 @@ const NEAR_ZERO_MEAN_DIFF = 0.05;
 // ceiling.
 const NEAR_ZERO_FRACTION_CEILING = 0.5;
 
-// NON_UNIFORM_STD_FLOOR = 1.0 (a cell's own luma standard deviation must
-// exceed this to count as real rendered content, not a flat fill). The
-// lowest real, legitimate per-frame std measured across all six
-// archetypes' actual captures is TRANSFORM's final frame at ~4.99 (a
-// bright, mostly-flat "after" surface with subtle real shading) - 1.0
-// sits with ~5x margin below that. Excluded from this calibration
-// deliberately: FLYTHROUGH's own final captured frame (frame-0071)
-// measured std=0.000, a perfectly flat white frame - not a legitimate
-// low-variance case but a genuine, previously-undiscovered bug this same
-// calibration pass surfaced (the camera has traveled far enough past the
-// scene geometry by t=1.0 that nothing is left in frame) - see the vault
-// write-up. Using that value to justify a looser floor would have
-// laundered a real bug into the guard's own calibration data, so it was
-// excluded and flagged separately instead.
-const NON_UNIFORM_STD_FLOOR = 1.0;
+// NON_UNIFORM_STD_FLOOR = 0.5 (a cell's own luma standard deviation must
+// exceed this to count as real rendered content, not a flat fill).
+//
+// CORRECTED 2026-08-06: originally set to 1.0, calibrated against a wrong
+// belief that the lowest real legitimate std was TRANSFORM's final frame at
+// ~4.99 (~5x margin). Re-measuring across all six archetypes' actual
+// captures found the true minimum is INTERFACE's earliest frames (indices
+// 0-8, std 1.29-1.47) - only a ~1.3x cushion above the old 1.0 floor, not
+// 5x. These frames are legitimate, not a bug: INTERFACE's three dashboard
+// panels slide in on staggered delays (see scenes/interface.html's PANELS
+// array), so at t~0.06 (frame 3 of 48) all three are still off-screen -
+// the only on-screen content is the small "+N%" counter digit against flat
+// background, confirmed by direct inspection of the captured frame, not
+// assumed from the std number alone. Nothing in the scene is broken or
+// worth "fixing" to raise this number - the choreography is working as
+// designed, and forcing the panels to appear earlier just to pad this
+// guard's own margin would be tuning the content to please a test, not
+// fixing a defect.
+//
+// Chosen the floor down instead, to 0.5 - a fresh ~2.6x margin below the
+// real 1.29 minimum (roughly the same proportion of headroom
+// NEAR_ZERO_MEAN_DIFF and NEAR_ZERO_FRACTION_CEILING above use relative to
+// their own real calibration data, not the ~5x this constant was
+// mistakenly assumed to have). A different client's counter-text/background
+// combination could legitimately land lower than Family Law in
+// Partnership's real 1.29 (a low-contrast palette makes an even smaller
+// contribution from the same tiny counter digit) - this margin exists for
+// that case, not for this one specifically, which already passed even
+// under the old floor. Still catches an actually-blank frame with total
+// confidence: FLYTHROUGH's real, previously-shipped bug measured std=0.000,
+// excluded from this calibration for the same reason noted originally (a
+// genuine defect, not a low-variance case to calibrate against) - 0.5 sits
+// nowhere near it.
+const NON_UNIFORM_STD_FLOOR = 0.5;
 
 const path = require('path');
 const { chromium } = require('playwright');

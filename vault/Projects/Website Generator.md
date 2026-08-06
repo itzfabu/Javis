@@ -3276,6 +3276,75 @@ Full method: `scenes/transform.html` (`makeGrainTexture()`), re-measured via
 `bin/generate-frames.js`/`measure-lcp.js`/`verifySheetIntegrity()` against the real fixtures, not a
 synthetic test.
 
+### TRANSFORM GRAIN MADE LUMINANCE-CONDITIONAL + STD FLOOR CORRECTED (2026-08-06)
+
+**A. Grain now scales with the primary color's own luminance, not a flat cost for every client.**
+The wash-out TRANSFORM END STATE (above) fixed is specifically a light-palette problem: a dark
+primary under the same glossy "after" material already gets real tonal contrast from the specular
+highlight against its dark base, without any grain at all - confirmed below against a real dark
+fixture, not assumed from the reasoning alone. `scenes/transform.html` now computes the primary
+color's luma (`relativeLuminance()`, the same `0.299R+0.587G+0.114B` formula
+`compose/verify-sheet.html`'s own std-dev check already uses - one definition of "how bright"
+reused, not a second one invented) and scales the grain's 40-unit contrast-range width by it: full
+215-255 range at luma 1.0 (white), shrinking toward a flat 255 (no grain beyond the cheap streak
+overlay, which stays unconditional) as luma approaches 0 (black).
+
+Re-measured against two real clients, not a synthetic palette:
+- **Light (Birds Barbershop, `#DCD7D1`, luma 0.846 → range width 34 of 40):** sprite shrank from
+  287,370→263,058 bytes no-logo (281.6KB→256.9KB, this session's own before/after under identical
+  system load) and 304,732→274,664 bytes approved-logo (297.9KB→268.2KB) - roughly 7-9% lighter for
+  the one real client that motivated the fix in the first place. LCP: 2304ms→2268ms no-logo,
+  2284ms→2300ms approved-logo, measured back-to-back on the same machine in the same session - a
+  noise-level difference (5-trial spans of ~200-300ms), not a regression. **Caveat on the older
+  1.04s/2.03s figures earlier in this doc: today's whole-machine baseline runs measurably slower
+  across the board** - re-measuring SPIN, untouched by this change, went from a stored 1476-1480ms to
+  1992-2000ms in this same session, so those older absolute numbers aren't a fair comparison point
+  today; the same-session before/after above is. Visually re-confirmed by screenshot (frame 31,
+  `t=1.0`): still a clearly deliberate brushed/polished surface, not a step back toward the original
+  wash-out.
+- **Dark (Hiut Denim, `#1A1A1A`, luma 0.102 → range width 4 of 40, SPIN's own real client tokens
+  re-run through TRANSFORM via `--archetype` override - no dark-palette client is recommended
+  TRANSFORM by the category mapping, so this reuses real color data rather than inventing a palette):**
+  frame 31 std = 102.9 (vs the light fixture's original pre-fix 4.99), no grain needed. Confirmed by
+  screenshot, not just the number: real directional specular sheen is visible across the dark plane
+  from the light rig alone - the archetype's own material response to a dark base is already enough
+  structure. Sheet-integrity, frustum, and occlusion guards all still pass on TRANSFORM's real shipped
+  asset (light case) after the change.
+
+**B. `NON_UNIFORM_STD_FLOOR` lowered from 1.0 to 0.5 - the floor moved, the scene did not.**
+Re-measured every cell's std across all six archetypes' real shipped sheets (not just TRANSFORM) to
+find the *true* minimum: INTERFACE's earliest frames (indices 0-8, std 1.29-1.47, frame 3 itself at
+1.29) - not TRANSFORM's 4.99, which the 1.0 floor was originally (wrongly) calibrated against,
+believing it had ~5x margin when the real cushion was ~1.3x.
+
+**Looked at INTERFACE frame 3 directly before deciding anything, per the task's own instruction.**
+It's a legitimately sparse early frame, not a TRANSFORM-style wash-out: `scenes/interface.html`'s
+three dashboard panels slide in on staggered delays (`PANELS[].delay` 0/0.15/0.3), so at
+`t≈0.06` (frame 3 of 48) all three are still fully off-screen past the camera frustum - the only
+on-screen content is the small "+N%" counter digit against flat background. Confirmed by direct
+inspection of the captured frame image, not inferred from the std number alone. Nothing here is
+broken; the choreography is doing exactly what it was built to do.
+
+**Chose to lower the floor, not "fix" the frame - the two options the task posed, picking one.**
+Nothing in INTERFACE frame 3 is a defect to fix; forcing the panels to appear earlier just to pad
+this guard's own margin would be tuning the archetype's motion design to please a test, not
+correcting a real problem. Moved `NON_UNIFORM_STD_FLOOR` to 0.5 instead - a fresh ~2.6x margin below
+the real 1.29 minimum, roughly the same proportion of headroom `NEAR_ZERO_MEAN_DIFF` and
+`NEAR_ZERO_FRACTION_CEILING` already use relative to their own real calibration data in this same
+file, not the ~5x this constant was mistakenly assumed to have. The margin exists for a *different*
+client whose counter-text/background combination could legitimately land lower than Family Law in
+Partnership's real 1.29 (lower contrast makes the same tiny counter digit contribute even less std),
+not for this fixture specifically, which already passed even under the old floor. Still catches an
+actually-blank frame with total confidence - FLYTHROUGH's real, previously-shipped bug measured
+std=0.000, nowhere near 0.5.
+
+**All twelve fixtures (six archetypes × no-logo/approved-logo) re-verified against the corrected
+floor - all pass**, not assumed safe from the one archetype that motivated the change.
+
+Full method: `scenes/transform.html`, `src/sheet-integrity.js` (`NON_UNIFORM_STD_FLOOR`),
+re-measured/re-verified via `bin/generate-frames.js`/`measure-lcp.js`/`verifySheetIntegrity()`
+against real fixtures (Birds Barbershop, Hiut Denim, and all twelve shipped sprite sheets).
+
 ### Sources (Thread 3)
 - [Best AI Video Generators with Consistent Characters in 2026 | Elser AI](https://www.elser.ai/blog/best-ai-video-generators-with-consistent-characters-in-2026-what-actually-works-across-multiple-scenes) — reference-image character-consistency mechanisms (Runway Gen-4, Veo 3.1 Ingredients-to-Video, Seedance 2.0, Wan 2.7)
 - [Kling AI vs Runway vs Luma: 2026 AI Video Models Compared | Atlas Cloud](https://www.atlascloud.ai/blog/guides/kling-ai-vs-runway-vs-luma) — comparative model capabilities

@@ -182,37 +182,37 @@
   {
     "archetype": "TRANSFORM",
     "state": "approved-logo",
-    "spriteBytes": 304732,
+    "spriteBytes": 274664,
     "frameCount": 32,
     "trials": [
-      2072,
-      2232,
-      2144,
-      2084,
-      2116
+      2304,
+      2300,
+      2160,
+      2532,
+      2172
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 2116,
-    "measuredLcpMinMs": 2072,
-    "measuredLcpMaxMs": 2232,
-    "wallClockMedianMs": 2134
+    "measuredLcpMedianMs": 2300,
+    "measuredLcpMinMs": 2160,
+    "measuredLcpMaxMs": 2532,
+    "wallClockMedianMs": 2342
   },
   {
     "archetype": "TRANSFORM",
     "state": "no-logo",
-    "spriteBytes": 287370,
+    "spriteBytes": 263058,
     "frameCount": 32,
     "trials": [
-      2032,
-      2156,
-      1992,
-      2064,
-      1968
+      2448,
+      2272,
+      2184,
+      2268,
+      2232
     ],
     "validTrials": 5,
-    "measuredLcpMedianMs": 2032,
-    "measuredLcpMinMs": 1968,
-    "measuredLcpMaxMs": 2156,
-    "wallClockMedianMs": 2063
+    "measuredLcpMedianMs": 2268,
+    "measuredLcpMinMs": 2184,
+    "measuredLcpMaxMs": 2448,
+    "wallClockMedianMs": 2297
   }
 ]
