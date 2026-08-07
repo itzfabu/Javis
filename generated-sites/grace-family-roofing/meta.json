@@ -1,0 +1,23 @@
+{
+  "business_name": "Grace Family Roofing",
+  "slug": "grace-family-roofing",
+  "prompt_used": "Assembled deterministically by tools/site-assembly from a Thread 1 tokens.json (source: https://gfryork.com) - not LLM-generated HTML.",
+  "reviews_used": [],
+  "created_date": "2026-08-07T07:01:16.169Z",
+  "status": "draft",
+  "client_contact": null,
+  "price": 490,
+  "license_type": "one-time",
+  "archetype": "ASSEMBLE",
+  "category": "construction-trades",
+  "known_gaps": [
+    "No trust-bar facts (years in business, license, service area) - Thread 1 does not currently capture these",
+    "No social proof / reviews - none supplied at generation time, not fabricated",
+    "No before/after or category gallery - no client-supplied photos available",
+    "No verified phone number or address (NAP) - Thread 1 does not currently capture these; omitted from footer/click-to-call rather than guessed",
+    "Hero shows a stylized/generic assemble scene, not the client's actual building/space: Template shows a generic assembling structure, not the client's actual building. Disclose to the client as a stylized representation; real photogrammetry capture is a separate, manually-scoped paid add-on (not produced by this pipeline).",
+    "Logo was extracted but is NOT reviewed/approved yet - not composited into the hero or shown in the nav, per Thread 1's mandatory review gate. Run bin/review-gate.js and regenerate once approved.",
+    "Contact form has no live submission destination - no Web3Forms access key was provided for this generation"
+  ],
+  "assembly_warnings": []
+}

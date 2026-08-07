@@ -93,7 +93,23 @@ window.__getEntry = () => new Promise((resolve) => {
   quietTimer = setTimeout(finish, QUIET_MS);
 
   const elObserver = new PerformanceObserver((list) => {
-    for (const e of list.getEntries()) elementEntries[e.identifier] = { renderTime: e.renderTime, loadTime: e.loadTime };
+    for (const e of list.getEntries()) {
+      elementEntries[e.identifier] = { renderTime: e.renderTime, loadTime: e.loadTime };
+      if (e.identifier === 'hero-sprite') {
+        // Same decomposition measure-lcp.js already uses for the isolated
+        // harness: split renderTime into discovery (time to fetch start),
+        // transfer (network), and decode (paint after bytes arrive) - so
+        // "why is the real page slower" has a measured answer, not a guess.
+        const res = performance.getEntriesByType('resource').find((r) => r.name.endsWith('sprite.webp'));
+        if (res) {
+          elementEntries[e.identifier].resourceStartTime = res.startTime;
+          elementEntries[e.identifier].resourceResponseEnd = res.responseEnd;
+          elementEntries[e.identifier].discoveryMs = res.startTime;
+          elementEntries[e.identifier].transferMs = res.responseEnd - res.startTime;
+          elementEntries[e.identifier].decodeMs = e.renderTime - res.responseEnd;
+        }
+      }
+    }
   });
   elObserver.observe({ type: 'element', buffered: true });
 
@@ -200,6 +216,19 @@ async function main() {
       const med = median(validRender);
       console.log(`REAL PAGE native-LCP median=${med.toFixed(1)}ms (min=${Math.min(...validRender).toFixed(1)}, max=${Math.max(...validRender).toFixed(1)}, n=${validRender.length}/${TRIALS})`);
       console.log(`ratioToControl=${(med / controlMedian).toFixed(3)}x`);
+    }
+
+    // Hero-sprite decomposition: discovery (nav-start -> fetch-start),
+    // transfer (network), decode (paint after bytes land) - measured, not
+    // guessed, same split measure-lcp.js uses for the isolated harness.
+    const discovery = elementTimingSamples.map((e) => e && e['hero-sprite'] && e['hero-sprite'].discoveryMs).filter((v) => v != null);
+    const transfer = elementTimingSamples.map((e) => e && e['hero-sprite'] && e['hero-sprite'].transferMs).filter((v) => v != null);
+    const decode = elementTimingSamples.map((e) => e && e['hero-sprite'] && e['hero-sprite'].decodeMs).filter((v) => v != null);
+    if (discovery.length) {
+      console.log(`\nhero-sprite decomposition (n=${discovery.length}/${TRIALS}):`);
+      console.log(`  discovery (nav-start -> fetch-start): median=${median(discovery).toFixed(1)}ms`);
+      console.log(`  transfer  (fetch-start -> bytes-in):  median=${median(transfer).toFixed(1)}ms`);
+      console.log(`  decode    (bytes-in -> paint):        median=${median(decode).toFixed(1)}ms`);
     }
 
     // Element Timing summary across all trials, per candidate

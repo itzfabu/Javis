@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grace Family Roofing</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#top">
+  <span class="brand-name">Grace Family Roofing</span>
+  </a>
+  <a class="btn btn-accent nav-cta" href="#contact">Get a Free Quote</a>
+</header>
+
+<section class="hero-intro" id="top">
+  <h1>Grace Family Roofing</h1>
+  <p class="hero-sub">Quality craftsmanship, on time and on budget - keep scrolling to see the work.</p>
+  <a class="btn btn-accent hero-cta" href="#contact">Get a Free Quote</a>
+</section>
+
+<div class="hero-track">
+  <div class="hero-sticky">
+    <!-- Thread 3 output, dropped in unmodified except the sprite.webp path (fixture-relative -> assets/) -->
+    <div class="hero-sprite" role="img" aria-label="ASSEMBLE hero animation"></div>
+  </div>
+</div>
+
+<main>
+  <section class="services" id="services">
+    <h2>Services</h2>
+    <p class="section-note">Menu below, generated from the business category - confirm exact offerings and pricing before this page goes live.</p>
+    <div class="service-grid">
+      <div class="card">New Installation</div>
+      <div class="card">Repairs</div>
+      <div class="card">Inspections</div>
+      <div class="card">Free Estimates</div>
+    </div>
+  </section>
+
+  <!--
+    Trust bar, social proof, and the category-conditional gallery are
+    omitted, not forgotten: this pipeline's Thread 1 extraction captures
+    design tokens (color/font/logo) but no intake-form facts (years in
+    business, reviews, before/after photos, NAP). Per Thread 2's own rule,
+    these are client-supplied or omitted - never fabricated, especially not
+    for a real business. See meta.json's known_gaps.
+  -->
+
+  <section class="contact" id="contact">
+    <h2>Get a Free Quote?</h2>
+    <p class="section-note">This form isn't wired to a live destination yet - no Web3Forms access key was provided for this generation. It will submit nowhere until one is.</p>
+    <form class="contact-form" action="#" onsubmit="return false;">
+      
+      <label>Name<input type="text" name="name" autocomplete="name" required></label>
+      <label>Phone<input type="tel" name="phone" autocomplete="tel" required></label>
+      <label>Job Type<select name="detail"><option>New Installation</option><option>Repair</option><option>Inspection</option><option>Other</option></select></label>
+      <label>What do you need?<textarea name="message" rows="3"></textarea></label>
+      <button type="submit" class="btn btn-accent">Get a Free Quote</button>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span class="brand-name">Grace Family Roofing</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

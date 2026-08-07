@@ -1,0 +1,14 @@
+{
+  "name": "site-assembly",
+  "version": "1.0.0",
+  "description": "Thread 2 deterministic assembly (Website Generator project): Thread 1 tokens -> Thread 3 sprite -> static page, replacing orb/app.py's LLM-freeform /generate-website path for the existing-website input path. No new dependency - reuses tools/brand-extraction and tools/frame-generation via relative require, and Node's own https/fs for font self-hosting.",
+  "main": "src/assemble.js",
+  "bin": {
+    "generate-site": "bin/generate-site.js"
+  },
+  "scripts": {
+    "generate": "node bin/generate-site.js"
+  },
+  "license": "ISC",
+  "type": "commonjs"
+}

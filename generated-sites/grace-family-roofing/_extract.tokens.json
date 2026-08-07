@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "client": "Grace Family Roofing",
+    "sourcePath": "existing-website",
+    "sourceUrl": "https://gfryork.com",
+    "extractedAt": "2026-08-07T07:00:47.891Z",
+    "confidence": "mixed - see per-field confidence below (primary/accent/logo are the fields most likely to need review)",
+    "reviewStatus": "pending",
+    "reviewRequired": {
+      "logo": true,
+      "accent": true
+    }
+  },
+  "category": "construction-trades",
+  "color": {
+    "primary": {
+      "value": "#212F3F",
+      "source": "sampled from screenshot crop (image-based header, no computed background-color)",
+      "derived": false,
+      "confidence": "medium"
+    },
+    "secondary": {
+      "value": "#141C26",
+      "source": "derived: no distinct footer background found; primary shaded 40% darker per Derivation Layer rule",
+      "derived": true,
+      "confidence": "low"
+    },
+    "accent": {
+      "value": "#FFFFFF",
+      "source": "derived: CTA (\"Contact Us\") found but has no fill (outlined/ghost button) - using its border color as a best-available proxy, needs human confirmation",
+      "derived": true,
+      "confidence": "low"
+    },
+    "text": {
+      "value": "#12243A",
+      "source": "direct computed value",
+      "derived": false,
+      "confidence": "high"
+    },
+    "background": {
+      "value": "#FFFFFF",
+      "source": "transparent computed value, normalized to assumed white",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "surface": {
+      "value": "#F0F0F0",
+      "source": "derived: tint of background, minimum 6% perceptual lightness delta",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "border": {
+      "value": "#E6E6E6",
+      "source": "derived: background darkened 10%",
+      "derived": true,
+      "confidence": "medium"
+    },
+    "accessibility": {
+      "textOnBackground": {
+        "ratio": 15.68,
+        "passesAA": true
+      },
+      "primaryOnBackground": {
+        "ratio": 13.61,
+        "passesAA": true
+      },
+      "accentTextOverride": {
+        "reason": "accent #FFFFFF - text contrast resolved directly",
+        "resolution": "use #000000 text on accent surfaces",
+        "ratio": 21,
+        "passesAA": true,
+        "textColor": "#000000",
+        "accentForText": "#FFFFFF"
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "detected": "Barlow Condensed",
+      "resolved": "Barlow Condensed",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&display=swap",
+      "fallbackStack": "'Barlow Condensed', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "body": {
+      "detected": "Barlow",
+      "resolved": "Barlow",
+      "source": "google-fonts",
+      "url": "https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap",
+      "fallbackStack": "'Barlow', sans-serif",
+      "note": "already a Google Font, reused directly, zero licensing risk",
+      "derived": false
+    },
+    "scale": {
+      "h1": "3.5rem",
+      "h2": "2.25rem",
+      "h3": "1.5rem",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "logo": {
+    "format": "png",
+    "source": "img-logo-heuristic",
+    "assetPath": "C:\\Jarvis\\generated-sites\\grace-family-roofing\\_extract.logo.png",
+    "hasTransparency": true,
+    "wordmarkFallback": false,
+    "backgroundRemovalApplied": false,
+    "needsBackgroundRemoval": false,
+    "confidence": "medium",
+    "confidenceNote": "heuristic match on class/id/alt - confirmed reliable in the validation spike, still worth a quick human glance",
+    "derived": false
+  },
+  "spacing": {
+    "unit": "8px",
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    }
+  },
+  "archetype": {
+    "recommended": "ASSEMBLE",
+    "reason": "category: construction-trades, per Thread 3 archetype-to-category mapping (Construction & Trades (roofer, contractor, plumber))"
+  },
+  "frameGeneration": {
+    "paletteForFrames": [
+      "#212F3F",
+      "#FFFFFF",
+      "#141C26"
+    ],
+    "backgroundForFrames": "#FFFFFF",
+    "logoCompositing": {
+      "enabled": true,
+      "assetPath": "C:\\Jarvis\\generated-sites\\grace-family-roofing\\_extract.logo.png",
+      "appearsAtFrameFraction": 1,
+      "note": "logo composites in on the final settled frame - pending the same mandatory review gate as the page-level logo (Thread 1 -> Thread 3 handoff)"
+    }
+  }
+}

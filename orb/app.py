@@ -14,6 +14,16 @@ STATUS_PATH = r"C:\Jarvis\orb\status.json"
 SESSION_STATE_PATH = r"C:\Jarvis\orb\session_state.json"
 SECRET_TOKEN = "bfee9c861c8a6a792a579f613b8bda86a3a6ac9fb5513d78"
 
+# Mirrors tools/brand-extraction/src/archetype.js's CATEGORY_ARCHETYPE keys -
+# kept in sync by hand (small, stable list); the real validation for what a
+# category actually resolves to still happens in that file, this is just an
+# early, friendlier 400 instead of a subprocess failure three steps in.
+CATEGORY_SLUGS = [
+    "food-beverage", "construction-trades", "retail-product", "real-estate-hospitality",
+    "gyms-fitness", "beauty-personal-care", "health-dental-general", "health-dental-cosmetic",
+    "professional-services-saas",
+]
+
 # Resuming the same Claude session forever means every message reloads the
 # whole accumulated transcript. CLAUDE.md, knowledge/*.md, the vault, and the
 # auto-memory files are all re-read fresh on every subprocess call regardless
@@ -815,6 +825,73 @@ Write exactly those three files to the exact absolute paths given above. Do not 
 
 You have full, pre-authorized permission to create these files immediately. Do not ask for confirmation or pause to check; proceed directly with the Write calls."""
 
+def run_deterministic_generation_job(job_id, business_name, category, slug, output_dir, client_contact, price, license_type, reference_url, reviews):
+    # Thread 2's deterministic assembly pipeline (tools/site-assembly):
+    # Thread 1 token extraction -> Thread 3 sprite generation -> template
+    # assembly from tokens - replaces the LLM-freeform path below for the
+    # existing-website input path (the only one Thread 1 actually built).
+    # meta.reviewStatus comes back "pending" from a fresh extraction, so the
+    # logo won't composite until bin/review-gate.js approves it and this is
+    # re-run - the correct, safe default, not a bug to work around here.
+    with GENERATION_JOBS_LOCK:
+        GENERATION_JOBS[job_id]["status"] = "running"
+    try:
+        site_assembly_dir = os.path.join(os.path.dirname(__file__), "..", "tools", "site-assembly")
+        reviews_path = None
+        if reviews:
+            reviews_path = os.path.join(output_dir, "_reviews.json")
+            with open(reviews_path, "w", encoding="utf-8") as f:
+                json.dump(reviews, f)
+
+        cmd = [
+            "node", os.path.join(site_assembly_dir, "bin", "generate-site.js"),
+            "--url", reference_url, "--client", business_name, "--category", category,
+            "--out", output_dir,
+        ]
+        if reviews_path:
+            cmd += ["--reviews", reviews_path]
+        if price is not None:
+            cmd += ["--price", str(price)]
+        if license_type:
+            cmd += ["--license-type", license_type]
+
+        result = subprocess.run(cmd, cwd=site_assembly_dir, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
+        if reviews_path and os.path.exists(reviews_path):
+            os.remove(reviews_path)
+
+        expected = ["index.html", "styles.css", "script.js", "meta.json"]
+        missing = [fn for fn in expected if not os.path.exists(os.path.join(output_dir, fn))]
+        if result.returncode != 0 or missing:
+            reason = (result.stderr.strip() or result.stdout.strip() or "unknown error")[:1000]
+            if missing:
+                reason += f" | missing files: {missing}"
+            with GENERATION_JOBS_LOCK:
+                GENERATION_JOBS[job_id]["status"] = "error"
+                GENERATION_JOBS[job_id]["error"] = reason
+            return
+
+        # meta.json is written directly by generate-site.js (business_name,
+        # slug, known_gaps, etc.) - overlay client_contact only, since that's
+        # operator-supplied and not derivable from the tokens/category.
+        meta_path = os.path.join(output_dir, "meta.json")
+        with open(meta_path, encoding="utf-8") as f:
+            meta = json.load(f)
+        meta["client_contact"] = client_contact or meta.get("client_contact")
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2)
+
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "done"
+            GENERATION_JOBS[job_id]["output_dir"] = output_dir
+    except subprocess.TimeoutExpired:
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "error"
+            GENERATION_JOBS[job_id]["error"] = "generation timed out"
+    except Exception as e:
+        with GENERATION_JOBS_LOCK:
+            GENERATION_JOBS[job_id]["status"] = "error"
+            GENERATION_JOBS[job_id]["error"] = str(e)
+
 def run_generation_job(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type, reference_url=None, is_own_site=None):
     with GENERATION_JOBS_LOCK:
         GENERATION_JOBS[job_id]["status"] = "running"
@@ -889,9 +966,19 @@ def generate_website():
     license_type = data.get("license_type")
     reference_url = (data.get("reference_url") or "").strip() or None
     is_own_site = data.get("is_own_site")
+    category = (data.get("category") or "").strip() or None
 
-    if not business_name or not description:
-        return jsonify({"error": "business_name and prompt are required"}), 400
+    if not business_name:
+        return jsonify({"error": "business_name is required"}), 400
+
+    # Deterministic path (Thread 1 extraction -> Thread 3 sprite -> template
+    # assembly, tools/site-assembly) - only available for the existing-website
+    # input path, the one Thread 1 actually built. Everything else (no
+    # reference_url, or a reference_url without is_own_site/category) still
+    # goes through the LLM-freeform path below - a disclosed limitation, not
+    # silently degraded: Thread 1 has no working "no brand at all" extraction
+    # path yet (see vault, Thread 1 > Honest gaps).
+    use_deterministic = bool(reference_url and is_own_site and category)
 
     if reference_url:
         try:
@@ -902,6 +989,11 @@ def generate_website():
             return jsonify({"error": "is_own_site (true/false) is required when reference_url is given"}), 400
         if not is_own_site and not business_name:
             return jsonify({"error": "business_name is required to confirm who a reference-based site is being built for"}), 400
+        if is_own_site and category and category not in CATEGORY_SLUGS:
+            return jsonify({"error": f"unknown category \"{category}\" - known: {', '.join(CATEGORY_SLUGS)}"}), 400
+
+    if not use_deterministic and not description:
+        return jsonify({"error": "prompt is required (unless reference_url + is_own_site + category are all given, which uses the deterministic pipeline instead)"}), 400
 
     os.makedirs(GENERATED_SITES_DIR, exist_ok=True)
     slug = unique_slug(slugify(business_name))
@@ -911,15 +1003,22 @@ def generate_website():
 
     job_id = str(uuid.uuid4())
     with GENERATION_JOBS_LOCK:
-        GENERATION_JOBS[job_id] = {"status": "queued", "slug": slug, "business_name": business_name}
+        GENERATION_JOBS[job_id] = {"status": "queued", "slug": slug, "business_name": business_name, "pipeline": "deterministic" if use_deterministic else "llm-freeform"}
 
-    threading.Thread(
-        target=run_generation_job,
-        args=(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type, reference_url, is_own_site),
-        daemon=True,
-    ).start()
+    if use_deterministic:
+        threading.Thread(
+            target=run_deterministic_generation_job,
+            args=(job_id, business_name, category, slug, output_dir, client_contact, price, license_type, reference_url, reviews),
+            daemon=True,
+        ).start()
+    else:
+        threading.Thread(
+            target=run_generation_job,
+            args=(job_id, business_name, description, reviews, slug, output_dir, client_contact, price, license_type, reference_url, is_own_site),
+            daemon=True,
+        ).start()
 
-    return jsonify({"job_id": job_id, "slug": slug, "status": "queued"})
+    return jsonify({"job_id": job_id, "slug": slug, "status": "queued", "pipeline": "deterministic" if use_deterministic else "llm-freeform"})
 
 @app.route("/generate-website/status/<job_id>")
 def generate_website_status(job_id):

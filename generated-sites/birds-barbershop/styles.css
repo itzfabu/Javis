@@ -2,6 +2,57 @@
    Tokens below are copied verbatim from Thread 1's real extraction output
    (tools/frame-generation/test/approved-fixtures/transform-approved.tokens.json). */
 
+/* Self-hosted fonts (2026-08-07) - replaces the fonts.googleapis.com/
+   fonts.gstatic.com <link> tags: two extra render-blocking origins plus a
+   CSS round-trip before the actual font files could even start downloading
+   on the throttled real-page measurement. Downloaded directly from Google
+   Fonts' own CDN (latin + latin-ext subsets only - this is an English-copy
+   page, the other unicode-range subsets Google serves by default were
+   never going to be used).
+   Righteous is requested here at weight 400 only - fixing a real bug found
+   while downloading these: Thread 1's extracted tokens.json requested
+   `Righteous:wght@500;700`, which 400s (Google: "Missing font family").
+   Righteous only ships weight 400; the external <link> version of this
+   page was silently failing to load its heading font this whole time and
+   falling back to plain sans-serif, never caught because a failed
+   `<link rel="stylesheet">` throws no visible error. */
+@font-face {
+  font-family: 'Righteous';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/righteous-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Righteous';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/righteous-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Source Sans 3: Google serves the SAME variable-font file for both the 400
+   and 600 static requests (confirmed by comparing the fetched CSS - byte-
+   identical URLs) - the browser selects the 600 instance from the file's
+   own weight axis, so only one physical file per subset is needed here. */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('assets/sourcesans3-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('assets/sourcesans3-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   --color-primary: #DCD7D1;
   --color-secondary: #84817D;
@@ -37,7 +88,7 @@ body {
   line-height: 1.5;
 }
 
-h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; }
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 400; line-height: 1.15; } /* Righteous only ships weight 400 - explicit here so no UA-default bold (700) gets requested against a face that doesn't have it */
 h1 { font-size: var(--h1); }
 h2 { font-size: var(--h2); margin-bottom: calc(var(--space) * 2); }
 h3 { font-size: var(--h3); }

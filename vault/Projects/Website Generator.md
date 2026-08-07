@@ -1448,6 +1448,101 @@ in `generated-sites/birds-barbershop/lcp-real-page-results.json`.
   quiet window might close the gap, not attempted since Element Timing already gives the same
   underlying signal reliably.
 
+### FONT SELF-HOSTING + DETERMINISTIC ASSEMBLY (2026-08-07)
+
+**Font self-hosting: applied to Birds Barbershop, made the template default, measured.** Downloaded
+the real woff2 files (Righteous latin/latin-ext, Source Sans 3 latin/latin-ext - Source Sans 3 turned
+out to be a variable font where Google serves the SAME file for weights 400 and 600, confirmed by
+comparing fetched CSS byte-for-byte) into `assets/`, added `@font-face` rules, dropped the
+`fonts.googleapis.com`/`fonts.gstatic.com` `<link>` tags. Along the way, confirmed a bug already
+recorded above (Righteous requested at weights 500/700, which 400s - Righteous only ships weight
+400) by watching the request fail directly: the external `<link>` version of this page had been
+silently falling back to plain sans-serif for its heading font the entire time, with no visible
+error. Fixed at weight 400 for this page.
+
+**Re-measured real-page LCP after the fix - the font hypothesis was wrong, measured rather than
+assumed.** Expected the two extra origins + the CSS-round-trip-before-fonts-even-start to be a real
+chunk of the ~448ms real-page-vs-isolated gap found in the BUILD section above. It wasn't: the
+hero-sprite's own render time is statistically flat before/after (2240ms -> 2216-2260ms across two
+15-trial runs). Font self-hosting sped up the H1 headline's own paint (~130ms faster - no more
+failed cross-origin request), but the headline was never the page's true LCP element (54,991-52,070px²
+vs. the sprite's 314,280px²), so that improvement doesn't move the number that matters. Decomposed the
+real ~448ms via Resource Timing instead: ~308ms **discovery delay** (more HTML/CSS to parse before
+the browser finds the sprite's background-image and starts fetching it) and ~253ms **transfer
+slowdown** (bandwidth contention - the sprite now shares the throttled 1.6Mbps link with `styles.css`,
+`script.js`, the logo, and 4 font files instead of being nearly the only request on the page); decode
+was actually faster on the real page (-114ms), read as session noise per this project's own established
+finding that decode is a small, noisy number, not folded in as a third real contributor. Neither
+discovery nor transfer delay is fixable by trimming the sprite - the ~260ms TRANSFORM real-page margin
+from the BUILD section stands, now confirmed measured against real, structural page-weight cost, not
+an easily-removed one. Full trial data in `generated-sites/birds-barbershop/lcp-real-page-results.json`.
+
+**Deterministic assembly step built: `tools/site-assembly/`.** Replaces `orb/app.py`'s
+`/generate-website` LLM-freeform path (a `claude -p` subprocess writing index.html/styles.css/script.js
+from scratch, zero Thread 1/3 integration) with a real pipeline for the existing-website input path -
+the only one Thread 1 actually built: Thread 1 extraction (`bin/extract-brand.js`, subprocess) -> Thread
+3 sprite generation (reuses `captureFrames`/`compositeSpriteSheet`/`buildMetadata` directly, same
+functions `bin/generate-frames.js` calls) -> font self-hosting (`src/fonts.js`, the template default
+now, not a one-off) -> template assembly (`src/template.js`, category-driven copy from
+`src/category-copy.js` - Thread 2's own per-category variant table, not an LLM call; the hero headline
+is a disclosed generic per-category default, since wiring a second LLM subprocess into the pipeline
+that's replacing one for exactly this reason would defeat the point, even though Thread 2's own Content
+Input table would technically permit LLM-generated hero copy). `orb/app.py`'s `run_generation_job`
+(LLM path) is unchanged and still used whenever `reference_url`+`is_own_site`+`category` aren't all
+given - a disclosed limitation, not a silent gap: Thread 1 has no working "no brand at all" extraction
+path yet (see Thread 1 > Honest gaps), so there's nothing deterministic to assemble from in that case.
+
+**Proof: generated Grace Family Roofing (ASSEMBLE, construction-trades) through the real, running
+route - live extraction from gfryork.com, not a canned fixture.** `POST /generate-website` with
+`reference_url`, `is_own_site: true`, `category: "construction-trades"` -> job completed end-to-end
+(`generated-sites/grace-family-roofing/`), portrait 2:3 hero, category-appropriate copy and services,
+the construction-trades-specific "Job Type" form dropdown, all rendered and screenshot-verified.
+**Four real bugs found, all from generating a second archetype the template had never seen, exactly
+as expected going in:**
+1. **Logo filename hardcoded to `.jpg`** - Birds Barbershop's logo happened to be a jpg; Grace Family
+   Roofing's is a png. `template.js` only wired `assets/logo.jpg`. Fixed: the real extension is now
+   passed through end to end instead of assumed.
+2. **Extracted accent color identical to background (`#FFFFFF`/`#FFFFFF`)** - a real Thread 1
+   extraction-quality issue for this client (not a template bug), made every `.btn-accent` invisible as
+   a shape (text-on-accent contrast technically passes AA at 21:1, but there's no visible button
+   boundary when the fill matches the page). Not fixed by guessing a better color - `.btn` now gets a
+   `1px solid var(--color-border)` outline unconditionally, a generic defensive fix that keeps any
+   button legible as a shape regardless of how degenerate a given client's accent/background pairing
+   turns out to be.
+3. **Frustum/occlusion guards ran against an empty logo texture and failed loudly** - the real blocker,
+   found because this was the first time the deterministic pipeline ran against a *freshly extracted,
+   unreviewed* tokens.json rather than an already-approved fixture. `resolveLogoPlan`'s SKIPPED case
+   (unreviewed logo) passes an empty string through as `logoAsset`, but the scene still creates a logo
+   mesh with no texture, and the occlusion check correctly found "0 opaque pixels" and correctly refused
+   to guess - but for the wrong reason: there was nothing to check placement/occlusion FOR, not a real
+   logo whose placement couldn't be verified. This blocked every fresh (unreviewed) extraction - the
+   normal, expected case for a first-time generation - from ever completing. Fixed in
+   `tools/frame-generation/src/capture.js`: both guards are now skipped entirely when nothing is
+   actually being composited (`!logoPlan.logoAssetUrl && !logoPlan.logoText`), not loosened for the
+   real-logo case, which is unchanged and still fails loudly on a genuine placement/occlusion problem.
+4. **(Already documented above, re-confirmed here)** the Righteous weight-request bug is generic to
+   `fonts.js`, not Birds-Barbershop-specific - `src/fonts.js`'s `selfHostFont()` retries with a bare
+   family name on a 400 and reports which weights actually came back, so this class of bug degrades
+   gracefully instead of crashing generation, without needing `tools/brand-extraction/src/fonts.js`
+   itself fixed first (that fix is still open, tracked in TASKS.md).
+
+**Not fixed, disclosed:** the nav logo, when it IS shown, has no contrast check against the page's own
+background the way the hero sprite's compositing does (guarded onto a dark signboard) - a white-on-
+transparent logo on a light nav would be invisible the same way Grace Family Roofing's accent color
+was, just not exercised by either fixture used this session (Birds Barbershop's nav logo has its own
+dark background baked into the asset; Grace Family Roofing's logo never composited at all, being
+unreviewed). Flagged, not built.
+
+**Web3Forms account: blocked, not completed.** Approved to create the account and wire the access key.
+Signup (`web3forms.com` -> "Create your Form") is gated behind a Cloudflare "Verify you are human"
+checkbox before the email-verification step even starts - completing CAPTCHAs is outside what this
+agent does regardless of prior approval for the task it blocks. `tools/site-assembly` is fully wired
+for this already (`src/fonts.js`... no - `src/assemble.js` reads `WEB3FORMS_ACCESS_KEY` from the
+environment, `orb/app.py`'s `load_env_file()` already sources `orb/.env` the same way `OPENAI_API_KEY`
+is loaded) - the only missing piece is the key itself. Every contact form generated by this pipeline in
+the meantime stays in the same disclosed-non-functional state Birds Barbershop's already was (visible
+note in the page, `action="#"`, never a silently-broken live-looking form).
+
 ## Walking Skeleton Findings (2026-08-05)
 
 **A rough end-to-end pipeline was built in `C:\Jarvis\spikes\generator-e2e\`** — one hardcoded

@@ -121,6 +121,21 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
       throw new Error(`LOGO ASSET FAILED for archetype ${archetype.key}: ${logoError}`);
     }
 
+    // Frustum/occlusion guards only make sense when something is actually
+    // being composited. Found by running a fresh (unreviewed) extraction
+    // through the real pipeline for the first time: resolveLogoPlan's
+    // SKIPPED case (reviewStatus != "approved") still passes an EMPTY
+    // string through to the scene as logoAsset - the scene still creates a
+    // logo mesh, now with no texture, and the occlusion check then correctly
+    // found "0 opaque pixels" and failed loudly, but for the wrong reason -
+    // there's no logo to check placement/occlusion FOR, not a logo whose
+    // placement/occlusion couldn't be verified. That blocked every fresh
+    // extraction (the normal, expected case for a first-time generation)
+    // from ever completing. Skipping both checks when nothing is composited
+    // isn't loosening the guard - it's the guard correctly not firing on
+    // "there is nothing here to guard."
+    const hasComposedLogo = !!(logoPlan.logoAssetUrl || logoPlan.logoText);
+
     // Frustum regression guard: move to the frame where the logo is actually
     // supposed to be visible (its appearsAtFrameFraction - for FLYTHROUGH
     // specifically the camera has moved by then, so checking at t=0 would
@@ -131,7 +146,7 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
     // caught.
     const checkT = Math.max(0, Math.min(1, logoPlan.logoFraction));
     await page.evaluate((t) => window.__renderFrame(t), checkT);
-    const frustumResult = await page.evaluate(() => (window.__frustumCheck ? window.__frustumCheck() : null));
+    const frustumResult = hasComposedLogo ? await page.evaluate(() => (window.__frustumCheck ? window.__frustumCheck() : null)) : null;
     if (frustumResult && !frustumResult.ok) {
       const failing = frustumResult.corners.filter((c) => !c.within);
       throw new Error(
@@ -149,7 +164,7 @@ async function captureFrames({ archetypeName, tokens, outDir }) {
     // of it. Found exactly that bug once already (ASSEMBLE's wordmark fully
     // hidden behind a tower block while the frustum check passed cleanly) -
     // see vault note for the full account and how this guard was calibrated.
-    const occlusionResult = await page.evaluate(() => (window.__occlusionCheck ? window.__occlusionCheck() : null));
+    const occlusionResult = hasComposedLogo ? await page.evaluate(() => (window.__occlusionCheck ? window.__occlusionCheck() : null)) : null;
     if (occlusionResult && occlusionResult.evaluable === false) {
       // Distinct from a real occlusion failure below: the guard found too
       // few fully-opaque logo pixels to measure occlusion at all (soft

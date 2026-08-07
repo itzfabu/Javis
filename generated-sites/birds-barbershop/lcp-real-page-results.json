@@ -1,66 +1,111 @@
 {
-  "measuredAt": "2026-08-07T06:23:28.505Z",
+  "measuredAt": "2026-08-07T06:42:27.730Z",
   "trials": 15,
-  "controlMedianMs": 1396,
+  "controlMedianMs": 1428,
   "controlTrials": [
-    1364,
-    1364,
+    1380,
+    1448,
+    1380,
+    1380,
     1352,
-    1420,
-    1408,
-    1372,
-    1444,
-    1352,
+    1516,
     1348,
-    1396,
-    1400,
-    1336,
-    1400,
-    1420,
-    1412
+    1404,
+    1348,
+    1448,
+    1556,
+    1512,
+    1428,
+    1428,
+    1476
   ],
   "nativeLcpFiredCount": 15,
   "nativeLcpSamples": [
     {
-      "renderTime": 692,
+      "renderTime": 784,
       "loadTime": 0,
-      "size": 54991,
+      "size": 52070,
       "elementTag": "H1",
       "elementClass": "",
       "url": null,
       "entryCount": 1
-    },
-    {
-      "renderTime": 2296,
-      "loadTime": 1875.1000000238419,
-      "size": 314280,
-      "elementTag": "DIV",
-      "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:55576/site/assets/sprite.webp",
-      "entryCount": 2
-    },
-    {
-      "renderTime": 2264,
-      "loadTime": 0,
-      "size": 54991,
-      "elementTag": "H1",
-      "elementClass": "",
-      "url": null,
-      "entryCount": 1
-    },
-    {
-      "renderTime": 2344,
-      "loadTime": 1927.4000000357628,
-      "size": 314280,
-      "elementTag": "DIV",
-      "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:54017/site/assets/sprite.webp",
-      "entryCount": 2
     },
     {
       "renderTime": 688,
       "loadTime": 0,
-      "size": 54991,
+      "size": 52070,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 664,
+      "loadTime": 0,
+      "size": 52070,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 696,
+      "loadTime": 0,
+      "size": 52070,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2500,
+      "loadTime": 2142.899999976158,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:50174/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2316,
+      "loadTime": 1977.0999999642372,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:54152/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 664,
+      "loadTime": 0,
+      "size": 52070,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2268,
+      "loadTime": 1920.4000000357628,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:64802/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2336,
+      "loadTime": 2020.1000000238419,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:58946/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 648,
+      "loadTime": 0,
+      "size": 52070,
       "elementTag": "H1",
       "elementClass": "",
       "url": null,
@@ -68,150 +113,68 @@
     },
     {
       "renderTime": 2236,
-      "loadTime": 1848.1000000238419,
+      "loadTime": 1944.2000000476837,
       "size": 314280,
       "elementTag": "DIV",
       "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:62696/site/assets/sprite.webp",
+      "url": "http://127.0.0.1:62568/site/assets/sprite.webp",
       "entryCount": 2
     },
     {
-      "renderTime": 676,
+      "renderTime": 2248,
+      "loadTime": 1908.800000011921,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:61079/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 700,
       "loadTime": 0,
-      "size": 54991,
+      "size": 52070,
       "elementTag": "H1",
       "elementClass": "",
       "url": null,
       "entryCount": 1
     },
     {
-      "renderTime": 2252,
-      "loadTime": 1832.4000000357628,
+      "renderTime": 2308,
+      "loadTime": 2017.300000011921,
       "size": 314280,
       "elementTag": "DIV",
       "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:51096/site/assets/sprite.webp",
+      "url": "http://127.0.0.1:60332/site/assets/sprite.webp",
       "entryCount": 2
     },
     {
-      "renderTime": 2260,
-      "loadTime": 1858.199999988079,
+      "renderTime": 2348,
+      "loadTime": 1919.3999999761581,
       "size": 314280,
       "elementTag": "DIV",
       "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:57122/site/assets/sprite.webp",
+      "url": "http://127.0.0.1:63709/site/assets/sprite.webp",
       "entryCount": 2
-    },
-    {
-      "renderTime": 2244,
-      "loadTime": 1837.6000000238419,
-      "size": 314280,
-      "elementTag": "DIV",
-      "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:54421/site/assets/sprite.webp",
-      "entryCount": 2
-    },
-    {
-      "renderTime": 692,
-      "loadTime": 0,
-      "size": 54991,
-      "elementTag": "H1",
-      "elementClass": "",
-      "url": null,
-      "entryCount": 1
-    },
-    {
-      "renderTime": 2300,
-      "loadTime": 1881.3999999761581,
-      "size": 314280,
-      "elementTag": "DIV",
-      "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:55131/site/assets/sprite.webp",
-      "entryCount": 2
-    },
-    {
-      "renderTime": 2200,
-      "loadTime": 1863.199999988079,
-      "size": 314280,
-      "elementTag": "DIV",
-      "elementClass": "hero-sprite",
-      "url": "http://127.0.0.1:58414/site/assets/sprite.webp",
-      "entryCount": 2
-    },
-    {
-      "renderTime": 632,
-      "loadTime": 0,
-      "size": 54991,
-      "elementTag": "H1",
-      "elementClass": "",
-      "url": null,
-      "entryCount": 1
-    },
-    {
-      "renderTime": 740,
-      "loadTime": 0,
-      "size": 54991,
-      "elementTag": "H1",
-      "elementClass": "",
-      "url": null,
-      "entryCount": 1
     }
   ],
   "elementTimingSamples": [
     {
       "hero-headline": {
-        "renderTime": 692,
+        "renderTime": 784,
         "loadTime": 0
       },
       "hero-logo": {
-        "renderTime": 840,
-        "loadTime": 791.6000000238419
+        "renderTime": 960,
+        "loadTime": 941.5
       },
       "hero-sprite": {
-        "renderTime": 2208,
-        "loadTime": 1844.1000000238419
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 928,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 1028,
-        "loadTime": 911.3000000119209
-      },
-      "hero-sprite": {
-        "renderTime": 2296,
-        "loadTime": 1875.1000000238419
-      }
-    },
-    {
-      "hero-logo": {
-        "renderTime": 2264,
-        "loadTime": 2151.899999976158
-      },
-      "hero-headline": {
-        "renderTime": 2264,
-        "loadTime": 0
-      },
-      "hero-sprite": {
-        "renderTime": 3760,
-        "loadTime": 3393
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 912,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 1020,
-        "loadTime": 903.3000000119209
-      },
-      "hero-sprite": {
-        "renderTime": 2344,
-        "loadTime": 1927.4000000357628
+        "renderTime": 2320,
+        "loadTime": 2080.5,
+        "resourceStartTime": 634.6999999880791,
+        "resourceResponseEnd": 2029.5999999642372,
+        "discoveryMs": 634.6999999880791,
+        "transferMs": 1394.8999999761581,
+        "decodeMs": 290.4000000357628
       }
     },
     {
@@ -220,170 +183,282 @@
         "loadTime": 0
       },
       "hero-logo": {
-        "renderTime": 832,
-        "loadTime": 805.6999999880791
+        "renderTime": 852,
+        "loadTime": 802.1999999880791
       },
       "hero-sprite": {
-        "renderTime": 2208,
-        "loadTime": 1873.199999988079
+        "renderTime": 2248,
+        "loadTime": 1960.6000000238419,
+        "resourceStartTime": 539.8999999761581,
+        "resourceResponseEnd": 1944.199999988079,
+        "discoveryMs": 539.8999999761581,
+        "transferMs": 1404.300000011921,
+        "decodeMs": 303.80000001192093
       }
     },
     {
       "hero-headline": {
-        "renderTime": 880,
+        "renderTime": 664,
         "loadTime": 0
       },
       "hero-logo": {
-        "renderTime": 984,
-        "loadTime": 866.9000000357628
+        "renderTime": 812,
+        "loadTime": 786.2999999523163
+      },
+      "hero-sprite": {
+        "renderTime": 2148,
+        "loadTime": 1951.8999999761581,
+        "resourceStartTime": 498.2999999523163,
+        "resourceResponseEnd": 1901.2999999523163,
+        "discoveryMs": 498.2999999523163,
+        "transferMs": 1403,
+        "decodeMs": 246.70000004768372
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 696,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 876,
+        "loadTime": 760
+      },
+      "hero-sprite": {
+        "renderTime": 2260,
+        "loadTime": 1921,
+        "resourceStartTime": 558.7000000476837,
+        "resourceResponseEnd": 1911.1000000238419,
+        "discoveryMs": 558.7000000476837,
+        "transferMs": 1352.3999999761581,
+        "decodeMs": 348.89999997615814
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 924,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 940,
+        "loadTime": 921.1000000238419
+      },
+      "hero-sprite": {
+        "renderTime": 2500,
+        "loadTime": 2142.899999976158,
+        "resourceStartTime": 780,
+        "resourceResponseEnd": 2123.199999988079,
+        "discoveryMs": 780,
+        "transferMs": 1343.199999988079,
+        "decodeMs": 376.80000001192093
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 828,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 932,
+        "loadTime": 813.3999999761581
+      },
+      "hero-sprite": {
+        "renderTime": 2316,
+        "loadTime": 1977.0999999642372,
+        "resourceStartTime": 607.5,
+        "resourceResponseEnd": 1959.2999999523163,
+        "discoveryMs": 607.5,
+        "transferMs": 1351.7999999523163,
+        "decodeMs": 356.7000000476837
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 664,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 800,
+        "loadTime": 783.5
+      },
+      "hero-sprite": {
+        "renderTime": 2188,
+        "loadTime": 1889.7000000476837,
+        "resourceStartTime": 495.4000000357628,
+        "resourceResponseEnd": 1877.800000011921,
+        "discoveryMs": 495.4000000357628,
+        "transferMs": 1382.3999999761581,
+        "decodeMs": 310.19999998807907
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 796,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 896,
+        "loadTime": 778.7000000476837
+      },
+      "hero-sprite": {
+        "renderTime": 2268,
+        "loadTime": 1920.4000000357628,
+        "resourceStartTime": 524.9000000357628,
+        "resourceResponseEnd": 1917.2000000476837,
+        "discoveryMs": 524.9000000357628,
+        "transferMs": 1392.300000011921,
+        "decodeMs": 350.7999999523163
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 760,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 956,
+        "loadTime": 881.3000000119209
+      },
+      "hero-sprite": {
+        "renderTime": 2336,
+        "loadTime": 2020.1000000238419,
+        "resourceStartTime": 606.8000000119209,
+        "resourceResponseEnd": 1994.9000000357628,
+        "discoveryMs": 606.8000000119209,
+        "transferMs": 1388.1000000238419,
+        "decodeMs": 341.0999999642372
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 648,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 816,
+        "loadTime": 783
+      },
+      "hero-sprite": {
+        "renderTime": 2164,
+        "loadTime": 1894,
+        "resourceStartTime": 497.7000000476837,
+        "resourceResponseEnd": 1884.6000000238419,
+        "discoveryMs": 497.7000000476837,
+        "transferMs": 1386.8999999761581,
+        "decodeMs": 279.39999997615814
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 668,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 908,
+        "loadTime": 804.3000000119209
       },
       "hero-sprite": {
         "renderTime": 2236,
-        "loadTime": 1848.1000000238419
+        "loadTime": 1944.2000000476837,
+        "resourceStartTime": 533.8000000119209,
+        "resourceResponseEnd": 1927.4000000357628,
+        "discoveryMs": 533.8000000119209,
+        "transferMs": 1393.6000000238419,
+        "decodeMs": 308.5999999642372
       }
     },
     {
       "hero-headline": {
-        "renderTime": 676,
+        "renderTime": 812,
         "loadTime": 0
       },
       "hero-logo": {
-        "renderTime": 832,
-        "loadTime": 809.1000000238419
-      },
-      "hero-sprite": {
-        "renderTime": 2184,
-        "loadTime": 1845.1000000238419
-      }
-    },
-    {
-      "hero-headline": {
         "renderTime": 920,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 1032,
-        "loadTime": 906.1999999880791
+        "loadTime": 800.5
       },
       "hero-sprite": {
-        "renderTime": 2252,
-        "loadTime": 1832.4000000357628
+        "renderTime": 2248,
+        "loadTime": 1908.800000011921,
+        "resourceStartTime": 499.4000000357628,
+        "resourceResponseEnd": 1899.6000000238419,
+        "discoveryMs": 499.4000000357628,
+        "transferMs": 1400.199999988079,
+        "decodeMs": 348.39999997615814
       }
     },
     {
       "hero-headline": {
-        "renderTime": 852,
+        "renderTime": 700,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 844,
+        "loadTime": 784.8000000119209
+      },
+      "hero-sprite": {
+        "renderTime": 2216,
+        "loadTime": 1953.5,
+        "resourceStartTime": 544.1999999880791,
+        "resourceResponseEnd": 1932.800000011921,
+        "discoveryMs": 544.1999999880791,
+        "transferMs": 1388.6000000238419,
+        "decodeMs": 283.19999998807907
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 836,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 956,
+        "loadTime": 885.1999999880791
+      },
+      "hero-sprite": {
+        "renderTime": 2308,
+        "loadTime": 2017.300000011921,
+        "resourceStartTime": 603.5,
+        "resourceResponseEnd": 2008.199999988079,
+        "discoveryMs": 603.5,
+        "transferMs": 1404.699999988079,
+        "decodeMs": 299.80000001192093
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 856,
         "loadTime": 0
       },
       "hero-logo": {
         "renderTime": 960,
-        "loadTime": 838.9000000357628
+        "loadTime": 846.8999999761581
       },
       "hero-sprite": {
-        "renderTime": 2260,
-        "loadTime": 1858.199999988079
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 820,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 948,
-        "loadTime": 814.6000000238419
-      },
-      "hero-sprite": {
-        "renderTime": 2244,
-        "loadTime": 1837.6000000238419
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 692,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 864,
-        "loadTime": 852.5
-      },
-      "hero-sprite": {
-        "renderTime": 2232,
-        "loadTime": 1922.5
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 948,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 1060,
-        "loadTime": 915.8000000119209
-      },
-      "hero-sprite": {
-        "renderTime": 2300,
-        "loadTime": 1881.3999999761581
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 748,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 856,
-        "loadTime": 772.3999999761581
-      },
-      "hero-sprite": {
-        "renderTime": 2200,
-        "loadTime": 1863.199999988079
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 632,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 808,
-        "loadTime": 774.2999999523163
-      },
-      "hero-sprite": {
-        "renderTime": 2188,
-        "loadTime": 1843.2999999523163
-      }
-    },
-    {
-      "hero-headline": {
-        "renderTime": 740,
-        "loadTime": 0
-      },
-      "hero-logo": {
-        "renderTime": 864,
-        "loadTime": 795.0999999642372
-      },
-      "hero-sprite": {
-        "renderTime": 2240,
-        "loadTime": 1876.5
+        "renderTime": 2348,
+        "loadTime": 1919.3999999761581,
+        "resourceStartTime": 524.8999999761581,
+        "resourceResponseEnd": 1909.5999999642372,
+        "discoveryMs": 524.8999999761581,
+        "transferMs": 1384.699999988079,
+        "decodeMs": 438.4000000357628
       }
     }
   ],
   "wallClocks": [
-    9942,
-    11776,
-    7804,
-    11113,
-    9573,
-    11266,
-    10921,
-    11570,
-    10792,
-    12200,
-    9659,
-    12069,
-    10865,
-    9846,
-    10168
+    8922,
+    9919,
+    10283,
+    9806,
+    11355,
+    8613,
+    9517,
+    9945,
+    10702,
+    9722,
+    10860,
+    10988,
+    10087,
+    7565,
+    8588
   ]
 }
