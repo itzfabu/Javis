@@ -12,6 +12,7 @@ const path = require('path');
 
 const MIME = {
   '.html': 'text/html',
+  '.css': 'text/css', // added 2026-08-07: this server didn't need to serve a linked stylesheet before (scene/composite HTML inlines its own <style>) - Thread 2's real generated page does, and Chromium refuses to apply a stylesheet served without this (strict MIME-type checking), silently rendering the page unstyled instead of erroring loudly
   '.js': 'text/javascript',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',

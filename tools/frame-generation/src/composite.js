@@ -9,7 +9,7 @@ const { startServer } = require('./static-server');
 const { verifySheetIntegrity } = require('./sheet-integrity');
 
 const COMPOSE_ROOT = path.join(__dirname, '..', 'compose');
-const WEBP_QUALITY = 0.8; // matches the quality used in this project's own cost-study measurements, for a fair before/after comparison
+const WEBP_QUALITY = 0.6; // lowered from 0.8 2026-08-07: measured ~200ms LCP recovery project-wide with no visible texture cost (std within 4% of 0.8, screenshot-confirmed) - see vault Thread 3 > TRANSFORM HEADROOM: THREE UNTRIED LEVERS MEASURED, and TASKS.md's TRANSFORM sign-off entry for the split decision (quality applied, frame-count rejected)
 
 async function compositeSpriteSheet({ framesDir, frameCount, dims, grid, outPath, fallbackFrame }) {
   const server = await startServer({

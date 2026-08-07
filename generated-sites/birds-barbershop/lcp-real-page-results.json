@@ -1,0 +1,389 @@
+{
+  "measuredAt": "2026-08-07T06:23:28.505Z",
+  "trials": 15,
+  "controlMedianMs": 1396,
+  "controlTrials": [
+    1364,
+    1364,
+    1352,
+    1420,
+    1408,
+    1372,
+    1444,
+    1352,
+    1348,
+    1396,
+    1400,
+    1336,
+    1400,
+    1420,
+    1412
+  ],
+  "nativeLcpFiredCount": 15,
+  "nativeLcpSamples": [
+    {
+      "renderTime": 692,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2296,
+      "loadTime": 1875.1000000238419,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:55576/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2264,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2344,
+      "loadTime": 1927.4000000357628,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:54017/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 688,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2236,
+      "loadTime": 1848.1000000238419,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:62696/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 676,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2252,
+      "loadTime": 1832.4000000357628,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:51096/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2260,
+      "loadTime": 1858.199999988079,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:57122/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2244,
+      "loadTime": 1837.6000000238419,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:54421/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 692,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 2300,
+      "loadTime": 1881.3999999761581,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:55131/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 2200,
+      "loadTime": 1863.199999988079,
+      "size": 314280,
+      "elementTag": "DIV",
+      "elementClass": "hero-sprite",
+      "url": "http://127.0.0.1:58414/site/assets/sprite.webp",
+      "entryCount": 2
+    },
+    {
+      "renderTime": 632,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    },
+    {
+      "renderTime": 740,
+      "loadTime": 0,
+      "size": 54991,
+      "elementTag": "H1",
+      "elementClass": "",
+      "url": null,
+      "entryCount": 1
+    }
+  ],
+  "elementTimingSamples": [
+    {
+      "hero-headline": {
+        "renderTime": 692,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 840,
+        "loadTime": 791.6000000238419
+      },
+      "hero-sprite": {
+        "renderTime": 2208,
+        "loadTime": 1844.1000000238419
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 928,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 1028,
+        "loadTime": 911.3000000119209
+      },
+      "hero-sprite": {
+        "renderTime": 2296,
+        "loadTime": 1875.1000000238419
+      }
+    },
+    {
+      "hero-logo": {
+        "renderTime": 2264,
+        "loadTime": 2151.899999976158
+      },
+      "hero-headline": {
+        "renderTime": 2264,
+        "loadTime": 0
+      },
+      "hero-sprite": {
+        "renderTime": 3760,
+        "loadTime": 3393
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 912,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 1020,
+        "loadTime": 903.3000000119209
+      },
+      "hero-sprite": {
+        "renderTime": 2344,
+        "loadTime": 1927.4000000357628
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 688,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 832,
+        "loadTime": 805.6999999880791
+      },
+      "hero-sprite": {
+        "renderTime": 2208,
+        "loadTime": 1873.199999988079
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 880,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 984,
+        "loadTime": 866.9000000357628
+      },
+      "hero-sprite": {
+        "renderTime": 2236,
+        "loadTime": 1848.1000000238419
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 676,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 832,
+        "loadTime": 809.1000000238419
+      },
+      "hero-sprite": {
+        "renderTime": 2184,
+        "loadTime": 1845.1000000238419
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 920,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 1032,
+        "loadTime": 906.1999999880791
+      },
+      "hero-sprite": {
+        "renderTime": 2252,
+        "loadTime": 1832.4000000357628
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 852,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 960,
+        "loadTime": 838.9000000357628
+      },
+      "hero-sprite": {
+        "renderTime": 2260,
+        "loadTime": 1858.199999988079
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 820,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 948,
+        "loadTime": 814.6000000238419
+      },
+      "hero-sprite": {
+        "renderTime": 2244,
+        "loadTime": 1837.6000000238419
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 692,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 864,
+        "loadTime": 852.5
+      },
+      "hero-sprite": {
+        "renderTime": 2232,
+        "loadTime": 1922.5
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 948,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 1060,
+        "loadTime": 915.8000000119209
+      },
+      "hero-sprite": {
+        "renderTime": 2300,
+        "loadTime": 1881.3999999761581
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 748,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 856,
+        "loadTime": 772.3999999761581
+      },
+      "hero-sprite": {
+        "renderTime": 2200,
+        "loadTime": 1863.199999988079
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 632,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 808,
+        "loadTime": 774.2999999523163
+      },
+      "hero-sprite": {
+        "renderTime": 2188,
+        "loadTime": 1843.2999999523163
+      }
+    },
+    {
+      "hero-headline": {
+        "renderTime": 740,
+        "loadTime": 0
+      },
+      "hero-logo": {
+        "renderTime": 864,
+        "loadTime": 795.0999999642372
+      },
+      "hero-sprite": {
+        "renderTime": 2240,
+        "loadTime": 1876.5
+      }
+    }
+  ],
+  "wallClocks": [
+    9942,
+    11776,
+    7804,
+    11113,
+    9573,
+    11266,
+    10921,
+    11570,
+    10792,
+    12200,
+    9659,
+    12069,
+    10865,
+    9846,
+    10168
+  ]
+}

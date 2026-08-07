@@ -1,0 +1,18 @@
+{
+  "business_name": "Birds Barbershop",
+  "slug": "birds-barbershop",
+  "prompt_used": "Not generated via the LLM /generate-website path. Built directly from a real Thread 1 token fixture (tools/frame-generation/test/approved-fixtures/transform-approved.tokens.json, source: birdsbarbershop.com) and its Thread 3 sprite output (test/cost-study/transform-approved/), for the Thread 2 page-template first pass.",
+  "reviews_used": [],
+  "created_date": "2026-08-07T00:00:00.000000+00:00",
+  "status": "draft",
+  "client_contact": null,
+  "price": null,
+  "license_type": null,
+  "known_gaps": [
+    "No trust-bar facts (years in business, license, service area) - not captured by this Thread 1 fixture, not fabricated",
+    "No social proof / reviews - none supplied for this real business, not fabricated",
+    "No before/after gallery - TRANSFORM/beauty category calls for one, no real client photos available",
+    "No verified phone number or address (NAP) - omitted from footer/click-to-call rather than guessed",
+    "Contact form has no live submission destination - Web3Forms account not yet created, pending sign-off (external-account decision)"
+  ]
+}

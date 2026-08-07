@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birds Barbershop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Righteous:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#top">
+    <img src="assets/logo.jpg" alt="Birds Barbershop" class="brand-logo">
+    <span class="brand-name">Birds Barbershop</span>
+  </a>
+  <a class="btn btn-accent nav-cta" href="#contact">Book Now</a>
+</header>
+
+<section class="hero-intro" id="top">
+  <h1>Walk In Rough.<br>Walk Out Sharp.</h1>
+  <p class="hero-sub">Precision haircuts, hot towel shaves, and beard work &mdash; keep scrolling to watch the transformation.</p>
+  <a class="btn btn-accent hero-cta" href="#contact">Book Now</a>
+</section>
+
+<div class="hero-track">
+  <div class="hero-sticky">
+    <!-- Thread 3 output, dropped in unmodified except the sprite.webp path (fixture-relative -> assets/) -->
+    <div class="hero-sprite" role="img" aria-label="TRANSFORM hero animation"></div>
+  </div>
+</div>
+
+<main>
+  <section class="services" id="services">
+    <h2>Services</h2>
+    <p class="section-note">Menu below, generated from the business category &mdash; confirm exact offerings and pricing before this page goes live.</p>
+    <div class="service-grid">
+      <div class="card">Haircut</div>
+      <div class="card">Beard Trim &amp; Shape</div>
+      <div class="card">Hot Towel Shave</div>
+      <div class="card">Skin Fade</div>
+      <div class="card">Kids Cut</div>
+    </div>
+  </section>
+
+  <!--
+    Trust bar, social proof, and the before/after gallery (Thread 2's
+    mandatory/category-conditional sections) are intentionally omitted, not
+    forgotten: this fixture's Thread 1 token extraction captured design
+    tokens (color/font/logo) for the real business but no intake-form facts
+    (years in business, reviews, before/after photos, NAP). Per Thread 2's
+    own rule, these are client-supplied or omitted - never fabricated,
+    especially not for a real business. See TASKS.md #website-generator
+    for the follow-up this gap should become.
+  -->
+
+  <section class="contact" id="contact">
+    <h2>Ready to Book?</h2>
+    <p class="section-note">
+      This form isn't wired to a live destination yet &mdash; the project's form
+      backend (Web3Forms) needs an account created first, and that's an
+      external-service decision pending sign-off, not a code gap. No verified
+      phone number or email was captured for this business either, so
+      click-to-call and the mailto: redundancy Thread 2 calls for are both
+      omitted rather than guessed.
+    </p>
+    <form class="contact-form" action="#" onsubmit="return false;">
+      <label>Name<input type="text" name="name" autocomplete="name" required></label>
+      <label>Phone<input type="tel" name="phone" autocomplete="tel" required></label>
+      <label>What do you need?<textarea name="message" rows="3"></textarea></label>
+      <button type="submit" class="btn btn-accent">Book Now</button>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span class="brand-name">Birds Barbershop</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

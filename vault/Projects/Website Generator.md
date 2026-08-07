@@ -1347,6 +1347,107 @@ not a flaw in the research.
 - [One Page Vs Multi Page Website For Service Providers — Twofold](https://twofold.squarespace.com/blog/one-page-vs-multi-page-website) — single-page conversion lift for simple-offer businesses
 - [Services Page vs Service Pages for Local SEO — SPB Web](https://www.spbweb.com/post/services-page-vs-service-pages-local-business) — multi-page local-SEO tradeoff
 
+### BUILD (2026-08-07) — first real page, consuming a real Thread 1 fixture + real Thread 3 output
+
+**One real generated page, end to end:** `generated-sites/birds-barbershop/` — static `index.html`/
+`styles.css`/`script.js`/`assets/`/`meta.json`, matching the Output Structure spec. Consumes
+`tools/frame-generation/test/approved-fixtures/transform-approved.tokens.json` (real Thread 1
+extraction, source: birdsbarbershop.com, `reviewStatus: "approved"`) and the TRANSFORM/approved-logo
+Thread 3 fixture's real `sprite.webp`/`snippet.css`/`snippet.html` (post-quality-fix, see the
+TRANSFORM headroom entry above), dropped in with only the sprite path adjusted (fixture-relative
+`sprite.webp` → this site's `assets/sprite.webp`) — the CSS/keyframes/positions are untouched.
+
+**Real bug found and fixed by building an actual page, not just the isolated hero:** the shared
+`src/static-server.js` (used by every measurement/verification script in this pipeline) had no
+`.css` MIME type — it never needed to serve a *linked* stylesheet before (the isolated hero-LCP
+harness and every scene/composite page inline their own `<style>`). Chromium's strict MIME-type
+checking silently refused to apply the stylesheet, rendering the page completely unstyled with no
+console error. Fixed by adding `'.css': 'text/css'` to the MIME map. A second real layout bug: the
+first draft put the headline/subhead/CTA *inside* `.hero-sticky` alongside the sprite, sharing its
+100vh box — at normal desktop widths the sprite alone (`width: min(90vw,1200px)`, 3:2 aspect ratio)
+runs up to ~800px tall, and the combined content overflowed the sticky viewport, clipping the
+headline's first line. Fixed by moving hero copy into its own normal (non-sticky) `.hero-intro`
+section above `.hero-track`, leaving `.hero-sticky` as Thread 3's sprite alone — consistent with
+Thread 3's own sizing contract (sole content of its container), not fought against.
+
+**Below the hero, deliberately incomplete — content-gated, not forgotten.** This Thread 1 fixture
+extracted design tokens (color/font/logo) for a real business but was never run through an intake
+form, so it has none of the facts Thread 2's skeleton needs for the mandatory trust bar, social
+proof, or category (before/after) gallery sections — years in business, reviews, real photos, NAP.
+Per Thread 2's own rule (client-supplied or omitted, never fabricated) — sharpened here for a real
+business specifically: inventing a phone number, address, or reviews attributed to an actual company
+would misrepresent it, not just look unpolished. Built: Services (generic barbershop offerings,
+explicitly labeled "confirm before this page goes live," the same LLM-expanded-pending-confirmation
+status Thread 2's Content Input table already describes) and a Contact/Conversion section (3-field
+form, CTA repeated) whose submission destination is disclosed as not-yet-wired, not silently broken
+— see the Web3Forms account gap below. Omitted: trust bar, social proof, gallery, FAQ, click-to-call,
+the `mailto:` redundancy — all for the same missing-facts reason, all disclosed in `meta.json`'s new
+`known_gaps` array and in an HTML comment in `index.html`. **A real gap this surfaces, not a Thread 2
+design flaw:** Thread 1's extraction pipeline captures brand tokens but nothing from an intake form
+(phone, NAP, reviews, photos) that Thread 2's skeleton assumes will exist — worth a follow-up task,
+not fixed here.
+
+**Not wired into `orb/app.py`'s `/generate-website` route.** That route is a fully separate,
+already-shipped pipeline: it prompts an LLM (`claude -p` subprocess) to freely write
+`index.html`/`styles.css`/`script.js` from a business description, with zero Thread 1/3 integration
+— no tokens, no sprite, no skeleton. Wiring the real pipeline in means replacing that free-form
+generation with a deterministic assembly step (Thread 1 extraction → Thread 3 sprite generation →
+template assembly from tokens), which is real, unbuilt engineering, not a config change — and Thread
+1's own architecture note already holds "deterministic script, not LLM improvisation" as a
+requirement, which the current route violates by design. Deferred, not because it's low-value, but
+because this was the first real page ever hand-assembled from the template, and it found two real
+bugs (the MIME gap, the hero-overflow layout) that a hasty route-wiring would have baked into every
+future generated site instead of catching once. Recommend building the deterministic assembly step
+as its own task once the Web3Forms/intake-form gaps above are resolved, not before.
+
+**External-account decision, not made here:** Thread 2's own form-backend decision (Web3Forms now,
+self-hosted later) needs an actual Web3Forms account created to get a real access key before any
+generated site's form can submit anywhere. Not created — flagged for Fabio's sign-off, consistent
+with this project's standing rule against opening external accounts without asking first.
+
+**Real-page LCP, measured — the actual point of this pass.** Every prior LCP figure in this note was
+taken with the sprite alone on a blank test page (`measure-lcp.js`'s isolated harness). Measured this
+real page instead, same harness (4x CPU throttle, Lighthouse Slow-4G, `test/measure-lcp-real-page.js`,
+15 trials, INTERFACE/no-logo control read in the same session): the hero-sprite's own render time
+(Element Timing, consistent across all 15 trials: 2184-2300ms, median **2240ms**) is **~448ms slower**
+than the isolated-hero reading for the same fixture taken minutes earlier in the same session
+(1760ms/1792ms no-logo/approved-logo, post-quality-fix) — real cost from surrounding page content
+(Google Fonts CSS + 2 font files + the nav logo + `styles.css`/`script.js`, all sharing the same
+throttled 1.6Mbps pipe and competing for main-thread time under 4x CPU throttle, none of which the
+isolated harness has to load at all). **Margin against 2.5s drops from 708-740ms (isolated) to ~260ms
+(real page)** — TRANSFORM is still Good on this real page, but by much less than the isolated figure
+implied, even after this session's quality fix recovered real headroom. This is exactly the caveat
+the sprite-budget work above was missing: every "Good"/"Poor" verdict on this board so far was judged
+against a page that doesn't exist yet.
+
+**Is the hero still the LCP element? Yes, but confirming this required working around a real,
+disclosed tooling gap, not just reading the number.** The native `largest-contentful-paint`
+PerformanceObserver, run against this real page, reproduced the exact same unreliability
+`measure-lcp.js`'s own header already disclosed for the isolated harness ("did not reliably fire an
+entry for this page's CSS background-image under network throttling in this build") — it settled on
+the H1 headline (median 820ms) in 6/15 trials and correctly on the hero-sprite (median 2240ms,
+matching Element Timing exactly when it did fire) in 9/15. By rendered area the sprite is
+unambiguously the larger element in every single trial (314,280px² vs. the headline's 54,991px² vs.
+the logo's few-thousand px²) — real Chrome's LCP spec explicitly includes CSS `background-image`
+elements as candidates, so this reads as the same Playwright/Chromium instrumentation gap already on
+record, not a genuine claim that real visitors sometimes see the headline as LCP and sometimes the
+hero. Reported both signals rather than picking the one that looked cleaner: full trial-by-trial data
+in `generated-sites/birds-barbershop/lcp-real-page-results.json`.
+
+**Honest gaps:**
+- Only one archetype/fixture (TRANSFORM/Birds Barbershop) was built into a real page — the other five
+  archetypes' real-page LCP cost is unmeasured; the ~448ms overhead found here is this fixture's
+  number, not yet confirmed as a general "real page tax."
+- The page is missing the trust bar, social proof, gallery, and FAQ sections real client sites will
+  usually have — a fuller page (more sections, possibly a real gallery image) would very plausibly
+  push the LCP-vs-margin picture further, in either direction depending on what fills those slots.
+  This build's ~260ms margin should be read as "thinner than the isolated figure suggested," not as
+  the final real-world number.
+- The native LCP observer's split behavior (60% correct / 40% stale-on-H1 at a 4000ms quiet window)
+  wasn't tuned further once the pattern was clear enough to trust Element Timing over it — a longer
+  quiet window might close the gap, not attempted since Element Timing already gives the same
+  underlying signal reliably.
+
 ## Walking Skeleton Findings (2026-08-05)
 
 **A rough end-to-end pipeline was built in `C:\Jarvis\spikes\generator-e2e\`** — one hardcoded
